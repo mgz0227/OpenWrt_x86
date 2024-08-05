@@ -35,8 +35,8 @@ mv -f feeds/kiddin9/r81* tmp/
 
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
-sed -i "s/192.168.1/192.168.3/" package/feeds/kiddin9/base-files/files/bin/config_generate
-sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
+sed -i "s/192.168.1/10.0.0/" package/feeds/kiddin9/base-files/files/bin/config_generate
+sed -i "s/192.168.1/10.0.0/" package/base-files/files/bin/config_generate
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
