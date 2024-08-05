@@ -17,7 +17,8 @@ sed -i 's/DEFAULT_PACKAGES +=/DEFAULT_PACKAGES += kmod-usb-hid kmod-mmc kmod-sdh
 mv -f tmp/r81* feeds/kiddin9/
 
 sed -i 's/256/1024/g' target/linux/x86/image/Makefile
-
+sed -i "s/192.168.1/192.168.3/" package/feeds/kiddin9/base-files/files/bin/config_generate
+sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 echo '
 CONFIG_ACPI=y
 CONFIG_X86_ACPI_CPUFREQ=y
