@@ -1,4 +1,4 @@
-#### 一分钟在线编译定制专属固件: [openwrt.ai](https://openwrt.ai)
+
 #### 支持300+设备:
 X86/64, 友善 NanoPi、R2S、R4S、R4SE、R5S、R2C、R5C、R6S、NEO3, 斐讯 N1、K2P、K3, 树莓派 4B、3B/3B+、2B, 电犀牛r68s、r66s, 香橙派 R1 Plus、R1 Plus LTS, 红米AX6, 小米AX3600, 小米AX9000, 红米AX6000, 红米AX6S/小米AX3200, 红米AC2100, 小米AC2100, 斐讯K3,  360V6, 玩客云, 极路由 HIWIFI HC5962(极路由4、B70)、HC5661A、HC5761A、HC5861B, 小米4, 小米 R3G, 小米 R3P, newifi-d2 (新路由3), 小娱XY-C5, 竞斗云2.0(P&W R619AC), GL.iNet GL-MT1300、GL-AX1800、GL-AXT1800、GL-microuter-N300、GL-MT300N V2, 小米CR660X(CR6606/CR6608/CR6609), 小米4A千兆版, 小米 R3G-v2, 小米青春版Nano, 迅雷下载宝 timecloud, 优酷 yk-l2, 有华 wr1200js, 向日葵 X3A, 华硕 ASUS RT-ACRH17、RT-AC58u/RT-ACRH13、RT-ac85p、RT-n56u-b1、RT-AC88U、RT-AC1200、RT-AC1200 V2, 网件 NETGEAR R6220、R6260、R6120、R6700-v2、R6800、R6850、R6900-v2、R7450、wndr3700-v5, H1 Box, 贝壳云P1, 我家云lL Pro, x96 Max, 微加云V-Plus, 章鱼星球ZYXQ, GT-King, Odroid N2, MXQ Pro+, 京东无线宝JDCloud RE-SP-01B, Linksys WRT1200AC、WRT1900AC v1、WRT1900AC v2、WRT3200ACM、WRT1900ACS v1、WRT1900ACS v2、WRT32X、EA7500 v2 等
 
@@ -22,7 +22,7 @@ X86/64, 友善 NanoPi、R2S、R4S、R4SE、R5S、R2C、R5C、R6S、NEO3, 斐讯 
 [![Issue Welcome][5]][6]
 [![AutoBuild][12]][13]
 
-<a href="https://t.me/opwrt" target="_blank">TG通知频道</a>
+
 ## 1. **特色**
 
 + Cutting edge,openwrt官方openwrt-23.05分支版本, Kernel 5.15, 与官方最新源码同步.
@@ -31,7 +31,6 @@ X86/64, 友善 NanoPi、R2S、R4S、R4SE、R5S、R2C、R5C、R6S、NEO3, 斐讯 
 
 + 自建插件仓库囊括了市面上几乎所有开源插件,插件库日更,系统自动更新所有已安装插件.
 
-+ 通过[openwrt.ai](https://openwrt.ai)在线定制专属固件, 无需任何专业知识, 一分钟生成. 同时支持github云编译.
 
 + 后台一键OTA更新固件,省去了每次固件升级都需要找固件,下载固件,上传固件等繁琐操作.
 
@@ -49,18 +48,15 @@ X86/64, 友善 NanoPi、R2S、R4S、R4SE、R5S、R2C、R5C、R6S、NEO3, 斐讯 
 
 可根据需要选择任意一种进行固件生成。
 
-### 2.1 **在线生成**
 
-通过浏览器访问[https://openwrt.ai](https://openwrt.ai)进行固件定制，等待固件生成结束之后直接下载使用即可。
-
-### 2.2 **GitHub编译**
+### 2.1 **GitHub编译**
 
 + 将仓库进行fork
 
 + 按需添加相关环境参数REPO_TOKEN、SCKEY、TELEGRAM_CHAT_ID
 
 + Actions页面选择 Repo Dispatcher 点击 Run workflow
-### 2.3 **GitHub结合浏览器插件编译**
+### 2.2 **GitHub结合浏览器插件编译**
 请在支持油猴的浏览器中安装 [脚本](https://greasyfork.org/scripts/407616-github-actions-trigger/code/Github%20Actions%20Trigger.user.js) ,仓库右上角会出现 x86_64 Actions,K2P Actions等按钮,点击对应按钮即可.更多玩法 [repo-dispatcher](https://github.com/tete1030/github-repo-dispatcher)
 
 ## 3. **使用**
