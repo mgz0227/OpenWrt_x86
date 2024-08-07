@@ -3,7 +3,7 @@
 shopt -s extglob
 sed -i 's|https://git.openwrt.org/feed/packages.git|https://github.com/immortalwrt/packages.git;openwrt-23.05|' feeds.conf.default
 sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com/immortalwrt/luci.git;openwrt-23.05|' feeds.conf.default
-sed -i 's|https://git.openwrt.org/feed/routing.git|https://github.com/openwrt/routing.git;openwrt-23.05|' feeds.conf.default
+sed -i 's|https://git.openwrt.org/feed/routing.git|https://github.com/immortalwrt/routing.git;openwrt-23.05|' feeds.conf.default
 sed -i '$a src-git miaogongzi https://github.com/mgz0227/OP-Packages.git;master' feeds.conf.default
 sed -i "/telephony/d" feeds.conf.default
 
