@@ -1,48 +1,4 @@
-
-#### 支持300+设备:
-X86/64, 友善 NanoPi、R2S、R4S、R4SE、R5S、R2C、R5C、R6S、NEO3, 斐讯 N1、K2P、K3, 树莓派 4B、3B/3B+、2B, 电犀牛r68s、r66s, 香橙派 R1 Plus、R1 Plus LTS, 红米AX6, 小米AX3600, 小米AX9000, 红米AX6000, 红米AX6S/小米AX3200, 红米AC2100, 小米AC2100, 斐讯K3,  360V6, 玩客云, 极路由 HIWIFI HC5962(极路由4、B70)、HC5661A、HC5761A、HC5861B, 小米4, 小米 R3G, 小米 R3P, newifi-d2 (新路由3), 小娱XY-C5, 竞斗云2.0(P&W R619AC), GL.iNet GL-MT1300、GL-AX1800、GL-AXT1800、GL-microuter-N300、GL-MT300N V2, 小米CR660X(CR6606/CR6608/CR6609), 小米4A千兆版, 小米 R3G-v2, 小米青春版Nano, 迅雷下载宝 timecloud, 优酷 yk-l2, 有华 wr1200js, 向日葵 X3A, 华硕 ASUS RT-ACRH17、RT-AC58u/RT-ACRH13、RT-ac85p、RT-n56u-b1、RT-AC88U、RT-AC1200、RT-AC1200 V2, 网件 NETGEAR R6220、R6260、R6120、R6700-v2、R6800、R6850、R6900-v2、R7450、wndr3700-v5, H1 Box, 贝壳云P1, 我家云lL Pro, x96 Max, 微加云V-Plus, 章鱼星球ZYXQ, GT-King, Odroid N2, MXQ Pro+, 京东无线宝JDCloud RE-SP-01B, Linksys WRT1200AC、WRT1900AC v1、WRT1900AC v2、WRT3200ACM、WRT1900ACS v1、WRT1900ACS v2、WRT32X、EA7500 v2 等
-
-[1]: https://img.shields.io/badge/license-GPLV2-brightgreen.svg
-[2]: /LICENSE
-[3]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
-[4]: https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/pulls
-[5]: https://img.shields.io/badge/Issues-welcome-brightgreen.svg
-[6]: https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/issues/new
-[7]: https://img.shields.io/github/v/release/hyird/Action-Openwrt
-[8]: https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/releases
-[10]: https://img.shields.io/badge/Contact-telegram-blue
-[11]: https://t.me/opwrt
-[12]: https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/actions/workflows/Openwrt-AutoBuild.yml/badge.svg
-[13]: https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/actions
-
-[![license][1]][2]
-[![GitHub Stars](https://img.shields.io/github/stars/kiddin9/OpenWrt_x86-r2s-r4s.svg?style=flat-square&label=Stars)](https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/kiddin9/OpenWrt_x86-r2s-r4s.svg?style=flat-square&label=Forks)](https://github.com/kiddin9/OpenWrt_x86-r2s-r4s/fork)
-[![PRs Welcome][3]][4]
-[![Issue Welcome][5]][6]
-[![AutoBuild][12]][13]
-
-
-## 1. **特色**
-
-+ Cutting edge,openwrt官方openwrt-23.05分支版本, Kernel 5.15, 与官方最新源码同步.
-
-+ 原生极致纯净,固件默认只包含基础上网功能, 后台在线选装插件,系统升级不丢失插件和配置.
-
-+ 自建插件仓库囊括了市面上几乎所有开源插件,插件库日更,系统自动更新所有已安装插件.
-
-
-+ 后台一键OTA更新固件,省去了每次固件升级都需要找固件,下载固件,上传固件等繁琐操作.
-
-+ 后台一键设置旁路由,一键开关IPv6.
-
-+ 支持在线安装全部Kmod内核模块.
-
-+ 替换 Uhttpd 为 Nginx, 支持 反向代理; WebDAV等诸多玩法.
-
-+ 性能,友好度,易用性,插件,以及针对国内特殊环境等的自定义优化, 开箱即用
-
-## 2. **固件**
+## 1. **固件**
 
 固件生成有3种方式：在线定制化生成、GitHub编译、本地化编译。
 
