@@ -54,7 +54,7 @@ jobs:
         gitdate=$(date -d "$gitdate" +%s)
         now=$(date -d "$(date)" +%s)
         if [[ $(expr $gitdate + 120) < $now ]]; then
-        curl -X POST https://api.github.com/repos/mgz0227/openwrt-packages/dispatches \
+        curl -X POST https://api.github.com/repos/mgz0227/OP-Packages/dispatches \
         -H "Accept: application/vnd.github.everest-preview+json" \
         -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" \
         --data '{"event_type": "update"}'
