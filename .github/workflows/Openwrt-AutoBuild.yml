@@ -270,7 +270,7 @@ jobs:
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
         REMOTE_PORT: ${{ secrets.SERVER_PORT }}
         REMOTE_USER: root
-        TARGET: "/www/wwwroot/dl.openwrt.ai/releases/tmp/"
+        TARGET: "/www/wwwroot/cdn.miaogongzi.cc/openwrt/23.05/releases"
 
     - name: Upload firmware for artifact
       uses: actions/upload-artifact@main
