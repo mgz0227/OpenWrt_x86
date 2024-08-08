@@ -1,7 +1,7 @@
 #!/bin/bash
 #=================================================
 shopt -s extglob
-sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com/immortalwrt/luci.git|' feeds.conf.default
+
 sed -i '$a src-git miaogongzi https://github.com/mgz0227/OP-Packages.git;master' feeds.conf.default
 sed -i "/telephony/d" feeds.conf.default
 
