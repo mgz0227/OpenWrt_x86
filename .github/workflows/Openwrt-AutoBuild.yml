@@ -114,8 +114,8 @@ jobs:
            -H "Authorization: Bearer ${{ secrets.TOKEN_MGZ0227 }}" \
            -X POST -d '{ "query": "query {repository(owner: \"openwrt\", name: \"openwrt\") {refs(refPrefix: \"refs/tags/\", last: 4, orderBy: {field: TAG_COMMIT_DATE, direction: ASC}) {edges {node {name}}}}}"}' https://api.github.com/graphql) | jq -r '.data.repository.refs.edges[].node.name' | grep v23 | tail -n 1)"
         #REPO_BRANCH="openwrt-23.05"
-        #echo "CONFIG_VERSION_REPO=\"https://dl.openwrt.ai/`echo $REPO_BRANCH  | cut -d . -f 1,2 | sed -e 's/^v//'`\"">>devices/common/.config
-        echo "CONFIG_VERSION_REPO=\"https://dl.openwrt.ai/23.05\"">>devices/common/.config
+        #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/`echo $REPO_BRANCH  | cut -d . -f 1,2 | sed -e 's/^v//'`\"">>devices/common/.config
+        echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/23.05\"">>devices/common/.config
         if [[ ! "${{ env.REPO_BRANCH }}" && "$REPO_URL" == "https://github.com/openwrt/openwrt" ]]; then
             git clone $REPO_URL -b $REPO_BRANCH openwrt
         elif [[ ! "${{ env.REPO_BRANCH }}" ]]; then
@@ -286,7 +286,7 @@ jobs:
       continue-on-error: true
       run: |
         echo -e "墙内加速下载 🚀:\n" >> release.txt
-        echo -e "[腾讯云] (https://dl.openwrt.ai/firmware/${{matrix.target}}/ ☁)\n" >> release.txt
+        echo -e "[腾讯云] (https://op.miaogongzi.cc/firmware/${{matrix.target}}/ ☁)\n" >> release.txt
         [ ${{ env.WETRANS }} ] && echo -e "[WeTransfer] (${{ env.WETRANS }} 🗽)\n" >> release.txt
         [ ${{ env.COWURL }} ] && echo -e "[奶牛上传] (${{ env.COWURL }} 🐮)\n" >> release.txt
         [ ${{ env.NOTICE }} ] && echo -e "${{ env.NOTICE }}" >> release.txt || true
@@ -313,7 +313,7 @@ jobs:
       if: env.TELEGRAM_TOKEN && ! contains(github.event.action, 'notg')
       continue-on-error: true
       run: |
-        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
+        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://op.miaogongzi.cc/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
 
     - name: Delete workflow runs
       uses: mgz0227/delete-workflow-runs@main
