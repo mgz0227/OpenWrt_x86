@@ -20,14 +20,17 @@ luci-app-wizard luci-base luci-compat luci-lib-ipkg luci-lib-fs \
 luci-app-argon-config luci-app-netdata luci-app-ddns-go luci-app-openclash luci-app-adblock tcpdump-mini luci-app-nlbwmon \
 coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-fileassistant /" include/target.mk
 
+sed -i "s/procd-ujail//" include/target.mk
+sed -i "s/procd-seccomp//" include/target.mk
+
 sed -i "s/^.*vermagic$/\techo '1' > \$(LINUX_DIR)\/.vermagic/" include/kernel-defaults.mk
 
-status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
+status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/kiddin9/openwrt-packages/actions/runs" | jq -r '.workflow_runs[0].status')
 echo "$status"
 while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
 	echo "wait 5s"
 	sleep 5
-	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
+	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/kiddin9/openwrt-packages/actions/runs" | jq -r '.workflow_runs[0].status')
 done
 
 rm -rf package/feeds/packages/v4l2loopback
@@ -43,10 +46,10 @@ sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
-git_clone_path master https://github.com/coolsnowwolf/lede target/linux/generic/hack-6.6
-wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
+git_clone_path master https://github.com/coolsnowwolf/lede target/linux/generic/hack-5.15
+wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-5.15/
 
-sed -i "s/CONFIG_WERROR=y/CONFIG_WERROR=n/" target/linux/generic/config-6.6
+sed -i "s/CONFIG_WERROR=y/CONFIG_WERROR=n/" target/linux/generic/config-5.15
 
 sed -i "s/no-lto,$/no-lto no-mold,$/" include/package.mk
 
@@ -79,19 +82,4 @@ sed -i \
 	-e 's?../../lang?$(TOPDIR)/feeds/packages/lang?' \
 	package/feeds/miaogongzi/*/Makefile
 
-(
-if [ -f sdk.tar.xz ]; then
-	sed -i 's,$(STAGING_DIR_HOST)/bin/upx,upx,' package/feeds/miaogongzi/*/Makefile
-	mkdir sdk
-	tar -xJf sdk.tar.xz -C sdk
-	cp -rf sdk/*/staging_dir/* ./staging_dir/
-	rm -rf sdk.tar.xz sdk
-	sed -i '/\(tools\|toolchain\)\/Makefile/d' Makefile
-	if [ -f /usr/bin/python ]; then
-		ln -sf /usr/bin/python staging_dir/host/bin/python
-	else
-		ln -sf /usr/bin/python3 staging_dir/host/bin/python
-	fi
-	ln -sf /usr/bin/python3 staging_dir/host/bin/python3
-fi
-) &
+sed -i "s/OpenWrt/OpenWrt/g" package/base-files/files/bin/config_generate package/base-files/image-config.in config/Config-images.in Config.in include/u-boot.mk include/version.mk package/network/config/wifi-scripts/files/lib/wifi/mac80211.sh || true
