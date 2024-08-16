@@ -51,7 +51,6 @@ sed -i "s/CONFIG_WERROR=y/CONFIG_WERROR=n/" target/linux/generic/config-6.6
 sed -i "s/no-lto,$/no-lto no-mold,$/" include/package.mk
 
 [ -d package/kernel/mt76 ] && {
-mkdir package/kernel/mt76/patches
 wget -N https://raw.githubusercontent.com/immortalwrt/immortalwrt/master/package/kernel/mt76/patches/0001-mt76-allow-VHT-rate-on-2.4GHz.patch -P package/kernel/mt76/patches/
 }
 
