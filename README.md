@@ -71,9 +71,6 @@ Build OpenWrt using GitHub Actions
 
 ## Acknowledgments
 
-#### Rockchip的Kernel等部分源码来源 https://github.com/coolsnowwolf/lede
-#### ipq807x的Kernel等部分源码来源 https://github.com/Boos4721/openwrt
-#### ipq60xx的Kernel等部分源码来源 https://github.com/coolsnowwolf/openwrt-gl-ax1800
 
 - [OpenWrt](https://github.com/openwrt/openwrt)
 - [Lean's OpenWrt](https://github.com/coolsnowwolf/lede)
