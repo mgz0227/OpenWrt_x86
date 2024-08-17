@@ -248,7 +248,7 @@ jobs:
       run: |
         shopt -s extglob
         mkdir -p firmware/${{matrix.target}}
-        cp -rf openwrt/bin/targets/*/*/*{combined,sysupgrade}* ./firmware/${{matrix.target}}/ || true
+        cp -rf openwrt/bin/targets/*/*/*{sysupgrade}* ./firmware/${{matrix.target}}/ || true
         #cp -rf openwrt/bin/targets/*/*{sysupgrade}* ./firmware/${{matrix.target}}/ || true
         cd openwrt/bin/targets/*/*/
         cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
