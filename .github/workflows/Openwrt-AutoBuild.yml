@@ -264,15 +264,21 @@ jobs:
         find ./firmware/${{matrix.target}} -type f -name "openwrt-*" -exec rename "s/openwrt-/${{ env.VERSION }}-openwrt-/" {} + || true
     
         # Adjust VMDK descriptor files if present
-        for vmdk in ./firmware/${{matrix.target}}/*.vmdk; do
+        for vmdk in *.vmdk; do
           if [[ -f "$vmdk" ]]; then
+        # Rename VMDK file
+            new_name=$(echo "$vmdk" | sed "s/openwrt-/openwrt-${{ env.VERSION }}-/")
+            mv "$vmdk" "$new_name"
             descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
+            new_descriptor_file="${new_name%.vmdk}-descriptor.vmdk"
             if [ -f "$descriptor_file" ]; then
+              # Rename the descriptor file
+              mv "$descriptor_file" "$new_descriptor_file"
               # Update the descriptor file with the new VMDK name
-              sed -i "s/${vmdk##*/}/${{ env.VERSION }}-openwrt-${{matrix.target}}-generic-ext4-combined-efi.vmdk/g" "$descriptor_file"
+              sed -i "s/$(basename "$vmdk")/$(basename "$new_name")/g" "$new_descriptor_file"
             fi
           fi
-        done
+          done
 
         # Recompress all files back to .gz format
         for file in ./firmware/${{matrix.target}}/*; do
