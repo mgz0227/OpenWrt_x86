@@ -248,19 +248,46 @@ jobs:
       run: |
         shopt -s extglob
         mkdir -p firmware/${{matrix.target}}
-        cp -rf openwrt/bin/targets/*/*/*{sysupgrade}* ./firmware/${{matrix.target}}/ || true
+        cp -rf openwrt/bin/targets/*/*/*{combined}* ./firmware/${{matrix.target}}/ || true
         #cp -rf openwrt/bin/targets/*/*{sysupgrade}* ./firmware/${{matrix.target}}/ || true
         cd openwrt/bin/targets/*/*/
         cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
         cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
         cd -
-        rename -v "s/openwrt-/${{ env.VERSION }}-openwrt-/" ./firmware/*/* || true
+
+        # Unzip .gz files
+        for file in ./firmware/${{matrix.target}}/*.gz; do
+          gunzip "$file"
+        done
+
+        # Rename all files, including VMDK files after decompression
+        find ./firmware/${{matrix.target}} -type f -name "openwrt-*" -exec rename "s/openwrt-/${{ env.VERSION }}-openwrt-/" {} + || true
+    
+        # Adjust VMDK descriptor files if present
+        for vmdk in ./firmware/${{matrix.target}}/*.vmdk; do
+          if [[ -f "$vmdk" ]]; then
+            descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
+            if [ -f "$descriptor_file" ]; then
+              # Update the descriptor file with the new VMDK name
+              sed -i "s/${vmdk##*/}/${{ env.VERSION }}-openwrt-${{matrix.target}}-generic-ext4-combined-efi.vmdk/g" "$descriptor_file"
+            fi
+          fi
+        done
+
+        # Recompress all files back to .gz format
+        for file in ./firmware/${{matrix.target}}/*; do
+          gzip "$file"
+        done
+        # Copy renamed files back to openwrt/bin/targets directory
+        cp -r $GITHUB_WORKSPACE/firmware/${{matrix.target}}/* $GITHUB_WORKSPACE/openwrt/bin/targets/*/*/
+
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
         if [ ${{matrix.target}} == "x86_64" ]; then
-        echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-        echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
+          echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+          echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
         fi
+
 
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
