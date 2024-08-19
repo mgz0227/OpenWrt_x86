@@ -40,7 +40,7 @@ mv -f feeds/miaogongzi/r81* tmp/
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 sed -i "s/192.168.1/192.168.3/" package/feeds/miaogongzi/base-files/files/bin/config_generate
-sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
+
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 

@@ -251,7 +251,7 @@ jobs:
           done
       
           # Rename all files, including VMDK files after decompression
-          find . -type f -name "openwrt-*" -exec rename "s/openwrt-/${{ env.VERSION }}-openwrt-/" {} + || true
+          find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}/" {} + || true
       
           # Adjust VMDK descriptor files if present
           for vmdk in *.vmdk; do
