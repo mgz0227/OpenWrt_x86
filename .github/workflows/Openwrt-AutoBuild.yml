@@ -70,7 +70,6 @@ jobs:
             echo "ARCH=linux/amd32" >> $GITHUB_ENV
             echo "MTARGET=x86_generic" >> $GITHUB_ENV
         fi
-
     - name: Trigger Packages Update
       continue-on-error: true
       run: |
@@ -81,7 +80,6 @@ jobs:
             -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" \
             --data '{"event_type": "update"}'
         fi
-
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -100,7 +98,6 @@ jobs:
         sudo timedatectl set-timezone "$TZ"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
-
     - name: Get current date
       id: date
       run: |
@@ -108,7 +105,6 @@ jobs:
         echo "date2=$(date +'%m/%d %Y')" >> $GITHUB_ENV
         VERSION="$(echo "${{github.event.action}}" | grep -Eo " [0-9.]+" | sed -e 's/ //')" || true
         [ "$VERSION" ] && echo "VERSION=$VERSION" >> $GITHUB_ENV || echo "VERSION=$(date +'%m.%d')" >> $GITHUB_ENV
-
     - name: Clone source code
       run: |
         REPO_BRANCH="$((curl -gs -H 'Content-Type: application/json' \
@@ -134,7 +130,6 @@ jobs:
         ln -sf /mnt/openwrt/dl openwrt/dl
         ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
         ln -sf /mnt/openwrt/build_dir openwrt/build_dir
-
     - name: Load custom configuration
       run: |
         function git_clone_path() {
@@ -170,7 +165,6 @@ jobs:
           /bin/bash "devices/${{matrix.target}}/$DIY_SH"
         fi
         cp -Rf ./diy/* ./ || true
-
     - name: Apply patches
       run: |
         cd openwrt
@@ -189,7 +183,6 @@ jobs:
         CONFIG_CRYPTO_CHACHA20POLY1305=y \
         CONFIG_FAT_DEFAULT_IOCHARSET="utf8" \
         ' `find target/linux -path "target/linux/*/config-*"`
-
     - name: Defconfig
       run: |
         cd openwrt
@@ -200,14 +193,12 @@ jobs:
         make defconfig
         fi
         cat .config
-
     - name: Download package
       id: package
       run: |
         cd openwrt
         make download -j$(($(nproc)+1)) &
         sleep 5
-
     - name: Cache
       uses: stupidloud/cachewrtbuild@main
       with:
@@ -224,7 +215,6 @@ jobs:
             rm -rf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
         fi
         df -hT
-
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
       if: contains(github.event.action, 'ssh')
@@ -242,10 +232,10 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
-        - name: Organize files
-        id: organize
-        continue-on-error: true
-        run: |
+    - name: Organize files
+      id: organize
+      continue-on-error: true
+      run: |
           shopt -s extglob
           cd openwrt/bin/targets/*/*/
       
@@ -296,9 +286,7 @@ jobs:
             echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
             echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
           fi
-      
-
-
+          
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
       continue-on-error: true
@@ -360,7 +348,7 @@ jobs:
       if: env.SCKEY
       run: |
         # [ steps.compile.outputs.status == 'success' ] && curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=🎉OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译完成😋|| curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=❌OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译失败😂
-
+    
     - name: Telegram notification
       if: env.TELEGRAM_TOKEN && ! contains(github.event.action, 'notg')
       continue-on-error: true
