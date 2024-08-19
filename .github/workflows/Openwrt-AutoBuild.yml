@@ -245,7 +245,7 @@ jobs:
           done
       
           # Rename all files, including VMDK files after decompression
-          find . -type f -name "openwrt-*" -exec rename "s/${{ env.VERSION }}-openwrt-/openwrt-${{ env.VERSION }}/" {} + || true
+          find . -type f -name "openwrt-*" -exec rename "s/${{ env.VERSION }}-openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
       
           # Recompress all IMG files back to .gz format
           for file in *.img; do
