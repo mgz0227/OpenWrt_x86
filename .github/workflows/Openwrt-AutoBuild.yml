@@ -246,7 +246,18 @@ jobs:
       
           # Rename all files, including VMDK files after decompression
           find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
-      
+          # Convert IMG files to ESXi-compatible VMDK format and compress them individually
+          for img in *.img; do
+            vmdk_name="${img%.img}.vmdk"
+            zip_name="${img%.img}.zip"
+        
+          # Convert IMG to VMDK
+          qemu-img convert -f raw -O vmdk -o subformat=monolithicSparse "$img" "$vmdk_name"
+        
+          # Compress VMDK into a separate zip file
+          zip -r "$zip_name" "$vmdk_name"
+          done
+          
           # Recompress all IMG files back to .gz format
           for file in *.img; do
             gzip "$file"
