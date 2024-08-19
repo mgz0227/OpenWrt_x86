@@ -232,10 +232,10 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
-        - name: Organize files
-        id: organize
-        continue-on-error: true
-        run: |
+    - name: Organize files
+      id: organize
+      continue-on-error: true
+      run: |
           shopt -s extglob
           cd openwrt/bin/targets/*/*/
       
