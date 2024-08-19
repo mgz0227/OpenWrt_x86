@@ -244,42 +244,13 @@ jobs:
             gunzip "$file"
           done
       
-          # Unzip .zip files
-          for file in *.zip; do
-            unzip "$file"
-            rm "$file"
-          done
-      
           # Rename all files, including VMDK files after decompression
           find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}/" {} + || true
-      
-          # Adjust VMDK descriptor files if present
-          for vmdk in *.vmdk; do
-            if [[ -f "$vmdk" ]]; then
-              # Rename VMDK file
-              new_name=$(echo "$vmdk" | sed "s/openwrt-/openwrt-${{ env.VERSION }}-/")
-              mv "$vmdk" "$new_name"
-              descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
-              new_descriptor_file="${new_name%.vmdk}-descriptor.vmdk"
-              if [ -f "$descriptor_file" ]; then
-                # Rename the descriptor file
-                mv "$descriptor_file" "$new_descriptor_file"
-                # Update the descriptor file with the new VMDK name
-                sed -i "s/$(basename "$vmdk")/$(basename "$new_name")/g" "$new_descriptor_file"
-              fi
-            fi
-          done
       
           # Recompress all IMG files back to .gz format
           for file in *.img; do
             gzip "$file"
-          done
-      
-          # Recompress all VMDK files back to .zip format
-          for file in *.vmdk; do
-            zip "${file%.vmdk}.zip" "$file"
-            rm "$file"
-          done
+          done     
       
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
           echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
