@@ -232,22 +232,22 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
-    - name: Organize files
-      id: organize
-      continue-on-error: true
-      run: |
+        - name: Organize files
+        id: organize
+        continue-on-error: true
+        run: |
           shopt -s extglob
           cd openwrt/bin/targets/*/*/
       
-          # Unzip .gz files without deleting the original
+          # Unzip .gz files
           for file in *.gz; do
-            cp "$file" "${file%.gz}"
-            gunzip -c "$file" > "${file%.gz}"
+            gunzip "$file"
           done
       
-          # Unzip .zip files without deleting the original
+          # Unzip .zip files
           for file in *.zip; do
-            unzip -o "$file" -d ./
+            unzip "$file"
+            rm "$file"
           done
       
           # Rename all files, including VMDK files after decompression
@@ -258,26 +258,27 @@ jobs:
             if [[ -f "$vmdk" ]]; then
               # Rename VMDK file
               new_name=$(echo "$vmdk" | sed "s/openwrt-/openwrt-${{ env.VERSION }}-/")
-              cp "$vmdk" "$new_name"
+              mv "$vmdk" "$new_name"
               descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
               new_descriptor_file="${new_name%.vmdk}-descriptor.vmdk"
               if [ -f "$descriptor_file" ]; then
                 # Rename the descriptor file
-                cp "$descriptor_file" "$new_descriptor_file"
+                mv "$descriptor_file" "$new_descriptor_file"
                 # Update the descriptor file with the new VMDK name
                 sed -i "s/$(basename "$vmdk")/$(basename "$new_name")/g" "$new_descriptor_file"
               fi
             fi
           done
       
-          # Recompress all IMG files back to .gz format without deleting the original
+          # Recompress all IMG files back to .gz format
           for file in *.img; do
-            gzip -c "$file" > "$file.gz"
+            gzip "$file"
           done
       
-          # Recompress all VMDK files back to .zip format without deleting the original
+          # Recompress all VMDK files back to .zip format
           for file in *.vmdk; do
             zip "${file%.vmdk}.zip" "$file"
+            rm "$file"
           done
       
           Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
@@ -286,6 +287,7 @@ jobs:
             echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
             echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
           fi
+      
           
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
