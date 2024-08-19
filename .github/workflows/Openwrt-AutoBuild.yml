@@ -242,57 +242,61 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
-    - name: Organize files
-      id: organize
-      continue-on-error: true
-      run: |
-        shopt -s extglob
-        mkdir -p firmware/${{matrix.target}}
-        cp -rf openwrt/bin/targets/*/*/*{combined}* ./firmware/${{matrix.target}}/ || true
-        #cp -rf openwrt/bin/targets/*/*{sysupgrade}* ./firmware/${{matrix.target}}/ || true
-        cd openwrt/bin/targets/*/*/
-        cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
-        cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
-        cd -
-
-        # Unzip .gz files
-        for file in ./firmware/${{matrix.target}}/*.gz; do
-          gunzip "$file"
-        done
-
-        # Rename all files, including VMDK files after decompression
-        find ./firmware/${{matrix.target}} -type f -name "openwrt-*" -exec rename "s/openwrt-/${{ env.VERSION }}-openwrt-/" {} + || true
-    
-        # Adjust VMDK descriptor files if present
-        for vmdk in *.vmdk; do
-          if [[ -f "$vmdk" ]]; then
-        # Rename VMDK file
-            new_name=$(echo "$vmdk" | sed "s/openwrt-/openwrt-${{ env.VERSION }}-/")
-            mv "$vmdk" "$new_name"
-            descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
-            new_descriptor_file="${new_name%.vmdk}-descriptor.vmdk"
-            if [ -f "$descriptor_file" ]; then
-              # Rename the descriptor file
-              mv "$descriptor_file" "$new_descriptor_file"
-              # Update the descriptor file with the new VMDK name
-              sed -i "s/$(basename "$vmdk")/$(basename "$new_name")/g" "$new_descriptor_file"
-            fi
-          fi
+        - name: Organize files
+        id: organize
+        continue-on-error: true
+        run: |
+          shopt -s extglob
+          cd openwrt/bin/targets/*/*/
+      
+          # Unzip .gz files without deleting the original
+          for file in *.gz; do
+            cp "$file" "${file%.gz}"
+            gunzip -c "$file" > "${file%.gz}"
           done
-
-        # Recompress all files back to .gz format
-        for file in ./firmware/${{matrix.target}}/*; do
-          gzip "$file"
-        done
-        # Copy renamed files back to openwrt/bin/targets directory
-        cp -r $GITHUB_WORKSPACE/firmware/${{matrix.target}}/* $GITHUB_WORKSPACE/openwrt/bin/targets/*/*/
-
-        Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-        echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-        if [ ${{matrix.target}} == "x86_64" ]; then
-          echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-          echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
-        fi
+      
+          # Unzip .zip files without deleting the original
+          for file in *.zip; do
+            unzip -o "$file" -d ./
+          done
+      
+          # Rename all files, including VMDK files after decompression
+          find . -type f -name "openwrt-*" -exec rename "s/openwrt-/${{ env.VERSION }}-openwrt-/" {} + || true
+      
+          # Adjust VMDK descriptor files if present
+          for vmdk in *.vmdk; do
+            if [[ -f "$vmdk" ]]; then
+              # Rename VMDK file
+              new_name=$(echo "$vmdk" | sed "s/openwrt-/openwrt-${{ env.VERSION }}-/")
+              cp "$vmdk" "$new_name"
+              descriptor_file="${vmdk%.vmdk}-descriptor.vmdk"
+              new_descriptor_file="${new_name%.vmdk}-descriptor.vmdk"
+              if [ -f "$descriptor_file" ]; then
+                # Rename the descriptor file
+                cp "$descriptor_file" "$new_descriptor_file"
+                # Update the descriptor file with the new VMDK name
+                sed -i "s/$(basename "$vmdk")/$(basename "$new_name")/g" "$new_descriptor_file"
+              fi
+            fi
+          done
+      
+          # Recompress all IMG files back to .gz format without deleting the original
+          for file in *.img; do
+            gzip -c "$file" > "$file.gz"
+          done
+      
+          # Recompress all VMDK files back to .zip format without deleting the original
+          for file in *.vmdk; do
+            zip "${file%.vmdk}.zip" "$file"
+          done
+      
+          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+          echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+          if [ ${{matrix.target}} == "x86_64" ]; then
+            echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+            echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
+          fi
+      
 
 
     - name: Deploy imagebuilder to server
