@@ -236,39 +236,54 @@ jobs:
       id: organize
       continue-on-error: true
       run: |
-          shopt -s extglob
-          cd openwrt/bin/targets/*/*/
-      
-          # Unzip .gz files
-          for file in *.gz; do
-            gunzip "$file"
-          done
-      
-          # Rename all files, including VMDK files after decompression
-          find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
-          # Convert IMG files to ESXi-compatible VMDK format and compress them individually
-          for img in *.img; do
-            vmdk_name="${img%.img}.vmdk"
-            zip_name="${img%.img}.zip"
+            shopt -s extglob
+            cd openwrt/bin/targets/*/*/
         
-          # Convert IMG to VMDK
-          qemu-img convert -f raw -O vmdk -o subformat=monolithicSparse "$img" "$vmdk_name"
+            # Unzip .gz files
+            for file in *.gz; do
+              gunzip "$file"
+            done
         
-          # Compress VMDK into a separate zip file
-          zip -r "$zip_name" "$vmdk_name"
-          done
+            # Rename all files, including VMDK files after decompression
+            find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
+            
+            # Convert IMG files to ESXi-compatible VMFS format and compress them individually
+            for img in *.img; do
+              vmdk_name="${img%.img}.vmdk"
+              zip_name="${img%.img}.zip"
           
-          # Recompress all IMG files back to .gz format
-          for file in *.img; do
-            gzip "$file"
-          done     
+              # Convert IMG to VMDK using VMFS format
+              echo "Converting $img to $vmdk_name using vmfs format"
+              qemu-img convert -f raw -O vmdk -o subformat=vmfs "$img" "$vmdk_name"
+              if [ $? -eq 0 ]; then
+                echo "Conversion successful: $vmdk_name"
+              else
+                echo "Conversion failed for $img"
+                continue
+              fi
+          
+              # Compress VMDK into a separate zip file
+              zip -r "$zip_name" "$vmdk_name"
+              echo "Compressed $vmdk_name into $zip_name"
+              
+              # Delete the VMDK file after compression
+              rm "$vmdk_name"
+              echo "Deleted $vmdk_name"
+            done
+            
+            # Recompress all IMG files back to .gz format
+            for file in *.img; do
+              gzip "$file"
+              echo "Recompressed $file to ${file}.gz"
+            done   
+        
+            Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+            echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+            if [ ${{matrix.target}} == "x86_64" ]; then
+              echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+              echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
+            fi
       
-          Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-          echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-          if [ ${{matrix.target}} == "x86_64" ]; then
-            echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-            echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
-          fi
       
           
     - name: Deploy imagebuilder to server
