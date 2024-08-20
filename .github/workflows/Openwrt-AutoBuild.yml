@@ -237,51 +237,31 @@ jobs:
       id: organize
       continue-on-error: true
       run: |
-            shopt -s extglob
-            cd openwrt/bin/targets/*/*/
-        
-            # Unzip .gz files
-            for file in *.gz; do
-              gunzip "$file"
-            done
-        
-            # Rename all files, including IMG files after decompression
-            find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
-            
-            # Convert IMG files to ESXi-compatible VMDK format using monolithicSparse with full preallocation and compress them individually
-            for img in *.img; do
-              vmdk_name="${img%.img}.vmdk"
-              zip_name="${img%.img}.vmdk.zip"
-          
-              # Convert IMG to VMDK using monolithicSparse format with full preallocation
-              echo "Converting $img to $vmdk_name using monolithicSparse format with full preallocation"
-              qemu-img convert -f raw -O vmdk -o subformat=monolithicSparse,preallocation=full "$img" "$vmdk_name"
-              if [ $? -eq 0 ]; then
-                echo "Conversion successful: $vmdk_name"
-              else
-                echo "Conversion failed for $img"
-                continue
-              fi
-          
-              # Compress VMDK into a separate zip file
-              zip -r "$zip_name" "$vmdk_name"
-              echo "Compressed $vmdk_name into $zip_name"
-              
-              # Delete the VMDK file after compression
-              rm "$vmdk_name"
-              echo "Deleted $vmdk_name"
+              shopt -s extglob
+              cd openwrt/bin/targets/*/*/
+      
+              # Unzip .gz files
+              for file in *.gz; do
+                gunzip "$file"
+              done
+      
+              # Rename all files, including IMG files after decompression
+              find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
       
               # Recompress the original IMG file back to .gz format
-              gzip "$img"
-              echo "Recompressed $img to ${img}.gz"
-            done
-            
-            Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-            echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-            if [ ${{matrix.target}} == "x86_64" ]; then
-              echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-              echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
-            fi
+              for img in *.img; do
+                gzip "$img"
+                echo "Recompressed $img to ${img}.gz"
+                rm "$img"
+                echo "Deleted original IMG file: $img"
+              done
+              
+              Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+              echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+              if [ ${{matrix.target}} == "x86_64" ]; then
+                echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+                echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
+              fi
       
       
       
