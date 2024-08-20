@@ -270,9 +270,13 @@ jobs:
               # Delete the VMDK file after compression
               rm "$vmdk_name"
               echo "Deleted $vmdk_name"
+      
+              # Delete the original IMG file
+              rm "$img"
+              echo "Deleted original IMG file: $img"
             done
             
-            # Recompress all IMG files back to .gz format
+            # Recompress all remaining IMG files back to .gz format
             for file in *.img; do
               gzip "$file"
               echo "Recompressed $file to ${file}.gz"
@@ -284,6 +288,7 @@ jobs:
               echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
               echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
             fi
+      
       
       
           
