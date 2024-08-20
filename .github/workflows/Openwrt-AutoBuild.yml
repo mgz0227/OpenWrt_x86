@@ -250,7 +250,7 @@ jobs:
       
               # Recompress the original IMG file back to .gz format
               for img in *.img; do
-                gzip "$img"
+                rm "${img%.img}.img"
                 echo "Recompressed $img to ${img}.gz"
                 rm "$img"
                 echo "Deleted original IMG file: $img"
