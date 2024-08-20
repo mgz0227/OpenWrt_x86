@@ -34,6 +34,9 @@ GRUB_TITLE:=$(call qstrip,$(CONFIG_GRUB_TITLE))
 
 BOOTOPTS:=$(call qstrip,$(CONFIG_GRUB_BOOTOPTS))
 
+# Get current date in desired format
+DATE_FORMAT := $(shell date +%m.%d.%Y)
+
 define Build/combined
 	$(CP) $(KDIR)/$(KERNEL_NAME) $@.boot/boot/vmlinuz
 	-$(CP) $(STAGING_DIR_ROOT)/boot/. $@.boot/boot/
@@ -104,7 +107,7 @@ define Device/Default
   IMAGE/combined.img := grub-config pc | combined | grub-install | append-metadata
   IMAGE/combined.img.gz := grub-config pc | combined | grub-install | gzip | append-metadata
   IMAGE/combined.vdi := grub-config pc | combined | grub-install | qemu-image vdi
-  IMAGE/combined.vmdk := grub-config pc | combined | grub-install | qemu-image vmdk
+  IMAGE/combined.vmdk := grub-config pc | combined | grub-install | qemu-image vmdk -o output=$(BIN_DIR)/openwrt-$(DATE_FORMAT)-x86-64-generic-ext4-combined.vmdk
   IMAGE/combined.vhdx := grub-config pc | combined | grub-install | qemu-image vhdx -o subformat=dynamic
   IMAGE/rootfs.img := append-rootfs | pad-to $(ROOTFS_PARTSIZE)
   IMAGE/rootfs.img.gz := append-rootfs | pad-to $(ROOTFS_PARTSIZE) | gzip
@@ -112,7 +115,7 @@ define Device/Default
   IMAGE/combined-efi.img := grub-config efi | combined efi | grub-install efi | append-metadata
   IMAGE/combined-efi.img.gz := grub-config efi | combined efi | grub-install efi | gzip | append-metadata
   IMAGE/combined-efi.vdi := grub-config efi | combined efi | grub-install efi | qemu-image vdi
-  IMAGE/combined-efi.vmdk := grub-config efi | combined efi | grub-install efi | qemu-image vmdk
+  IMAGE/combined-efi.vmdk := grub-config efi | combined efi | grub-install efi | qemu-image vmdk -o output=$(BIN_DIR)/openwrt-$(DATE_FORMAT)-x86-64-generic-ext4-combined-efi.vmdk
   IMAGE/combined-efi.vhdx := grub-config efi | combined efi | grub-install efi | qemu-image vhdx -o subformat=dynamic
   ifeq ($(CONFIG_TARGET_IMAGES_GZIP),y)
     IMAGES-y := rootfs.img.gz
@@ -142,12 +145,12 @@ define Device/Default
     IMAGES-$$(CONFIG_GRUB_IMAGES) += combined.vhdx
     IMAGES-$$(CONFIG_GRUB_EFI_IMAGES) += combined-efi.vhdx
   endif
-  IMAGES := $$(IMAGES-y)
-  ARTIFACTS := $$(ARTIFACTS-y)
-  SUPPORTED_DEVICES :=
 endef
 
-include $(SUBTARGET).mk
+define Device/generic
+  DEVICE_VENDOR := Generic
+  DEVICE_MODEL := x86/64
+  GRUB_TITLE := OpenWrt
+endef
 
-$(eval $(call BuildImage))
-
+TARGET_DEVICES += generic
