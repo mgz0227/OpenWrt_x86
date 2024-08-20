@@ -42,8 +42,8 @@ index 322131c2a488..0b4ed1d272eb 100644
    ifeq ($(CONFIG_VMDK_IMAGES),y)
 -    IMAGES-$$(CONFIG_GRUB_IMAGES) += combined.vmdk
 -    IMAGES-$$(CONFIG_GRUB_EFI_IMAGES) += combined-efi.vmdk
-+    IMAGES-$$(CONFIG_GRUB_IMAGES) += combined.vmdk.zip
-+    IMAGES-$$(CONFIG_GRUB_EFI_IMAGES) += combined-efi.vmdk.zip
++    IMAGES-$$(CONFIG_GRUB_IMAGES) += $(patsubst %,$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined.vmdk.zip,$(IMAGES-$$(CONFIG_GRUB_IMAGES)))
++    IMAGES-$$(CONFIG_GRUB_EFI_IMAGES) += $(patsubst %,$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi.vmdk.zip,$(IMAGES-$$(CONFIG_GRUB_EFI_IMAGES)))
    endif
    ifeq ($(CONFIG_VHDX_IMAGES),y)
      IMAGES-$$(CONFIG_GRUB_IMAGES) += combined.vhdx
