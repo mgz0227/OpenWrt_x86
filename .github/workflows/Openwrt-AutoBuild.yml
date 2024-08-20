@@ -255,7 +255,7 @@ jobs:
           
               # Convert IMG to VMDK using VMFS format
               echo "Converting $img to $vmdk_name using vmfs format"
-              qemu-img convert -f raw -O vmdk -o subformat=vmfs "$img" "$vmdk_name"
+              qemu-img convert -f raw -O vmdk -o subformat=monolithicSparse "$img" "$vmdk_name"
               if [ $? -eq 0 ]; then
                 echo "Conversion successful: $vmdk_name"
               else
