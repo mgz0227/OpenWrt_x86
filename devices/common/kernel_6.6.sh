@@ -7,7 +7,7 @@ bash $SHELL_FOLDER/../common/kernel_6.1.sh
 
 git_clone_path master https://github.com/coolsnowwolf/lede target/linux/generic/hack-6.6
 rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek*
-rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
+
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
 
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/libs/dmx_usb_module/patches/101-fix-kernel-6.6-builds.patch -P package/feeds/packages/dmx_usb_module/patches/
