@@ -276,11 +276,16 @@ jobs:
               echo "Deleted original IMG file: $img"
             done
             
-            # Recompress all remaining IMG files back to .gz format
-            for file in *.img; do
-              gzip "$file"
-              echo "Recompressed $file to ${file}.gz"
-            done   
+            # Check if any IMG files exist before attempting to recompress
+            if ls *.img 1> /dev/null 2>&1; then
+              # Recompress all remaining IMG files back to .gz format
+              for file in *.img; do
+                gzip "$file"
+                echo "Recompressed $file to ${file}.gz"
+              done
+            else
+              echo "No IMG files found to recompress."
+            fi
         
             Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
             echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
@@ -288,6 +293,7 @@ jobs:
               echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
               echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
             fi
+      
       
       
       
