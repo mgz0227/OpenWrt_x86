@@ -248,12 +248,9 @@ jobs:
               # Rename all files, including IMG files after decompression
               find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
       
-              # Recompress the original IMG file back to .gz format
-              for img in *.img; do
-                rm "${img%.img}.img"
-                echo "Recompressed $img to ${img}.gz"
-                rm "$img"
-                echo "Deleted original IMG file: $img"
+              # Recompress all IMG files back to .gz format
+              for file in *.img; do
+              gzip "$file"
               done
               
               Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
