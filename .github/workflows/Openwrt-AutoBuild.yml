@@ -21,14 +21,14 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   DOCKER_ID: ${{ secrets.DOCKER_ID }}
   DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
-  #HOME: /home/miaogongzi
+  HOME: /home/miaogongzi
 
   TZ: Asia/Shanghai
 
 jobs:
   build:
-    runs-on: Ubuntu-latest
-    #runs-on: self-hosted
+    #runs-on: Ubuntu-latest
+    runs-on: self-hosted
     
     name: Build ${{matrix.target}}
     strategy:
