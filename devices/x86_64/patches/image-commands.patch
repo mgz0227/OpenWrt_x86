@@ -6,13 +6,13 @@
  # E.g. | qemu-image vdi <optional extra arguments to qemu-img binary>
 +define Build/qemu-exsi
 +	if command -v qemu-img; then \
-+		name="openwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined"; \
++		name="openwrt-$(date +%m.%d.%Y)-x86-64-generic-ext4-combined"; \
 +		if [ "$(CONFIG_GRUB_EFI_IMAGES)" = "y" ]; then \
-+			name="openwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi"; \
++			name="openwrt-$(date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi"; \
 +		fi; \
-+		qemu-img convert -f raw -O vmdk $@ $$name.vmdk; \
-+		rm -f $@; \
-+		zip -jm $@ $$name.vmdk; \
++		qemu-img convert -f raw -O vmdk $@ $${name}.vmdk && \
++		rm -f $@ && \
++		zip -jm $${name}.zip $${name}.vmdk; \
 +	else \
 +		echo "WARNING: Install qemu-img to create VDI/VMDK images" >&2; exit 1; \
 +	fi
