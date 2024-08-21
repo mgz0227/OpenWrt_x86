@@ -1,6 +1,6 @@
 --- a/include/image-commands.mk
 +++ b/include/image-commands.mk
-@@ -578,6 +578,22 @@
+@@ -578,6 +578,21 @@
  
  # Convert a raw image into a $1 type image.
  # E.g. | qemu-image vdi <optional extra arguments to qemu-img binary>
@@ -11,7 +11,6 @@
 +			name="openwrt-$(date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi"; \
 +		fi; \
 +		qemu-img convert -f raw -O vmdk -o subformat=monolithicFlat $@ $${name}.vmdk && \
-+		mv $${name}-flat.vmdk $${name}-flat.vmdk && \
 +		rm -f $@ && \
 +		zip -j $${name}.zip $${name}.vmdk $${name}-flat.vmdk && \
 +		rm -f $${name}.vmdk $${name}-flat.vmdk; \
