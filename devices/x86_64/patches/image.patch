@@ -16,7 +16,7 @@ index 322131c2a488..0b4ed1d272eb 100644
    IMAGE/combined.img.gz := grub-config pc | combined | grub-install | gzip | append-metadata
    IMAGE/combined.vdi := grub-config pc | combined | grub-install | qemu-image vdi
 -  IMAGE/combined.vmdk := grub-config pc | combined | grub-install | qemu-image vmdk
-+  IMAGE/combined.vmdk.zip := grub-config pc | combined | grub-install | qemu-exsi vmdk -o adapter_type=lsilogic -o subformat=monolithicFlat -o output=./openwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined.vmdk
++  IMAGE/combined.vmdk.zip := grub-config pc | combined | grub-install | qemu-exsi vmdk -o adapter_type=lsilogic -o subformat=monolithicFlat
    IMAGE/combined.vhdx := grub-config pc | combined | grub-install | qemu-image vhdx -o subformat=dynamic
 -  IMAGE/rootfs.img := append-rootfs | pad-to $(ROOTFS_PARTSIZE)
 -  IMAGE/rootfs.img.gz := append-rootfs | pad-to $(ROOTFS_PARTSIZE) | gzip
@@ -25,7 +25,7 @@ index 322131c2a488..0b4ed1d272eb 100644
    IMAGE/combined-efi.img.gz := grub-config efi | combined efi | grub-install efi | gzip | append-metadata
    IMAGE/combined-efi.vdi := grub-config efi | combined efi | grub-install efi | qemu-image vdi
 -  IMAGE/combined-efi.vmdk := grub-config efi | combined efi | grub-install efi | qemu-image vmdk
-+  IMAGE/combined-efi.vmdk.zip := grub-config efi | combined efi | grub-install efi | qemu-exsi vmdk -o adapter_type=lsilogic -o subformat=monolithicFlat -o output=./openwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi.vmdk
++  IMAGE/combined-efi.vmdk.zip := grub-config efi | combined efi | grub-install efi | qemu-exsi vmdk -o adapter_type=lsilogic -o subformat=monolithicFlat
    IMAGE/combined-efi.vhdx := grub-config efi | combined efi | grub-install efi | qemu-image vhdx -o subformat=dynamic
    ifeq ($(CONFIG_TARGET_IMAGES_GZIP),y)
 -    IMAGES-y := rootfs.img.gz
