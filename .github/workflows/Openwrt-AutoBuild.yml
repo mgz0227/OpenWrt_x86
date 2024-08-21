@@ -27,8 +27,8 @@ env:
 
 jobs:
   build:
-    #runs-on: Ubuntu-latest
-    runs-on: self-hosted
+    runs-on: Ubuntu-latest
+    #runs-on: self-hosted
     
     name: Build ${{matrix.target}}
     strategy:
