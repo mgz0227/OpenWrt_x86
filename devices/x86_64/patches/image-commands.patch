@@ -11,9 +11,9 @@
 +		if [ "$(CONFIG_GRUB_EFI_IMAGES)" = "y" ]; then \
 +			date_name="openwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi"; \
 +		fi; \
-+		qemu-img convert -f raw -O vmdk $1 $@ $${date_name}.vmdk; \
++		qemu-img convert -f raw -O vmdk $1 ${date_name}.vmdk; \
 +		rm -f $@; \
-+		zip -jm $@ $${date_name}.vmdk; \
++		zip -jm $@ ${date_name}.vmdk; \
 +	else \
 +		echo "WARNING: Install qemu-img to create VDI/VMDK images" >&2; exit 1; \
 +	fi
