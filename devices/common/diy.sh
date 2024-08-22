@@ -13,6 +13,9 @@ sed -i '/	refresh_config();/d' scripts/feeds
 ./scripts/feeds install -a -p miaogongzi -f
 ./scripts/feeds install -a
 
+rm -rf package/base-files
+mv -f feeds/miaogongzi/base-files package/
+
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile
 sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-advancedplus luci-app-firewall luci-app-opkg luci-app-upnp luci-app-autoreboot \
@@ -39,7 +42,7 @@ mv -f feeds/miaogongzi/r81* tmp/
 
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
-sed -i "s/192.168.1/192.168.3/" package/feeds/miaogongzi/base-files/files/bin/config_generate
+sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
@@ -82,4 +85,4 @@ sed -i \
 	-e 's?../../lang?$(TOPDIR)/feeds/packages/lang?' \
 	package/feeds/miaogongzi/*/Makefile
 
-sed -i "s/OpenWrt/OpenWrt/g" package/base-files/files/bin/config_generate package/base-files/image-config.in config/Config-images.in Config.in include/u-boot.mk include/version.mk package/network/config/wifi-scripts/files/lib/wifi/mac80211.sh || true
+sed -i "s/OpenWrt/MeowWrt/g" package/base-files/files/bin/config_generate package/base-files/image-config.in config/Config-images.in Config.in include/u-boot.mk include/version.mk package/network/config/wifi-scripts/files/lib/wifi/mac80211.sh || true
