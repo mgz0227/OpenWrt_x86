@@ -1,6 +1,6 @@
 --- a/include/image-commands.mk
 +++ b/include/image-commands.mk
-@@ -578,6 +578,23 @@
+@@ -578,6 +578,22 @@
  
  # Convert a raw image into a $1 type image.
  # E.g. | qemu-image vdi <optional extra arguments to qemu-img binary>
