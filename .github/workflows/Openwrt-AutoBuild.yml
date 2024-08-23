@@ -186,6 +186,7 @@ jobs:
         CONFIG_CRYPTO_CHACHA20POLY1305=y \
         CONFIG_FAT_DEFAULT_IOCHARSET="utf8" \
         ' `find target/linux -path "target/linux/*/config-*"`
+
     - name: Defconfig
       run: |
         cd openwrt
@@ -196,6 +197,7 @@ jobs:
         make defconfig
         fi
         cat .config
+
     - name: Download package
       id: package
       run: |
@@ -234,6 +236,7 @@ jobs:
         rm -rf staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
         rm -rf staging_dir/toolchain-*/initial
         df -hT
+
     - name: Organize files
       id: organize
       continue-on-error: true
@@ -247,7 +250,7 @@ jobs:
               done
       
               # Rename all files, including IMG files after decompression
-              find . -type f -name "openwrt-*" -exec rename "s/openwrt-/openwrt-${{ env.VERSION }}.2024-/" {} + || true
+              find . -type f -name "MeowWrt-*" -exec rename "s/MeowWrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
       
               # Recompress all IMG files back to .gz format
               for file in *.img; do
@@ -258,14 +261,36 @@ jobs:
               echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
               if [ ${{matrix.target}} == "x86_64" ]; then
                 echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-                echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
+                echo "NOTICE=请分配不少于5G的存储容量" >> $GITHUB_ENV
               fi
-      
-      
-      
-      
-      
-          
+    - name: Organize Release files
+      id: organizeRelease
+      continue-on-error: true
+      run: |
+            shopt -s extglob
+            mkdir -p firmware/${{matrix.target}}          
+            cp -rf openwrt/bin/targets/*/*/*{combined,bin,imagebuilder,rootfs}* ./firmware/${{matrix.target}}/ || true
+            cd  firmware
+
+            # Unzip .gz files
+              for file in *.gz; do
+              gunzip "$file"
+              done
+              
+            # Rename all files, including IMG files after decompression
+              find . -type f -name "MeowWrt-*" -exec rename "s/MeowWrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
+              
+            # Recompress all IMG files back to .gz format
+              for file in *.img; do
+              gzip "$file"
+              done
+              cd -
+              Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+              echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+              if [ ${{matrix.target}} == "x86_64" ]; then
+              echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+              fi
+
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
       continue-on-error: true
@@ -309,6 +334,7 @@ jobs:
         [ ${{ env.WETRANS }} ] && echo -e "[WeTransfer] (${{ env.WETRANS }} 🗽)\n" >> release.txt
         [ ${{ env.COWURL }} ] && echo -e "[奶牛上传] (${{ env.COWURL }} 🐮)\n" >> release.txt
         [ ${{ env.NOTICE }} ] && echo -e "${{ env.NOTICE }}" >> release.txt || true
+
     - name: Upload firmware for release
       uses: softprops/action-gh-release@master
       continue-on-error: true
@@ -316,7 +342,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
       with:
-        files: "${{ env.FIRMWARE }}/*"
+        files: firmware/${{matrix.target}}/*
         name: ${{ env.date2 }} ${{matrix.target}} ${{ env.EMOJI }}
         tag_name: ${{ env.date }}_${{matrix.target}}
         body_path: release.txt
@@ -348,4 +374,3 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
-        
