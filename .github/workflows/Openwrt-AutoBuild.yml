@@ -254,8 +254,13 @@ jobs:
       continue-on-error: true
       run: |
               shopt -s extglob
+              mkdir -p firmware/${{matrix.target}}
+              cp -rf openwrt/bin/targets/*/*/*{combined,bin}* ./firmware/${{matrix.target}}/ || true
               cd openwrt/bin/targets/*/*/
-      
+              cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
+              cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
+              
+              cd openwrt/bin/targets/*/*/
               # Unzip .gz files
               for file in *.gz; do
                 gunzip "$file"
@@ -268,22 +273,13 @@ jobs:
               for file in *.img; do
               gzip "$file"
               done
-              cd -
-              mkdir -p firmware/${{matrix.target}}
-              cp -rf $GITHUB_WORKSPACE/openwrt/bin/targets/*/*/*{combined,bin}* ./firmware/${{matrix.target}}/ || true
-              cd openwrt/bin/targets/*/*/
-              cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
-              cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
+
               Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
               echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
               if [ ${{matrix.target}} == "x86_64" ]; then
                 echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
                 echo "NOTICE=请分配不少于1G的存储容量" >> $GITHUB_ENV
               fi
-      
-      
-      
-      
       
           
     - name: Deploy imagebuilder to server
