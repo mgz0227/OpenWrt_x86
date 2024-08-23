@@ -268,8 +268,9 @@ jobs:
               for file in *.img; do
               gzip "$file"
               done
+              cd -
               mkdir -p firmware/${{matrix.target}}
-              cp -rf $GITHUB_WORKSPACE/openwrt/bin/openwrt/bin/targets/*/*/*{combined,sysupgrade,bin}* ./firmware/${{matrix.target}}/ || true
+              cp -rf $GITHUB_WORKSPACE/openwrt/bin/targets/*/*/*{combined,bin}* ./firmware/${{matrix.target}}/ || true
               cd openwrt/bin/targets/*/*/
               cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
               cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
