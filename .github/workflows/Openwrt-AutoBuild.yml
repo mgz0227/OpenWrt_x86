@@ -250,7 +250,7 @@ jobs:
               done
       
               # Rename all files, including IMG files after decompression
-              find . -type f -name "MeowWrt-*" -exec rename "s/MeowWrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
+              find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
       
               # Recompress all IMG files back to .gz format
               for file in *.img; do
@@ -278,7 +278,7 @@ jobs:
               done
               
             # Rename all files, including IMG files after decompression
-              find . -type f -name "MeowWrt-*" -exec rename "s/MeowWrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
+              find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
               
             # Recompress all IMG files back to .gz format
               for file in *.img; do
