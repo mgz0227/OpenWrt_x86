@@ -275,21 +275,6 @@ jobs:
             shopt -s extglob
             mkdir -p firmware/${{matrix.target}}          
             cp -rf openwrt/bin/targets/*/*/*{combined,bin,imagebuilder,rootfs}* ./firmware/${{matrix.target}}/ || true
-            cd  firmware
-
-            # Unzip .gz files
-              for file in *.gz; do
-              gunzip "$file"
-              done
-              
-            # Rename all files, including IMG files after decompression
-              find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
-              
-            # Recompress all IMG files back to .gz format
-              for file in *.img; do
-              gzip "$file"
-              done
-              cd -
               Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
               echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
               if [ ${{matrix.target}} == "x86_64" ]; then
