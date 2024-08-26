@@ -266,7 +266,7 @@ jobs:
               echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
               if [ ${{matrix.target}} == "x86_64" ]; then
                 echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-                echo "NOTICE=请分配不少于5G的存储容量" >> $GITHUB_ENV
+                echo "NOTICE=请分配不少于2G的存储容量" >> $GITHUB_ENV
               fi
     - name: Organize Release files
       id: organizeRelease
