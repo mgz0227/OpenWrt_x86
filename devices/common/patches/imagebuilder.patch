@@ -61,7 +61,7 @@
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
 +IMAGE_SIZE:="$(shell echo $$(echo $($(USER_PROFILE)_IMAGE_SIZE) | cut -d k -f1))"
 +BUILD_PACKAGES:=$(shell if [[ "$(IMAGE_SIZE)" && ! "`echo "$(IMAGE_SIZE)" | grep "m"`" && $(IMAGE_SIZE) -lt 20480 ]]; then \
-+echo "$(BUILD_PACKAGES) -coremark -htop -bash -openssh-sftp-server "; \
++echo "$(BUILD_PACKAGES) -coremark -htop -bash -openssh-sftp-server -luci-app-diskman "; \
 +else \
 +echo "$(BUILD_PACKAGES)"; \
 +fi \
@@ -115,7 +115,7 @@
 +		fi \
 +	done; \
 +	if [[ "`echo "$(BUILD_PACKAGES)" | grep "usb"`" ]]; then \
-+		packages+="automount "; \
++		packages+="automount -luci-app-diskman "; \
 +	fi; \
 +	$(OPKG) install $(BUILD_PACKAGES) luci-i18n-base-zh-cn luci-i18n-base-en; \
 +	$(OPKG) install $$packages || true
