@@ -10,6 +10,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/x86/64/config-6.6 -P target/linux/x86/64/
 
+wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmware/linux-firmware/intel.mk -P package/firmware/linux-firmware/
+
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 #rm -rf target/linux/generic/pending-6.6/601-udp-fix-receiving-fraglist-GSO_packets.patch
 
@@ -20,7 +22,7 @@ sed -i "s/192.168.1/192.168.3/" package/feeds/miaogongzi/base-files/files/bin/co
 
 
 
-sed -i 's/256/5120/g' target/linux/x86/image/Makefile
+sed -i 's/256/1024/g' target/linux/x86/image/Makefile
 
 echo '
 CONFIG_ACPI=y
