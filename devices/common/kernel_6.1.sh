@@ -2,7 +2,7 @@
 
 shopt -s extglob
 
-rm -rf target/linux package/kernel package/boot package/firmware
+rm -rf target/linux package/kernel package/boot package/firmware devices/common/patches/mac80211.patch
 
 mkdir new; cp -rf .git new/.git
 cd new
