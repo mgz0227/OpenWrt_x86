@@ -318,7 +318,7 @@ jobs:
         REMOTE_USER: root
         TARGET: "/www/wwwroot/op.miaogongzi.cc/23.05"
 
-    - name: Deploy imagebuilder to Ubuntuserver
+    - name: Deploy imagebuilder to DL Server
       uses: easingthemes/ssh-deploy@main
       continue-on-error: true
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
