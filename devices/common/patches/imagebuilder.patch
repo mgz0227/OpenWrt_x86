@@ -1,30 +1,5 @@
 --- a/include/image.mk
 +++ b/include/image.mk
-@@ -504,7 +504,6 @@ define Device/Check
-   endif
- endef
- 
--ifndef IB
- define Device/Build/initramfs
-   $(call Device/Export,$(KDIR)/tmp/$$(KERNEL_INITRAMFS_IMAGE),$(1))
-   $$(_TARGET): $$(if $$(KERNEL_INITRAMFS),$(BIN_DIR)/$$(KERNEL_INITRAMFS_IMAGE) \
-@@ -557,7 +556,6 @@ define Device/Build/initramfs
- 	SUPPORTED_DEVICES="$$(SUPPORTED_DEVICES)" \
- 	$(TOPDIR)/scripts/json_add_image_info.py $$@
- endef
--endif
- 
- define Device/Build/compile
-   $$(_COMPILE_TARGET): $(KDIR)/$(1)
-@@ -623,7 +621,7 @@ define Device/Build/kernel
- endef
- 
- define Device/Build/image
--  GZ_SUFFIX := $(if $(filter %dtb %gz,$(2)),,$(if $(and $(findstring ext4,$(1)),$(CONFIG_TARGET_IMAGES_GZIP)),.gz))
-+  GZ_SUFFIX := $(if $(filter %dtb %gz,$(2)),,$(if $(and $(findstring ext4,$(1)),$(findstring img,$(2)),$(CONFIG_TARGET_IMAGES_GZIP)),.gz))
-   $$(_TARGET): $(if $(CONFIG_JSON_OVERVIEW_IMAGE_INFO), \
- 	  $(BUILD_DIR)/json_info_files/$(call DEVICE_IMG_NAME,$(1),$(2)).json, \
- 	  $(BIN_DIR)/$(call DEVICE_IMG_NAME,$(1),$(2))$$(GZ_SUFFIX))
 @@ -761,6 +761,7 @@ define Device/DumpInfo
  Target-Profile: DEVICE_$(1)
  Target-Profile-Name: $(DEVICE_DISPLAY)
@@ -80,7 +55,7 @@
 
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
-@@ -131,10 +131,41 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
+@@ -131,11 +131,39 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
  # "-pkgname" in the package list means remove "pkgname" from the package list
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
@@ -104,25 +79,24 @@
 +define add_zh_cn_packages
 +$(eval BUILD_PACKAGES += $(foreach pkg,$(BUILD_PACKAGES),$(if $(and $(filter luci-app-%,$(pkg)),$(shell $(OPKG) list | grep -q "^luci-i18n-$(patsubst luci-app-%,%,$(pkg))-zh-cn" && echo 1)),luci-i18n-$(patsubst luci-app-%,%,$(pkg))-zh-cn)))
 +endef
-+define UpdateVersionInfo
-+	@DATE="$${DATE:-$$(date +'%m.%d.%Y')}"; \
-+	mkdir -p $(USER_FILES)/etc/uci-defaults; \
-+	echo ' \
-+		sed -i "s/[0-9]\+.[0-9]\+.[0-9]\{4\}/'"$$DATE"'/" /etc/openwrt_release; \
-+		sed -i "s/DISTRIB_ID=.*/DISTRIB_ID='"'"'$(ROOTFS_PARTSIZE)'"'"'/" /etc/openwrt_release; \
-+		sed -i "s/Kwrt .* by/Kwrt '"$$DATE"' by/" /etc/banner; \
-+		echo "'"$$DATE"'" > /etc/openwrt_version; \
-+	' > $(USER_FILES)/etc/uci-defaults/99-version
-+endef
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  PACKAGES:=
  
  _call_image: staging_dir/host/.prereq-build
-+	$(call UpdateVersionInfo)
- 	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
+-	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'
++	[ "$(DATE)" ] && DATE="$(DATE)" || DATE="`date +'%m.%d.%Y'`"; \
++	mkdir -p $(USER_FILES)/etc/uci-defaults || true; \
++	echo -e " \
++	sed -i \"s/[0-9]\+.[0-9]\+.[0-9]\{4\}/$$DATE/\" /etc/openwrt_release \n \
++	sed -i \"s/DISTRIB_ID=.*/DISTRIB_ID='$(ROOTFS_PARTSIZE)'/\" /etc/openwrt_release \n \
++	sed -i \"s/MeowWrt .* by/MeowWrt $$DATE by/\" /etc/banner \n \
++	echo \"$$DATE\" >/etc/openwrt_version \n \
++	"> $(USER_FILES)/etc/uci-defaults/99-version; \
++	echo 'Building images for $(BOARD)$(if $($(USER_PROFILE)_NAME), - $($(USER_PROFILE)_NAME))'; \
  	echo 'Packages: $(BUILD_PACKAGES)'
  	echo
-@@ -146,6 +177,8 @@ _call_image: staging_dir/host/.prereq-build
+ 	rm -rf $(TARGET_DIR) $(TARGET_DIR_ORIG)
+@@ -146,6 +174,8 @@ _call_image: staging_dir/host/.prereq-build
  	$(MAKE) -s build_image
  	$(MAKE) -s json_overview_image_info
  	$(MAKE) -s checksum
@@ -131,7 +105,7 @@
  
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
-@@ -184,9 +217,17 @@ package_list: FORCE
+@@ -184,9 +214,15 @@ package_list: FORCE
  package_install: FORCE
  	@echo
  	@echo Installing packages...
@@ -140,17 +114,15 @@
  	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/kernel_*.ipk $(PACKAGE_DIR)/kernel_*.ipk))
 -	$(OPKG) install $(BUILD_PACKAGES)
 +	$(OPKG) install $(BUILD_PACKAGES) luci-i18n-base-zh-cn || true
-+	$(if $(USER_FILES), \
 +	find $(USER_FILES) -name "*.ipk" -print0 | \
 +	while IFS= read -r -d '' ipk; do \
 +      $(OPKG) install "$$ipk" && rm -f "$$ipk" || true; \
 +	done; \
-+	)
 +	$(OPKG) install --force-maintainer --force-reinstall my-default-settings
  
  prepare_rootfs: FORCE
  	@echo
-@@ -200,12 +241,15 @@ prepare_rootfs: FORCE
+@@ -200,12 +233,15 @@ prepare_rootfs: FORCE
  		) \
  	)
  	$(call prepare_rootfs,$(TARGET_DIR),$(USER_FILES),$(DISABLED_SERVICES))
@@ -167,3 +139,4 @@
  		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
  
  $(BIN_DIR)/profiles.json: FORCE
+ 
