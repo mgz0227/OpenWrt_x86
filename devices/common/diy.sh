@@ -36,7 +36,7 @@ while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
 	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
 done
 
-rm -rf package/feeds/packages/v4l2loopback
+rm -rf package/feeds/packages/v4l2loopback  package/feeds/miaogongzi/accel-ppp
 
 mv -f feeds/miaogongzi/r81* tmp/
 
