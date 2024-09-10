@@ -87,13 +87,14 @@ jobs:
     - name: Free disk space
       uses: jlumbroso/free-disk-space@main
       with:
-        tool-cache: false
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+  
 
     - name: Initialization environment
       env:
@@ -150,6 +151,7 @@ jobs:
         ln -sf /mnt/openwrt/dl openwrt/dl
         ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
         ln -sf /mnt/openwrt/build_dir openwrt/build_dir
+
     - name: Load custom configuration
       run: |
         function git_clone_path() {
@@ -185,6 +187,7 @@ jobs:
           /bin/bash "devices/${{matrix.target}}/$DIY_SH"
         fi
         cp -Rf ./diy/* ./ || true
+
     - name: Apply patches
       run: |
         cd openwrt
@@ -280,6 +283,7 @@ jobs:
                 echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
                 echo "NOTICE=请分配不少于2G的存储容量" >> $GITHUB_ENV
               fi
+              
     - name: Organize Release files
       id: organizeRelease
       continue-on-error: true
