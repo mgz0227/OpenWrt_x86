@@ -104,7 +104,7 @@ jobs:
             sudo -E apt-get -qq install build-essential clang llvm flex g++ gawk gcc-multilib gettext \
             git libncurses5-dev libssl-dev python2.7 python3-distutils python3-pyelftools python3-setuptools \
             python3-dev python3-pip rsync unzip zlib1g-dev swig aria2 jq subversion qemu-utils ccache rename \
-            libelf-dev device-tree-compiler libgnutls28-dev coccinelle libgmp3-dev libmpc-dev libfuse-dev gcc-multilib
+            libelf-dev device-tree-compiler libgnutls28-dev coccinelle libgmp3-dev libmpc-dev libfuse-dev gcc-multilib dwarves
             pip3 install --user -U pylibfdt
             sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
             sudo -E apt-get -qq autoremove --purge
