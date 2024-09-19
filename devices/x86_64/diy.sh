@@ -15,6 +15,13 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmw
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 #rm -rf target/linux/generic/backport-6.6/822-v6.11-0012-nvmem-Fix-return-type-of-devm_nvmem_device_get-in-ke.patch
 #rm -rf target/linux/generic/backport-6.6/200-regmap-maple-work-around-false-positive-warning.patch
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/backport-6.6/819-v6.8-0005-nvmem-core-Rework-layouts-to-become-regular-devices.patch target/linux/generic/backport-6.6/
+
+rm -rf target/linux/generic/backport-6.6/819-v6.8-0010-nvmem-core-add-nvmem_dev_size-helper.patch
+rm -rf target/linux/generic/backport-6.6/819-v6.8-0011-nvmem-u-boot-env-use-nvmem_add_one_cell-nvmem-subsys.patch
+rm -rf target/linux/generic/backport-6.6/819-v6.8-0012-nvmem-u-boot-env-use-nvmem-device-helpers.patch
+rm -rf target/linux/generic/backport-6.6/819-v6.8-0013-nvmem-u-boot-env-improve-coding-style.patch
+rm -rf target/linux/generic/backport-6.6/822-v6.11-0011-nvmem-u-boot-env-error-if-NVMEM-device-is-too-small.patch
 
 sed -i 's/kmod-r8169/kmod-r8168/' target/linux/x86/image/64.mk
 
