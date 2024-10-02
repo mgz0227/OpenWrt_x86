@@ -51,7 +51,7 @@ jobs:
 
     - name: Trigger Packages Update
       run: |
-        gitdate=$(curl -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" -s "https://api.github.com/repos/mgz0227/openwrt-packages/actions/runs" | jq -r '.workflow_runs[0].created_at')
+        gitdate=$(curl -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].created_at')
         gitdate=$(date -d "$gitdate" +%s)
         now=$(date -d "$(date)" +%s)
         if [[ $(expr $gitdate + 120) < $now ]]; then
