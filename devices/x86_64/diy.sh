@@ -12,7 +12,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmware/linux-firmware/intel.mk -P package/firmware/linux-firmware/
 
-#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 #rm -rf target/linux/generic/backport-6.6/780-24-v6.12-r8169-disable-ALDPS-per-default-for-RTL8125.patch
 #rm -rf target/linux/generic/pending-6.6/360-selftests-bpf-portability-of-unprivileged-tests.patch
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/backport-6.6/819-v6.8-0005-nvmem-core-Rework-layouts-to-become-regular-devices.patch target/linux/generic/backport-6.6/
