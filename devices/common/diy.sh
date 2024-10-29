@@ -44,15 +44,14 @@ wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/go
 
 sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 
-
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
-git_clone_path master https://github.com/coolsnowwolf/lede target/linux/generic/hack-6.6
-wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
+git_clone_path master https://github.com/coolsnowwolf/lede target/linux/generic/hack-5.15
+wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-5.15/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-5.15/
 
-sed -i "s/CONFIG_WERROR=y/CONFIG_WERROR=n/" target/linux/generic/config-6.6
+sed -i "s/CONFIG_WERROR=y/CONFIG_WERROR=n/" target/linux/generic/config-5.15
 
 sed -i "s/no-lto,$/no-lto no-mold,$/" include/package.mk
 
@@ -87,4 +86,4 @@ sed -i \
 	-e 's?../../lang?$(TOPDIR)/feeds/packages/lang?' \
 	package/feeds/miaogongzi/*/Makefile
 
-sed -i "s/OpenWrt/MeowWrt/g" package/base-files/files/bin/config_generate package/base-files/image-config.in config/Config-images.in Config.in include/u-boot.mk include/version.mk package/network/config/wifi-scripts/files/lib/wifi/mac80211.sh || true
+sed -i "s/OpenWrt/MeowWrt/g" package/base-files/files/bin/config_generate package/base-files/image-config.in config/Config-images.in Config.in include/u-boot.mk include/version.mk package/network/config/wifi-scripts/files/lib/wifi/mac80211.sh package/kernel/mac80211/files/lib/netifd/wireless/mac80211.sh || true
