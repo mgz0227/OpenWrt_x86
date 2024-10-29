@@ -18,18 +18,11 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmw
 #rm -rf target/linux/generic/pending-6.6/684-gso-fix-gso-fraglist-segmentation-after-pull-from-fr.patch
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/backport-6.6/819-v6.8-0005-nvmem-core-Rework-layouts-to-become-regular-devices.patch target/linux/generic/backport-6.6/
 
-#rm -rf target/linux/generic/backport-6.6/819-v6.8-0010-nvmem-core-add-nvmem_dev_size-helper.patch
-#rm -rf target/linux/generic/backport-6.6/819-v6.8-0011-nvmem-u-boot-env-use-nvmem_add_one_cell-nvmem-subsys.patch
-#rm -rf target/linux/generic/backport-6.6/819-v6.8-0012-nvmem-u-boot-env-use-nvmem-device-helpers.patch
-#rm -rf target/linux/generic/backport-6.6/819-v6.8-0013-nvmem-u-boot-env-improve-coding-style.patch
-#rm -rf target/linux/generic/backport-6.6/822-v6.11-0011-nvmem-u-boot-env-error-if-NVMEM-device-is-too-small.patch
-
 sed -i 's/kmod-r8169/kmod-r8168/' target/linux/x86/image/64.mk
 
 sed -i 's/DEFAULT_PACKAGES +=/DEFAULT_PACKAGES += kmod-usb-hid kmod-mmc kmod-sdhci usbutils pciutils lm-sensors-detect kmod-atlantic kmod-vmxnet3 kmod-igbvf kmod-iavf kmod-bnx2x kmod-pcnet32 kmod-tulip kmod-r8101 kmod-r8125 kmod-r8126 kmod-8139cp kmod-8139too kmod-i40e kmod-drm-i915 kmod-drm-amdgpu kmod-mlx4-core kmod-mlx5-core fdisk lsblk kmod-phy-broadcom kmod-ixgbevf/' target/linux/x86/Makefile
 sed -i "s/192.168.1/192.168.3/" package/feeds/miaogongzi/base-files/files/bin/config_generate
-
-
+mv -f tmp/r81* feeds/miaogongzi/
 
 sed -i 's/256/1024/g' target/linux/x86/image/Makefile
 
@@ -49,3 +42,4 @@ CONFIG_DRM_I915=y
 ' >> ./target/linux/x86/config-6.6
 
 sed -i "s/enabled '0'/enabled '1'/g" feeds/packages/utils/irqbalance/files/irqbalance.config
+
