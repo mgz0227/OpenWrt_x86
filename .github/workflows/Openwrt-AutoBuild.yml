@@ -218,12 +218,12 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-       # if [[ ! "${{matrix.target}}" =~ ^(amlogic_*|armsr_armv8|bcm27xx_*|rockchip_armv8|sunxi_*|x86_*) ]]; then
-       # sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
-      #  sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
-      #  make defconfig
-     #   fi
-     #   cat .config
+        if [[ ! "${{matrix.target}}" =~ ^(amlogic_*|armsr_armv8|bcm27xx_*|rockchip_armv8|sunxi_*|x86_*) ]]; then
+        sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
+        sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
+        make defconfig
+        fi
+        cat .config
 
     - name: Download package
       id: package
