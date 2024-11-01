@@ -1,6 +1,6 @@
 --- a/include/target.mk
 +++ b/include/target.mk
-@@ -53,10 +53,10 @@ DEFAULT_PACKAGES.nas:=\
+@@ -53,10 +53,10 @@
  	mdadm
  # For router targets
  DEFAULT_PACKAGES.router:=\
