@@ -34,17 +34,6 @@
  Target-Profile-SupportedDevices: $(SUPPORTED_DEVICES)
  $(if $(BROKEN),Target-Profile-Broken: $(BROKEN))
 
---- a/scripts/target-metadata.pl
-+++ b/scripts/target-metadata.pl
-@@ -437,6 +437,7 @@ ()
- 		print "PROFILE_NAMES = ".join(" ", @profile_ids_unique)."\n";
- 		foreach my $profile (@{$cur->{profiles}}) {
- 			print $profile->{id}.'_NAME:='.$profile->{name}."\n";
-+			print $profile->{id}.'_IMAGE_SIZE:='.$profile->{image_size}."\n";
- 			print $profile->{id}.'_HAS_IMAGE_METADATA:='.$profile->{has_image_metadata}."\n";
- 			if (defined($profile->{supported_devices}) and @{$profile->{supported_devices}} > 0) {
- 				print $profile->{id}.'_SUPPORTED_DEVICES:='.join(' ', @{$profile->{supported_devices}})."\n";
-
 --- a/scripts/metadata.pm
 +++ b/scripts/metadata.pm
 @@ -150,6 +150,7 @@ sub parse_target_metadata($) {
@@ -58,25 +47,33 @@
 
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
-@@ -38,13 +38,15 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
- 		./files/repositories.conf \
+@@ -39,7 +39,8 @@
+ 		./files/Makefile \
  		$(TMP_DIR)/.targetinfo \
  		$(TMP_DIR)/.packageinfo \
 -		$(PKG_BUILD_DIR)/
 +		$(TOPDIR)/files \
-+		$(PKG_BUILD_DIR)/ || true
++		$(PKG_BUILD_DIR)/ || tru
  
--ifeq ($(CONFIG_IB_STANDALONE),)
+ 	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
+ 
+@@ -52,12 +53,14 @@
+ 
+ 	$(INSTALL_DATA) ./files/README.apk.md $(PKG_BUILD_DIR)/packages/README.md
+ else
+-  ifeq ($(CONFIG_IB_STANDALONE),)
++
  	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
- 	$(call FeedSourcesAppend,$(PKG_BUILD_DIR)/repositories.conf)
+ 	$(call FeedSourcesAppendOPKG,$(PKG_BUILD_DIR)/repositories.conf)
  	$(VERSION_SED_SCRIPT) $(PKG_BUILD_DIR)/repositories.conf
--endif
+ 
+-  endif
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) '/openwrt_core/d' $(PKG_BUILD_DIR)/repositories.conf
  
- 	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
  	# create an empty package index so `opkg` doesn't report an error
+ 	touch $(PKG_BUILD_DIR)/packages/Packages
 
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
@@ -116,39 +113,42 @@
  
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
-@@ -184,9 +206,17 @@ package_list: FORCE
+@@ -223,10 +223,18 @@
  package_install: FORCE
  	@echo
  	@echo Installing packages...
 +	$(eval $(call add_zh_cn_packages))
+ ifeq ($(CONFIG_USE_APK),)
  	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/libc_*.ipk $(PACKAGE_DIR)/libc_*.ipk))
  	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/kernel_*.ipk $(PACKAGE_DIR)/kernel_*.ipk))
 -	$(OPKG) install $(BUILD_PACKAGES)
-+	$(OPKG) install $(BUILD_PACKAGES) luci-i18n-base-zh-cn || true
++    $(OPKG) install $(BUILD_PACKAGES) luci-i18n-base-zh-cn || true
 +	$(if $(USER_FILES), \
 +	find $(USER_FILES) -name "*.ipk" -print0 | \
 +	while IFS= read -r -d '' ipk; do \
-+      $(OPKG) install "$$ipk" && rm -f "$$ipk" || true; \
++  $(OPKG) install "$$ipk" && rm -f "$$ipk" || true; \
 +	done; \
 +	)
 +	$(OPKG) install --force-maintainer --force-reinstall my-default-settings
- 
- prepare_rootfs: FORCE
- 	@echo
-@@ -200,12 +230,15 @@ prepare_rootfs: FORCE
- 		) \
+ else
+ 	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/libc-*.apk $(PACKAGE_DIR)/libc-*.apk))
+ 	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/kernel-*.apk $(PACKAGE_DIR)/kernel-*.apk))
+@@ -254,6 +262,9 @@
  	)
+ endif
  	$(call prepare_rootfs,$(TARGET_DIR),$(USER_FILES),$(DISABLED_SERVICES))
 +	$(if $(SMALL_FLASH), \
-+			$(shell echo "`grep meowwrt_miaogongzi $(TOPDIR)/repositories.conf | sed -e 's/miaogongzi/small_flash/g'`" >>$(BUILD_DIR)/root-*/etc/opkg/distfeeds.conf) \
++	        $(shell echo "`grep meowwrt_miaogongzi $(TOPDIR)/repositories.conf | sed -e 's/miaogongzi/small_flash/g'`" >>$(BUILD_DIR)/root-*/etc/opkg/distfeeds.conf) \
 +	)
  
  build_image: FORCE
  	@echo
- 	@echo Building images...
- 	rm -rf $(BUILD_DIR)/json_info_files/
--	$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
-+	nice -n 19 $(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
- 		$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)")
+@@ -263,7 +274,7 @@
+ 		$(NO_TRACE_MAKE) -C target/linux/feeds/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
+ 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
+ 	else \
+-		$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
++		nice -n 19 $(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
+ 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
+ 	fi
  
- $(BIN_DIR)/profiles.json: FORCE
