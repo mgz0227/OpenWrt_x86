@@ -47,25 +47,33 @@
 
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
-@@ -38,13 +38,15 @@ $(BIN_DIR)/$(IB_NAME).tar.xz: clean
- 		./files/repositories.conf \
+@@ -39,7 +39,8 @@
+ 		./files/Makefile \
  		$(TMP_DIR)/.targetinfo \
  		$(TMP_DIR)/.packageinfo \
 -		$(PKG_BUILD_DIR)/
 +		$(TOPDIR)/files \
-+		$(PKG_BUILD_DIR)/ || true
++		$(PKG_BUILD_DIR)/ || tru
  
--ifeq ($(CONFIG_IB_STANDALONE),)
+ 	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
+ 
+@@ -52,12 +53,14 @@
+ 
+ 	$(INSTALL_DATA) ./files/README.apk.md $(PKG_BUILD_DIR)/packages/README.md
+ else
+-  ifeq ($(CONFIG_IB_STANDALONE),)
++
  	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
- 	$(call FeedSourcesAppend,$(PKG_BUILD_DIR)/repositories.conf)
+ 	$(call FeedSourcesAppendOPKG,$(PKG_BUILD_DIR)/repositories.conf)
  	$(VERSION_SED_SCRIPT) $(PKG_BUILD_DIR)/repositories.conf
--endif
+ 
+-  endif
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) '/openwrt_core/d' $(PKG_BUILD_DIR)/repositories.conf
  
- 	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
  	# create an empty package index so `opkg` doesn't report an error
+ 	touch $(PKG_BUILD_DIR)/packages/Packages
 
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
