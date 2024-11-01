@@ -53,7 +53,7 @@
  		$(TMP_DIR)/.packageinfo \
 -		$(PKG_BUILD_DIR)/
 +		$(TOPDIR)/files \
-+		$(PKG_BUILD_DIR)/ || tru
++		$(PKG_BUILD_DIR)/ || true
  
  	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
  
