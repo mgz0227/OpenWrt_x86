@@ -25,8 +25,8 @@ env:
 
 jobs:
   build:
-    #runs-on: Ubuntu-latest
-    runs-on: self-hosted
+    runs-on: Ubuntu-latest
+    #runs-on: self-hosted
     
     name: Build ${{matrix.target}}
     strategy:
@@ -100,7 +100,7 @@ jobs:
       run: |
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential clang llvm flex g++ gawk gcc-multilib gettext \
-        git libncurses5-dev libssl-dev python3 python3-pyelftools python3-setuptools \
+        git libncurses5-dev libssl-dev python2.7 python3-distutils python3-pyelftools python3-setuptools \
         python3-dev python3-pip rsync unzip zlib1g-dev swig aria2 jq subversion qemu-utils ccache rename \
         libelf-dev device-tree-compiler libgnutls28-dev coccinelle libgmp3-dev libmpc-dev libfuse-dev
         pip3 install --user -U pylibfdt
@@ -259,13 +259,13 @@ jobs:
         shopt -s extglob
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
-        make -j$(($(nproc)+1)) || make V=sc &>build.log || (tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} x86_64 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1)
+        make -j$(($(nproc)+1)) || make V=sc &>build.log || (tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1)
         #make -j1 || make V=sc
         sed -i "s/# CONFIG_IB is not set/CONFIG_IB=y/" .config
         rm -rf staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
         rm -rf staging_dir/toolchain-*/initial
         df -hT
-    
+
     - name: Organize files
       id: organize
       continue-on-error: true
