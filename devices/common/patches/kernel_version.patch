@@ -1,6 +1,6 @@
 --- a/scripts/json_overview_image_info.py
 +++ b/scripts/json_overview_image_info.py
-@@ -47,7 +47,7 @@
+@@ -47,7 +47,7 @@ def get_initial_output(image_info):
  
  
  if output:
@@ -9,14 +9,14 @@
          [
              "make",
              "--no-print-directory",
-@@ -55,6 +55,7 @@
+@@ -55,6 +55,7 @@ def get_initial_output(image_info):
              "target/linux/",
              "val.DEFAULT_PACKAGES",
              "val.ARCH_PACKAGES",
 +            "val.LINUX_VERSION",
-             "V=s",
          ],
          stdout=PIPE,
+         stderr=PIPE,
 
 --- a/scripts/json_add_image_info.py
 +++ b/scripts/json_add_image_info.py
