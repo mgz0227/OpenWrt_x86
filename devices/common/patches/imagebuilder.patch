@@ -71,8 +71,8 @@
  	$(call FeedSourcesAppend,$(PKG_BUILD_DIR)/repositories.conf)
  	$(VERSION_SED_SCRIPT) $(PKG_BUILD_DIR)/repositories.conf
 -endif
-+	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/dl.openwrt.ai\/\2/' $(PKG_BUILD_DIR)/repositories.conf
-+	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/dl.openwrt.ai\/\2/' $(PKG_BUILD_DIR)/repositories.conf
++	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
++	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) '/openwrt_core/d' $(PKG_BUILD_DIR)/repositories.conf
  
  	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
@@ -96,7 +96,7 @@
 +ifeq ($(SMALL_FLASH),true)
 +    BUILD_PACKAGES += -coremark -htop -bash -openssh-sftp-server -luci-app-diskman
 +	ifeq ($(shell grep -q small_flash $(TOPDIR)/repositories.conf || echo "not_found"),not_found)
-+        $(shell echo "`grep kwrt_kiddin9 $(TOPDIR)/repositories.conf | sed -e 's/kiddin9/small_flash/g'`" >>$(TOPDIR)/repositories.conf)
++        $(shell echo "`grep meowwrt_miaogongzi $(TOPDIR)/repositories.conf | sed -e 's/miaogongzi/small_flash/g'`" >>$(TOPDIR)/repositories.conf)
 +    endif
 +else
 +    $(shell sed -i "/small_flash/d" $(TOPDIR)/repositories.conf)
@@ -140,7 +140,7 @@
  	)
  	$(call prepare_rootfs,$(TARGET_DIR),$(USER_FILES),$(DISABLED_SERVICES))
 +	$(if $(SMALL_FLASH), \
-+			$(shell echo "`grep kwrt_kiddin9 $(TOPDIR)/repositories.conf | sed -e 's/kiddin9/small_flash/g'`" >>$(BUILD_DIR)/root-*/etc/opkg/distfeeds.conf) \
++			$(shell echo "`grep meowwrt_miaogongzi $(TOPDIR)/repositories.conf | sed -e 's/miaogongzi/small_flash/g'`" >>$(BUILD_DIR)/root-*/etc/opkg/distfeeds.conf) \
 +	)
  
  build_image: FORCE
