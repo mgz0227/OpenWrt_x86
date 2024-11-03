@@ -16,6 +16,7 @@ wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.
 wget -N https://raw.githubusercontent.com/namiltd/package/kernel/mac80211/patches/build/236-fix-genlmsg_multicast_allns-build-error-on-kernel-6.6.59.patch -P package/kernel/mac80211/patches/build/
 rm -rf /target/linux/generic/backport-6.6/777-netfilter-xtables-fix-typo-causing-some-targets-to-not-load-on-IPv6.patch
 rm -rf target/linux/generic/backport-6.6/780-22-v6.12-r8169-add-support-for-RTL8126A-rev.b.patch
+rm -rf /target/linux/generic/backport-6.6/780-24-v6.12-r8169-avoid-unsolicited-interrupts.patch
 #rm -rf target/linux/generic/pending-6.6/684-gso-fix-gso-fraglist-segmentation-after-pull-from-fr.patch
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/backport-6.6/819-v6.8-0005-nvmem-core-Rework-layouts-to-become-regular-devices.patch target/linux/generic/backport-6.6/
 
