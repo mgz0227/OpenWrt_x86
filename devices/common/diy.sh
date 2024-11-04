@@ -15,6 +15,10 @@ sed -i '/	refresh_config();/d' scripts/feeds
 
 rm -rf package/base-files
 mv -f feeds/miaogongzi/base-files package/
+rm -rf package/net/nginx
+rm -rf package/net/nginx-util
+mv -f feeds/miaogongzi/nginx package/net/
+mv -f feeds/miaogongzi/nginx-util package/net/
 
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile
