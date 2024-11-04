@@ -13,7 +13,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmware/linux-firmware/intel.mk -P package/firmware/linux-firmware/
 
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
-#rm -rf package/network/utils/xdp-tools
+rm -rf package/network/utils/xdp-tools
 #wget -N https://raw.githubusercontent.com/namiltd/package/kernel/mac80211/patches/build/236-fix-genlmsg_multicast_allns-build-error-on-kernel-6.6.59.patch -P package/kernel/mac80211/patches/build/
 #rm -rf /target/linux/generic/backport-6.6/777-netfilter-xtables-fix-typo-causing-some-targets-to-not-load-on-IPv6.patch
 #rm -rf target/linux/generic/backport-6.6/780-22-v6.12-r8169-add-support-for-RTL8126A-rev.b.patch
