@@ -2,7 +2,7 @@
 
 shopt -s extglob
 
-rm -rf target/linux package/kernel package/boot package/firmware
+rm -rf target/linux package/kernel package/boot package/firmware package/network/utils/xdp-tools
 
 mkdir new; cp -rf .git new/.git
 cd new
