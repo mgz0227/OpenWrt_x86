@@ -25,7 +25,7 @@ env:
 
 jobs:
   build:
-    runs-on: Ubuntu-latest
+    runs-on: ubuntu-latest
     #runs-on: self-hosted
     
     name: Build ${{matrix.target}}
@@ -67,9 +67,6 @@ jobs:
         if [ ${{matrix.target}} == "x86_64" ]; then
             echo "ARCH=linux/amd64" >> $GITHUB_ENV
             echo "MTARGET=x86_64" >> $GITHUB_ENV
-        elif [ ${{matrix.target}} == "x86_generic" ]; then
-            echo "ARCH=linux/amd32" >> $GITHUB_ENV
-            echo "MTARGET=x86_generic" >> $GITHUB_ENV
         fi
 
     - name: Trigger Packages Update
@@ -132,7 +129,7 @@ jobs:
         REPO_BRANCH="openwrt-23.05"
         fi
         #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/`echo $REPO_BRANCH  | cut -d . -f 1,2 | sed -e 's/^v//'`\"">>devices/common/.config
-        echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/24.10\"">>devices/common/.config
+        echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/23.05\"">>devices/common/.config
         if [[ ! "${{ env.REPO_BRANCH }}" && "$REPO_URL" == "https://github.com/openwrt/openwrt" ]]; then
             git clone $REPO_URL -b $REPO_BRANCH openwrt
         elif [[ ! "${{ env.REPO_BRANCH }}" ]]; then
@@ -221,6 +218,9 @@ jobs:
         if [[ ! "${{matrix.target}}" =~ (amlogic_*|armsr_armv8|bcm27xx_*|rockchip_armv8|sunxi_*|x86_*) ]]; then
         sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
         sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
+        if [[ "${{matrix.target}}" == "rockchip_rk35xx" ]]; then 
+            sed -n '/# Video Support/,/# end of Video Support/p' .config | sed -e 's/=m/=n/' >>.config
+        fi
         make defconfig
         fi
         cat .config
@@ -270,41 +270,41 @@ jobs:
       id: organize
       continue-on-error: true
       run: |
-              shopt -s extglob
-              cd openwrt/bin/targets/*/*/
-      
-              # Unzip .gz files
-              for file in *.gz; do
-                gunzip "$file"
-              done
-      
-              # Rename all files, including IMG files after decompression
-              find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
-      
-              # Recompress all IMG files back to .gz format
-              for file in *.img; do
-              gzip "$file"
-              done
-              
-              Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-              echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-              if [ ${{matrix.target}} == "x86_64" ]; then
-                echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-                echo "NOTICE=请分配不少于2G的存储容量" >> $GITHUB_ENV
-              fi
-              
+                shopt -s extglob
+                cd openwrt/bin/targets/*/*/
+        
+                # Unzip .gz files
+                for file in *.gz; do
+                  gunzip "$file"
+                done
+        
+                # Rename all files, including IMG files after decompression
+                find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
+        
+                # Recompress all IMG files back to .gz format
+                for file in *.img; do
+                gzip "$file"
+                done
+                
+                Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+                echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+                if [ ${{matrix.target}} == "x86_64" ]; then
+                  echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+                  echo "NOTICE=请分配不少于2G的存储容量" >> $GITHUB_ENV
+                fi
+                
     - name: Organize Release files
       id: organizeRelease
       continue-on-error: true
       run: |
-            shopt -s extglob
-            mkdir -p firmware/${{matrix.target}}          
-            cp -rf openwrt/bin/targets/*/*/*{combined,bin,imagebuilder,rootfs,256}* ./firmware/${{matrix.target}}/ || true
-              Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-              echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-              if [ ${{matrix.target}} == "x86_64" ]; then
-              echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-              fi
+              shopt -s extglob
+              mkdir -p firmware/${{matrix.target}}          
+              cp -rf openwrt/bin/targets/*/*/*{combined,bin,imagebuilder,rootfs,256}* ./firmware/${{matrix.target}}/ || true
+                Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
+                echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+                if [ ${{matrix.target}} == "x86_64" ]; then
+                echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
+                fi
 
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
@@ -339,13 +339,14 @@ jobs:
         name: ${{ env.VERSION }}_${{matrix.target}}
         path: |
           openwrt/bin/targets/
+
     - name: Create release
       id: create_release
       if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
       continue-on-error: true
       run: |
         echo -e "墙内加速下载 🚀:\n" >> release.txt
-        echo -e "[腾讯云] (https://dl.miaogongzi.cc/24.10/${{matrix.target}}/ ☁)\n" >> release.txt
+        echo -e "[腾讯云] (https://dl.miaogongzi.cc/${{matrix.target}}/ ☁)\n" >> release.txt
         [ ${{ env.WETRANS }} ] && echo -e "[WeTransfer] (${{ env.WETRANS }} 🗽)\n" >> release.txt
         [ ${{ env.COWURL }} ] && echo -e "[奶牛上传] (${{ env.COWURL }} 🐮)\n" >> release.txt
         [ ${{ env.NOTICE }} ] && echo -e "${{ env.NOTICE }}" >> release.txt || true
@@ -367,12 +368,13 @@ jobs:
       if: env.SCKEY
       run: |
         # [ steps.compile.outputs.status == 'success' ] && curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=🎉OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译完成😋|| curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=❌OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译失败😂
-    
+
     - name: Telegram notification
       if: env.TELEGRAM_TOKEN && ! contains(github.event.action, 'notg')
       continue-on-error: true
       run: |
-        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://op.miaogongzi.cc/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
+        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
+
     - name: Delete workflow runs
       uses: mgz0227/delete-workflow-runs@main
       continue-on-error: true
