@@ -135,7 +135,7 @@ jobs:
         elif [[ ! "${{ env.REPO_BRANCH }}" ]]; then
             git clone $REPO_URL openwrt
         else
-             if [ ${#${{ env.REPO_BRANCH }}} -lt 10 ]; then
+             if [ ${{#env.REPO_BRANCH}} -lt 10 ]; then
                 git clone $REPO_URL -b ${{ env.REPO_BRANCH }} openwrt
             else
                 git clone $REPO_URL openwrt
