@@ -71,8 +71,9 @@ jobs:
 
     - name: Trigger Packages Update
       continue-on-error: true
+      if: contains(github.event.action, 'pkg')
       run: |
-        # status=$(curl -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
+        status=$(curl -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
         if [[ "$status" == "completed" ]]; then
           curl -X POST https://api.github.com/repos/mgz0227/OP-Packages/dispatches \
             -H "Accept: application/vnd.github.everest-preview+json" \
