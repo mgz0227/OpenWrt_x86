@@ -324,7 +324,7 @@ jobs:
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
         REMOTE_PORT: ${{ secrets.SERVER_PORT }}
         REMOTE_USER: root
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/23.05"
+        TARGET: "/www/wwwroot/op.miaogongzi.cc/24.10"
 
     - name: Deploy imagebuilder to Ubuntuserver
       uses: easingthemes/ssh-deploy@main
