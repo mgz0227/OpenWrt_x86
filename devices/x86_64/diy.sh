@@ -19,12 +19,12 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmw
 #rm -rf target/linux/generic/backport-6.6/780-24-v6.12-r8169-avoid-unsolicited-interrupts.patch
 #rm -rf target/linux/generic/backport-6.6/409-mtd-spi-nor-winbond-fix-w25q128-regression.patch
 
-rm -rf package/kernel/mac80211
-rm -rf feeds/routing/batman-adv
-rm -rf package/kernel/ath10k-ct
-rm -rf package/kernel/mt76
-rm -rf package/firmware/ath10k-ct-firmware
-rm -rf package/kernel/rtl8812au-ct
+#rm -rf package/kernel/mac80211
+#rm -rf feeds/routing/batman-adv
+#rm -rf package/kernel/ath10k-ct
+#rm -rf package/kernel/mt76
+#rm -rf package/firmware/ath10k-ct-firmware
+#rm -rf package/kernel/rtl8812au-ct
 
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/openwrt-24.10/package/kernel/mac80211/patches/build/236-fix-genlmsg_multicast_allns-build-error-on-kernel-6.6.59.patch -P package/kernel/mac80211/patches/build/
 
