@@ -11,7 +11,7 @@
 -        linux_release,
 -        linux_vermagic,
 -    ) = run(
-+    default_packages, output["arch_packages", output["kernel_version"]  = run(
++    default_packages, output["arch_packages"], output["kernel_version"]  = run(
          [
              "make",
              "--no-print-directory",
