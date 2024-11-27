@@ -1,10 +1,31 @@
 --- a/scripts/json_overview_image_info.py
 +++ b/scripts/json_overview_image_info.py
-@@ -50,6 +50,7 @@
-     (
-         default_packages,
-         output["arch_packages"],
-+        output["kernel_version"],
-         linux_version,
-         linux_release,
-         linux_vermagic,
+@@ -47,13 +47,7 @@
+ 
+ 
+ if output:
+-    (
+-        default_packages,
+-        output["arch_packages"],
+-        linux_version,
+-        linux_release,
+-        linux_vermagic,
+-    ) = run(
++    default_packages, output["arch_packages", output["kernel_version"]  = run(
+         [
+             "make",
+             "--no-print-directory",
+@@ -73,11 +67,7 @@
+     ).stdout.splitlines()
+ 
+     output["default_packages"] = sorted(default_packages.split())
+-    output["linux_kernel"] = {
+-        "version": linux_version,
+-        "release": linux_release,
+-        "vermagic": linux_vermagic,
+-    }
++
+     output_path.write_text(json.dumps(output, sort_keys=True, separators=(",", ":")))
+ else:
+     print("JSON info file script could not find any JSON files for target")
+\ No newline at end of file
