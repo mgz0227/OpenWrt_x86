@@ -4,7 +4,6 @@
  	CONFIG_SND_USB_AUDIO
    $(call AddDepends/usb)
    $(call AddDepends/sound)
--  DEPENDS+=+kmod-media-controller
 +  DEPENDS+=+(LINUX_6_1||LINUX_6_6):kmod-media-core
    FILES:= \
  	$(LINUX_DIR)/sound/usb/snd-usbmidi-lib.ko \
