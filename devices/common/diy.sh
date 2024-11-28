@@ -44,7 +44,7 @@ sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
-wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
+wget -N https://github.com/openwrt/openwrt/raw/refs/heads/main/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
 
 git_clone_path master https://github.com/coolsnowwolf/lede mv target/linux/generic/hack-6.6
