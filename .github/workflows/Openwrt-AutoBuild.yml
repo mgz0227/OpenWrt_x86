@@ -321,7 +321,7 @@ jobs:
         SOURCE: openwrt/bin/targets
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
         REMOTE_PORT: ${{ secrets.SERVER_PORT }}
-        REMOTE_USER: root
+        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
         TARGET: "/www/wwwroot/op.miaogongzi.cc/24.10"
 
     - name: Deploy imagebuilder to Ubuntuserver
@@ -334,7 +334,7 @@ jobs:
         SOURCE: openwrt/bin/targets
         REMOTE_HOST: ${{ secrets.HOST }}
         REMOTE_PORT: ${{ secrets.PORT }}
-        REMOTE_USER: root
+        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
         TARGET: "/www/wwwroot/op.miaogongzi.cc/24.10"
 
     - name: Upload firmware for artifact
