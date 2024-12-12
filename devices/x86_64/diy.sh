@@ -29,7 +29,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmw
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/openwrt-24.10/package/kernel/mac80211/patches/build/236-fix-genlmsg_multicast_allns-build-error-on-kernel-6.6.59.patch -P package/kernel/mac80211/patches/build/
 #wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/kernel/linux/modules/usb.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/hack-6.6/780-usb-net-MeigLink_modem_support.patch -P target/linux/generic/hack-6.6/
+wget -N https://raw.githubusercontent.com/graysky2/openwrt/6/target/linux/generic/hack-6.6/780-usb-net-MeigLink_modem_support.patch -P target/linux/generic/hack-6.6/
 
 #结束
 
