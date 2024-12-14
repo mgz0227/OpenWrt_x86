@@ -16,7 +16,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/package/firmw
 #内核升级模块
 #开始
 
-
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/hack-6.6/780-usb-net-MeigLink_modem_support.patch -P target/linux/generic/hack-6.6/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
 #结束
