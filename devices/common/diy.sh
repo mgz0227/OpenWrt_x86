@@ -25,7 +25,7 @@ luci-app-argon-config luci-app-ddns-go luci-app-openclash luci-app-adblock tcpdu
 coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-filemanager /" include/target.mk
 
 sed -i "s/procd-ujail//" include/target.mk
-sed -i "s/procd-seccomp//" include/target.mk
+
 
 sed -i "s/^.*vermagic$/\techo '1' > \$(LINUX_DIR)\/.vermagic/" include/kernel-defaults.mk
 
