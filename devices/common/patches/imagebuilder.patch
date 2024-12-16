@@ -78,8 +78,8 @@
  	$(VERSION_SED_SCRIPT) $(PKG_BUILD_DIR)/repositories.conf
  
 -  endif
-+	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/dl.openwrt.ai\/\2/' $(PKG_BUILD_DIR)/repositories.conf
-+	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/dl.openwrt.ai\/\2/' $(PKG_BUILD_DIR)/repositories.conf
++	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
++	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) '/openwrt_core/d' $(PKG_BUILD_DIR)/repositories.conf
  
  	# create an empty package index so `opkg` doesn't report an error
