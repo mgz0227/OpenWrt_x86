@@ -87,21 +87,26 @@
 
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
-@@ -142,6 +142,26 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
+@@ -142,6 +142,31 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
  # "-pkgname" in the package list means remove "pkgname" from the package list
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
 +IMAGE_SIZE_VALUE := $(shell echo $($(USER_PROFILE)_IMAGE_SIZE) | sed 's/k$$//')
 +ifdef IMAGE_SIZE_VALUE
-+  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 20480 && echo true),true)
++  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 32448 && echo true),true)
 +    SMALL_FLASH := true
++  endif
++  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 20480 && echo true),true)
++    XSMALL_FLASH := true
 +  endif
 +endif
 +ifneq ($(findstring usb,$(BUILD_PACKAGES)),)
 +    BUILD_PACKAGES += automount luci-app-diskman
 +endif
 +ifeq ($(SMALL_FLASH),true)
-+    BUILD_PACKAGES += -coremark -htop -bash -openssh-sftp-server -luci-app-diskman
++	ifeq ($(XSMALL_FLASH),true)
++		BUILD_PACKAGES += -coremark -htop -bash -openssh-sftp-server -luci-app-diskman -automount -luci-theme-argon
++	endif
 +	ifeq ($(shell grep -q small_flash $(TOPDIR)/repositories.conf || echo "not_found"),not_found)
 +        $(shell echo "`grep MeowWrt_miaogongzi $(TOPDIR)/repositories.conf | sed -e 's/miaogongzi/small_flash/g'`" >>$(TOPDIR)/repositories.conf)
 +    endif
