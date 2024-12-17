@@ -93,7 +93,7 @@
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
 +IMAGE_SIZE_VALUE := $(shell echo $($(USER_PROFILE)_IMAGE_SIZE) | sed 's/k$$//')
 +ifdef IMAGE_SIZE_VALUE
-+  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 32448 && echo true),true)
++  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 35480 && echo true),true)
 +    SMALL_FLASH := true
 +  endif
 +  ifeq ($(shell test $(IMAGE_SIZE_VALUE) -lt 20480 && echo true),true)
