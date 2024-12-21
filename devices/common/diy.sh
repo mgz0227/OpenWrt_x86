@@ -54,7 +54,6 @@ wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/go
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
-wget -N https://github.com/openwrt/openwrt/raw/refs/heads/main/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
 git_clone_path master https://github.com/coolsnowwolf/lede mv target/linux/generic/hack-6.6
 rm -rf target/linux/generic/hack-6.6/929-Revert-genetlink*
