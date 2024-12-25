@@ -146,7 +146,7 @@
  ifeq ($(CONFIG_USE_APK),)
  	$(if $(CONFIG_SIGNATURE_CHECK), \
  		$(if $(ADD_LOCAL_KEY), \
-@@ -254,6 +294,9 @@
+@@ -254,16 +294,19 @@
  	)
  endif
  	$(call prepare_rootfs,$(TARGET_DIR),$(USER_FILES),$(DISABLED_SERVICES))
@@ -156,3 +156,15 @@
  
  build_image: FORCE
  	@echo
+ 	@echo Building images...
+ 	rm -rf $(BUILD_DIR)/json_info_files/
+ 	if [ -d "target/linux/feeds/$(BOARD)" ]; then \
+-		$(NO_TRACE_MAKE) -C target/linux/feeds/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
++		nice $(NO_TRACE_MAKE) -C target/linux/feeds/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
+ 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
+ 	else \
+-		$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
++		nice $(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
+ 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
+ 	fi
+ 
