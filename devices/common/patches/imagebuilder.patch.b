@@ -1,6 +1,6 @@
 --- a/include/image.mk
 +++ b/include/image.mk
-@@ -623,7 +621,7 @@ define Device/Build/kernel
+@@ -717,7 +717,7 @@
  endef
  
  define Device/Build/image
@@ -9,7 +9,7 @@
    $$(_TARGET): $(if $(CONFIG_JSON_OVERVIEW_IMAGE_INFO), \
  	  $(BUILD_DIR)/json_info_files/$(call DEVICE_IMG_NAME,$(1),$(2)).json, \
  	  $(BIN_DIR)/$(call DEVICE_IMG_NAME,$(1),$(2))$$(GZ_SUFFIX))
-@@ -761,6 +761,7 @@ define Device/DumpInfo
+@@ -861,6 +861,7 @@
  Target-Profile: DEVICE_$(1)
  Target-Profile-Name: $(DEVICE_DISPLAY)
  Target-Profile-Packages: $(DEVICE_PACKAGES)
@@ -20,7 +20,7 @@
 
 --- a/scripts/target-metadata.pl
 +++ b/scripts/target-metadata.pl
-@@ -437,6 +437,7 @@ ()
+@@ -437,6 +437,7 @@
  		print "PROFILE_NAMES = ".join(" ", @profile_ids_unique)."\n";
  		foreach my $profile (@{$cur->{profiles}}) {
  			print $profile->{id}.'_NAME:='.$profile->{name}."\n";
@@ -42,7 +42,7 @@
 
 --- a/target/imagebuilder/Makefile
 +++ b/target/imagebuilder/Makefile
-@@ -39,7 +39,8 @@ $(BIN_DIR)/$(IB_NAME).tar.zst: clean
+@@ -39,7 +39,8 @@
  		./files/Makefile \
  		$(TMP_DIR)/.targetinfo \
  		$(TMP_DIR)/.packageinfo \
@@ -52,7 +52,7 @@
  
  	$(INSTALL_DIR) $(PKG_BUILD_DIR)/packages
  
-@@ -52,12 +53,13 @@ ifneq ($(CONFIG_USE_APK),)
+@@ -52,12 +53,12 @@
  
  	$(INSTALL_DATA) ./files/README.apk.md $(PKG_BUILD_DIR)/packages/README.md
  else
@@ -60,7 +60,7 @@
  	echo '## Remote package repositories' >> $(PKG_BUILD_DIR)/repositories.conf
  	$(call FeedSourcesAppendOPKG,$(PKG_BUILD_DIR)/repositories.conf)
  	$(VERSION_SED_SCRIPT) $(PKG_BUILD_DIR)/repositories.conf
- 
+-
 -  endif
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*packages.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
 +	$(SED) 's/^src\/gz \(.*\) https.*ai\/\(.*targets.*\)/src \1 file:\/\/www\/wwwroot\/op.miaogongzi.cc\/\2/' $(PKG_BUILD_DIR)/repositories.conf
@@ -69,9 +69,10 @@
  	# create an empty package index so `opkg` doesn't report an error
  	touch $(PKG_BUILD_DIR)/packages/Packages
 
+
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
-@@ -142,6 +142,36 @@ BUILD_PACKAGES:=$(sort $(DEFAULT_PACKAGES) $($(USER_PROFILE)_PACKAGES) kernel)
+@@ -142,6 +142,36 @@
  # "-pkgname" in the package list means remove "pkgname" from the package list
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
@@ -108,7 +109,7 @@
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  PACKAGES:=
  
-@@ -157,6 +187,8 @@ _call_image: staging_dir/host/.prereq-build
+@@ -157,6 +187,8 @@
  	$(MAKE) -s build_image
  	$(MAKE) -s json_overview_image_info
  	$(MAKE) -s checksum
@@ -117,11 +118,11 @@
  
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
-@@ -224,9 +256,17 @@ package_install: FORCE
+@@ -224,9 +256,17 @@
  	@echo
  	@echo Installing packages...
  ifeq ($(CONFIG_USE_APK),)
-+	$(eval $(call add_zh_cn_packages))
++    $(eval $(call add_zh_cn_packages))
  	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/libc_*.ipk $(PACKAGE_DIR)/libc_*.ipk))
  	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/kernel_*.ipk $(PACKAGE_DIR)/kernel_*.ipk))
 -	$(OPKG) install $(BUILD_PACKAGES)
@@ -136,7 +137,7 @@
  else
  	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/libc-*.apk $(PACKAGE_DIR)/libc-*.apk))
  	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/kernel-*.apk $(PACKAGE_DIR)/kernel-*.apk))
-@@ -237,7 +277,7 @@ prepare_rootfs: FORCE
+@@ -237,7 +277,7 @@
  	@echo
  	@echo Finalizing root filesystem...
  
@@ -145,7 +146,7 @@
  ifeq ($(CONFIG_USE_APK),)
  	$(if $(CONFIG_SIGNATURE_CHECK), \
  		$(if $(ADD_LOCAL_KEY), \
-@@ -254,16 +294,19 @@ else
+@@ -254,6 +294,9 @@
  	)
  endif
  	$(call prepare_rootfs,$(TARGET_DIR),$(USER_FILES),$(DISABLED_SERVICES))
@@ -155,15 +156,3 @@
  
  build_image: FORCE
  	@echo
- 	@echo Building images...
- 	rm -rf $(BUILD_DIR)/json_info_files/
- 	if [ -d "target/linux/feeds/$(BOARD)" ]; then \
--		$(NO_TRACE_MAKE) -C target/linux/feeds/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
-+		nice $(NO_TRACE_MAKE) -C target/linux/feeds/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
- 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
- 	else \
--		$(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
-+		nice $(NO_TRACE_MAKE) -C target/linux/$(BOARD)/image install TARGET_BUILD=1 IB=1 EXTRA_IMAGE_NAME="$(EXTRA_IMAGE_NAME)" \
- 			$(if $(USER_PROFILE),PROFILE="$(USER_PROFILE)"); \
- 	fi
- 
