@@ -1,14 +1,14 @@
 --- a/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
 +++ b/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
-@@ -192,6 +192,7 @@
+@@ -192,6 +192,7 @@ const methods = {
  
  	getFeatures: {
  		call: function() {
-+		    let kernel_version = popen('echo -n `uname -r`').read('all');
++			let kernel_version = popen('echo -n `uname -r`').read('all');
  			let result = {
  				firewall:   access('/sbin/fw3') == true,
  				firewall4:  access('/sbin/fw4') == true,
-@@ -199,6 +200,7 @@
+@@ -199,6 +200,7 @@ const methods = {
  				bonding:    access('/sys/module/bonding'),
  				mii_tool:   access('/usr/sbin/mii-tool'),
  				offloading: access('/sys/module/xt_FLOWOFFLOAD/refcnt') == true || access('/sys/module/nft_flow_offload/refcnt') == true,
@@ -16,7 +16,6 @@
  				br2684ctl:  access('/usr/sbin/br2684ctl') == true,
  				swconfig:   access('/sbin/swconfig') == true,
  				odhcpd:     access('/usr/sbin/odhcpd') == true,
-
 @@ -538,6 +540,99 @@ const methods = {
  		call: function() {
  			return { result: process_list() };
@@ -158,22 +157,6 @@
 -		<a href="cgi-bin/luci/">LuCI - Lua Configuration Interface</a>
  	</body>
  </html>
-
---- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/ui.js
-+++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/ui.js
-@@ -3129,12 +3129,6 @@ var UIMenu = baseclass.singleton(/** @lends LuCI.ui.menu.prototype */ {
- 
- 				for (var i = 0; root != null && i < path.length; i++)
- 					root = L.isObject(root.children) ? root.children[path[i]] : null;
--
--				if (root)
--					subnode = Object.assign({}, subnode, {
--						children: root.children,
--						action: root.action
--					});
- 			}
- 
- 			children.push(subnode);
 
 --- a/package/feeds/luci/luci-base/root/etc/init.d/ucitrack
 +++ b/package/feeds/luci/luci-base/root/etc/init.d/ucitrack
