@@ -12,9 +12,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 
-#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/hack-6.6/780-usb-net-MeigLink_modem_support.patch -P target/linux/generic/hack-6.6/
-#rm -rf target/linux/generic/backport-6.6/902-net-llc-reset-skb-transport_header.patch
-rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
+#rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
+
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
 #结束
