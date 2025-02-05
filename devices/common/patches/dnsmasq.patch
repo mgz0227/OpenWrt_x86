@@ -91,4 +91,3 @@
  	fi
 +	[ -n "$(command -v nft)" ] && nftables_clear || iptables_clear
  }
-\ No newline at end of file
