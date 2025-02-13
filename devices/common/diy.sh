@@ -13,7 +13,7 @@ sed -i '/	refresh_config();/d' scripts/feeds
 ./scripts/feeds install -a -p miaogongzi -f
 ./scripts/feeds install -a
 
-sed -i "s/%C\"/%C by miaogongzi\"" package/base-files/files/etc/*release
+sed --follow-symlinks -i "s#%C\"#%C by miaogongzi\"#" package/base-files/files/etc/os-release
 sed -i -e '$a /etc/bench.log' \
         -e '/\/etc\/profile/d' \
         -e '/\/etc\/shinit/d' \
