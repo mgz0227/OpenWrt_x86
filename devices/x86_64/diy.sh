@@ -13,7 +13,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
-
+rm -rf target/linux/ath79/patches-6.6/900-unaligned_access_hacks.patch
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
 #结束
