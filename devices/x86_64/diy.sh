@@ -15,12 +15,12 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
 
 rm -rf target/linux/generic/backport-6.6/819-v6.8-00*
-rm -rf target/linux/generic/backport-6.6/820-v6.9-000*
-rm -rf target/linux/generic/backport-6.6/821-v6.10-000*
-rm -rf target/linux/generic/backport-6.6/819-v6.11-000*
-rm -rf target/linux/generic/backport-6.6/820-v6.11-000*
-rm -rf target/linux/generic/backport-6.6/821-v6.11-000*
-rm -rf target/linux/generic/backport-6.6/822-v6.11-000*
+rm -rf target/linux/generic/backport-6.6/820-v6.9-00*
+rm -rf target/linux/generic/backport-6.6/821-v6.10-00*
+rm -rf target/linux/generic/backport-6.6/819-v6.11-00*
+rm -rf target/linux/generic/backport-6.6/820-v6.11-00*
+rm -rf target/linux/generic/backport-6.6/821-v6.11-00*
+rm -rf target/linux/generic/backport-6.6/822-v6.11-00*
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
 #结束
