@@ -21,6 +21,7 @@ rm -rf target/linux/generic/backport-6.6/819-v6.11-00*
 rm -rf target/linux/generic/backport-6.6/820-v6.11-00*
 rm -rf target/linux/generic/backport-6.6/821-v6.11-00*
 rm -rf target/linux/generic/backport-6.6/822-v6.11-00*
+rm -rf target/linux/generic/pending-6.6/804-nvmem*
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
 #结束
