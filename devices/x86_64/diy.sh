@@ -13,10 +13,13 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
-rm -rf target/linux/generic/backport-6.6/819-v6.8-0002-nvmem-Create-a-header-for-internal-sharing.patch
-rm -rf target/linux/generic/backport-6.6/819-v6.8-0003-nvmem-Simplify-the-add_cells-hook.patch
-rm -rf target/linux/generic/backport-6.6/819-v6.8-0004-nvmem-Move-and-rename-fixup_cell_info.patch
+rm -rf package/network/services/dnsmasq/patches/0001-Fix-spurious-resource-limit-exceeded-messages.patch
+rm -rf package/network/services/dnsmasq/patches/0002-PATCH-Fix-error-introduced-in-51471cafa5a4fa44d6fe49.patch
+rm -rf package/network/services/dnsmasq/patches/0003-Handle-DS-queries-to-auth-zones.patch
+
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/package/network/services/dnsmasq/Makefile -P package/network/services/dnsmasq/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/package/network/services/dnsmasq/patches/200-ubus_dns.patch -P package/network/services/dnsmasq/patches/
 
 #结束
 
