@@ -16,7 +16,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/network/services/dnsmasq/patches/0001-Fix-spurious-resource-limit-exceeded-messages.patch
 rm -rf package/network/services/dnsmasq/patches/0002-PATCH-Fix-error-introduced-in-51471cafa5a4fa44d6fe49.patch
 rm -rf package/network/services/dnsmasq/patches/0003-Handle-DS-queries-to-auth-zones.patch
-
+rm -rf package/network/services/dnsmasq/Makefile
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/package/network/services/dnsmasq/Makefile -P package/network/services/dnsmasq/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/package/network/services/dnsmasq/patches/200-ubus_dns.patch -P package/network/services/dnsmasq/patches/
