@@ -13,6 +13,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
+rm -rf target/linux/generic/pending-6.6/155-usbnet-restore-usb%d-name-exception-for-local-mac-addresses.patch
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/include/kernel-6.6 -P include/
 
