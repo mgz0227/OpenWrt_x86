@@ -3,7 +3,7 @@
 
 ## 1. **固件**
 
-固件生成有3种方式：在线定制化生成、GitHub编译、本地化编译。
+固件生成有2种方式：GitHub编译、本地化编译。
 
 可根据需要选择任意一种进行固件生成。
 
@@ -54,10 +54,6 @@
 + 默认插件包含: Opkg 软件包管理、Bypass 智能过墙、Samba4 文件共享(x86)、UPNP 自动端口转发、Turbo ACC 网络加速。
 其他插件请自行在 后台->软件包 中安装,系统升级不会丢失插件.每次系统升级完成连接网络后,会自动安装所有已自选安装的插件。
 
-## 5. **系统截图展示**
-![](https://github.com/kiddin9/luci-theme-edge/raw/master/Screenshots/1.png)
-![](https://github.com/kiddin9/luci-theme-edge/raw/master/Screenshots/3.png)
-![](https://github.com/kiddin9/luci-theme-edge/raw/master/Screenshots/8.png)
 
 
 ------
