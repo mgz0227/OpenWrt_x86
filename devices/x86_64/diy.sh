@@ -15,6 +15,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
 rm -rf target/linux/generic/pending-6.6/155-usbnet-restore-usb%d-name-exception-for-local-mac-addresses.patch
 rm -rf target/linux/generic/hack-6.6/781-usb-net-rndis-support-asr.patch
+rm -rf target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/kernel-6.6 -P include/
 
 
