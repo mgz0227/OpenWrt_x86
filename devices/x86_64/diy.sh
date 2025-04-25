@@ -17,6 +17,7 @@ rm -rf target/linux/generic/pending-6.6/155-usbnet-restore-usb%d-name-exception-
 rm -rf target/linux/generic/hack-6.6/781-usb-net-rndis-support-asr.patch
 rm -rf target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch
 rm -rf target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch
+
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/kernel-6.6 -P include/
 
 
