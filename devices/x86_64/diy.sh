@@ -13,7 +13,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
-
+rm -rf target/linux/generic/pending-6.6/155-usbnet-restore-usb%d-name-exception-for-local-mac-addresses.patch
+rm -rf target/linux/generic/hack-6.6/781-usb-net-rndis-support-asr.patch
 rm -rf target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch
 rm -rf target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch
 rm -rf target/linux/generic/hack-6.6/610-net-page_pool-try-to-free-deferred-skbs-while-waitin.patch
