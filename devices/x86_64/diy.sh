@@ -29,9 +29,9 @@ wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
 
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/hack-6.6/610-net-page_pool-try-to-free-deferred-skbs-while-waitin.patch -P include/
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch -P include/
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/target/linux/generic/hack-6.6/610-net-page_pool-try-to-free-deferred-skbs-while-waitin.patch -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/kernel-6.6 -P include/
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
