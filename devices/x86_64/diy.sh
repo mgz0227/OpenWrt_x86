@@ -22,13 +22,13 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/pending-6.6/620-net_sched-codel-do-not-defer-queue-length-update.patch -P include/
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch -P include/
 #wget -N https://github.com/openwrt/openwrt/blob/113d0268b4856d640cb380a71792b8fdc3b87802/config/Config-kernel.in -P /config
+#wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc -P package/network/config/wifi-scripts/files/lib/wifi/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/fs.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/iio.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/other.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc -P package/network/config/wifi-scripts/files/lib/wifi/
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 
