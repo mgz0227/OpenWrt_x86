@@ -34,7 +34,7 @@ wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/03cbc353d7e2f02a9ffa8f39dad67c8c2469426a/target/linux/generic/pending-6.6/734-net-ethernet-mediatek-enlarge-DMA-reserve-buffer.patch -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/main/target/linux/generic/kernel-6.6 -P include/
 
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/kernel-6.12 -P include/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/include/kernel-version.mk -P include/
 
