@@ -14,8 +14,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led-link-select-for-RTL8221.patch
 
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/fs.mk -P package/kernel/linux/modules/
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/iio.mk -P package/kernel/linux/modules/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/fs.mk -P package/kernel/linux/modules/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/iio.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/other.mk -P package/kernel/linux/modules/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
