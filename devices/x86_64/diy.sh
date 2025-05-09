@@ -23,6 +23,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/691-net-ipv6-fix-UDPv6-GSO-segmentation-with-NAT.patch  -P target/linux/generic/pending-6.12/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/737-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch -P target/linux/generic/pending-6.12/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/include/kernel-version.mk -P include/
