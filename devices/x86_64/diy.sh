@@ -17,13 +17,9 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/fs.mk -P package/kernel/linux/modules/
 
 
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/iio.mk -P package/kernel/linux/modules/
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/other.mk -P package/kernel/linux/modules/
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
-
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/691-net-ipv6-fix-UDPv6-GSO-segmentation-with-NAT.patch  -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch -P target/linux/generic/pending-6.12/
+rm -rf target/linux/generic/pending-6.12/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/737-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch -P target/linux/generic/pending-6.12/
 
 
