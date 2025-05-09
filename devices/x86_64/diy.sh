@@ -22,7 +22,7 @@ wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c241
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/9898b6e38db509f622c2415caffa29547f275d45/package/kernel/linux/modules/video.mk -P package/kernel/linux/modules/
 
 
-
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/691-net-ipv6-fix-UDPv6-GSO-segmentation-with-NAT.patch  -P target/linux/generic/pending-6.12/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/include/kernel-version.mk -P include/
