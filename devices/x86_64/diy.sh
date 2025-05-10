@@ -30,7 +30,7 @@ wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/targ
 wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch -P target/linux/generic/pending-6.12/
 wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/738-02-net-ethernet-mtk_eth_soc-do-not-enable-page-pool-sta.patch -P target/linux/generic/pending-6.12/
 
-
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/191bcaffd1ffb1d28bb0102ec92e1ba455b2b11b/package/firmware/linux-firmware/Makefile -P package/firmware/linux-firmware/
 
 
 
