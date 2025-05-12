@@ -17,19 +17,6 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/16dcde04aa0a4d292b27a4f0485223b9b03cae7d/package/kernel/linux/modules/fs.mk -P package/kernel/linux/modules/
 
 
-
-
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/backport-6.12/753-v6.15-net-ethernet-mediatek-add-EEE-support.patch -P target/linux/generic/backport-6.12/
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/pending-6.12/737-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/hack-6.12/204-module_strip.patch -P target/linux/generic/hack-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/hack-6.12/730-net-ethernet-mtk_eth_soc-add-hw-dump-for-forced-rese.patch -P target/linux/generic/hack-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/hack-6.12/781-usb-net-rndis-support-asr.patch -P target/linux/generic/hack-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/732-01-net-ethernet-mtk_eth_soc-work-around-issue-with-send.patch -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/733-01-net-ethernet-mtk_eth_soc-use-napi_build_skb.patch -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/737-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch -P target/linux/generic/pending-6.12/
-wget -N https://raw.githubusercontent.com/namiltd/openwrt/refs/heads/update/target/linux/generic/pending-6.12/738-02-net-ethernet-mtk_eth_soc-do-not-enable-page-pool-sta.patch -P target/linux/generic/pending-6.12/
-
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/191bcaffd1ffb1d28bb0102ec92e1ba455b2b11b/package/firmware/linux-firmware/Makefile -P package/firmware/linux-firmware/
 
 
