@@ -15,7 +15,8 @@ rm -rf net/xtables-addons
 
 cd ../../
 
-#cd package
-#rm -rf devel/kselftests-bpf devel/perf kernel/mt76 kernel/mt7621-qtn-rgmii
+cd package
+rm -rf devel/kselftests-bpf devel/perf 
+#kernel/mt76 kernel/mt7621-qtn-rgmii
 
 #cd ../
