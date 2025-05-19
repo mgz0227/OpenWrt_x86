@@ -11,11 +11,11 @@ cp -rf --parents target/linux package/kernel  package/network package/boot packa
 cd -
 
 cd feeds/packages
-rm -rf kernel/ovpn-dco libs/xr_usb_serial_common net/xtables-addons
+rm -rf net/xtables-addons
 
 cd ../../
 
-cd package
-rm -rf devel/kselftests-bpf devel/perf kernel/mt76 kernel/mt7621-qtn-rgmii
+#cd package
+#rm -rf devel/kselftests-bpf devel/perf kernel/mt76 kernel/mt7621-qtn-rgmii
 
-cd ../
+#cd ../
