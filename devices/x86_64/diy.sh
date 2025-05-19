@@ -19,7 +19,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/191bcaffd1ffb1d28bb0102ec92e1ba455b2b11b/package/firmware/linux-firmware/Makefile -P package/firmware/linux-firmware/
 
-
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
 
 rm -rf target/linux/generic/pending-6.12/691-net-ipv6-fix-UDPv6-GSO-segmentation-with-NAT.patch
 
