@@ -16,6 +16,7 @@ cd -
 #cd ../../
 mv feeds/miaogongzi/MeowWrt-Packages/xtables-addons feeds/packages/net/
 cd package
-rm -rf devel/kselftests-bpf devel/perf kernel/mt76
+rm -rf devel/kselftests-bpf devel/perf 
+#kernel/mt76
 
 cd ../
