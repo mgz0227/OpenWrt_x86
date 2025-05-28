@@ -17,12 +17,12 @@ wget -N https://raw.githubusercontent.com/openwrt/openwrt/191bcaffd1ffb1d28bb010
 
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
 
-
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
 
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/refs/heads/openwrt-24.10/include/kernel-version.mk -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
 #结束
 
