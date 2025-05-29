@@ -17,6 +17,14 @@ wget -N https://raw.githubusercontent.com/openwrt/openwrt/191bcaffd1ffb1d28bb010
 
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
 
+
+rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch
+rm -rf target/linux/generic/backport-6.12/780-33-v6.15-r8169-disable-RTL8126-ZRX-DC-timeout.patch
+rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
+
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
+
+
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
 
 #以下不能动
