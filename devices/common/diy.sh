@@ -35,11 +35,7 @@ wget -N https://github.com/immortalwrt/immortalwrt/raw/refs/heads/openwrt-24.10/
  rm -rf package/libs/openssl package/network/services/ppp
  git_clone_path openwrt-24.10 https://github.com/immortalwrt/immortalwrt package/libs/openssl package/network/services/ppp
 
-#兼容6.12	
- rm -rf packages/net/xtables-addons
- git_clone_path master https://github.com/openwrt/packages net/xtables-addons
 
-#结束
 
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile

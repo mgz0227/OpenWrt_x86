@@ -10,13 +10,12 @@ git reset --hard origin/master
 cp -rf --parents target/linux package/kernel  package/network package/boot package/firmware package/network package/libs config/Config-kernel.in ../
 cd -
 
-#cd feeds/packages
-#rm -rf net/xtables-addons
-
-#cd ../../
+cd feeds/packages
+rm -rf net/xtables-addons
+git_clone_path master https://github.com/openwrt/packages net/xtables-addons
+cd ../../
 
 cd package
 rm -rf devel/kselftests-bpf devel/perf 
-
 
 cd ../
