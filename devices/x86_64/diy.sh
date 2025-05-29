@@ -19,13 +19,10 @@ rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
 
-
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/6ca430841b4e0d1d70bdd3fcb1c3afe236a888e5/target/linux/x86/config-6.12 -P target/linux/x86/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
-
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
 #结束
 
