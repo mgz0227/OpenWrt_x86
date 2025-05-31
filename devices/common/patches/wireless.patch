@@ -12,3 +12,4 @@
 +
  					o = ss.taboption('advanced', form.Flag, 'rxldpc', _('Rx LDPC'), _('Low-Density Parity-Check'));
  					o.default = '1';
+ 
