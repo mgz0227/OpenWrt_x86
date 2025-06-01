@@ -11,13 +11,8 @@ cp -rf --parents target/linux package/boot package/firmware package/kernel packa
 cd -
 
 cd feeds/packages
-rm -rf net/xtables-addons net/adblock
-git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/adblock
-cd ../../
-
-cd feeds/luci
-rm -rf applications/luci-app-adblock
-git_clone_path master https://github.com/openwrt/luci applications/luci-app-adblock
+rm -rf net/xtables-addons
+git_clone_path master https://github.com/openwrt/packages net/xtables-addons
 cd ../../
 
 
