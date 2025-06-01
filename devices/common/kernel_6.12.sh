@@ -16,8 +16,8 @@ git_clone_path master https://github.com/openwrt/packages net/xtables-addons net
 cd ../../
 
 cd package
-rm -rf network/services/dnsmasq
-git_clone_path master https://github.com/openwrt/openwrt network/services/dnsmasq
+rm -rf network/services
+git_clone_path master https://github.com/openwrt/openwrt network/services
 #cd package
 #rm -rf devel/kselftests-bpf devel/perf 
 
