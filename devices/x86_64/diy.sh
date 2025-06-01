@@ -13,11 +13,11 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 
 
-rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch
-rm -rf target/linux/generic/backport-6.12/780-33-v6.15-r8169-disable-RTL8126-ZRX-DC-timeout.patch
-rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
+#rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch
+#rm -rf target/linux/generic/backport-6.12/780-33-v6.15-r8169-disable-RTL8126-ZRX-DC-timeout.patch
+#rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
 
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
+#wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
