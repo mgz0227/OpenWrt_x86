@@ -15,11 +15,6 @@ rm -rf net/xtables-addons net/adblock
 git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/adblock
 cd ../../
 
-cd feeds/luci
-rm -rf applications/luci-app-adblock
-git_clone_path master https://github.com/openwrt/luci applications/luci-app-adblock
-cd ../../
-
 cd package
 rm -rf network/services/dnsmasq
 git_clone_path master https://github.com/openwrt/openwrt network/services/dnsmasq
