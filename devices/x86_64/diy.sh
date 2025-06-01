@@ -11,6 +11,14 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #内核升级模块
 #开始
+rm -rf package/network/services/dnsmasq/Makefile
+rm -rf package/network/services/dnsmasq/patches/0001-Fix-spurious-resource-limit-exceeded-messages.patch
+rm -rf package/network/services/dnsmasq/patches/0002-PATCH-Fix-error-introduced-in-51471cafa5a4fa44d6fe49.patch
+rm -rf package/network/services/dnsmasq/patches/0003-Handle-DS-queries-to-auth-zones.patch
+
+wget -N https://github.com/openwrt/openwrt/raw/refs/heads/main/package/network/services/dnsmasq/patches/200-ubus_dns.patch -P package/network/services/dnsmasq/patches/
+wget -N https://github.com/openwrt/openwrt/raw/refs/heads/main/package/network/services/dnsmasq/files/dnsmasq.init -P package/network/services/dnsmasq/files/
+wget -N https://github.com/openwrt/openwrt/raw/refs/heads/main/package/network/services/dnsmasq/Makefile -P package/network/services/dnsmasq/
 
 
 #rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch

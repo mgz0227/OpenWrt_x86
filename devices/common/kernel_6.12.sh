@@ -2,7 +2,7 @@
 
 shopt -s extglob
 
-rm -rf target/linux package/boot package/firmware package/kernel package/libs package/network package/system package/utils
+rm -rf target/linux package/boot package/firmware package/kernel package/libs package/network package/network/services/dnsmasq package/system package/utils
 mkdir new; cp -rf .git new/.git
 cd new
 git reset --hard origin/master
