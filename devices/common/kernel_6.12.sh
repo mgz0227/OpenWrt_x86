@@ -11,11 +11,14 @@ cp -rf --parents target/linux package/boot package/firmware package/kernel packa
 cd -
 
 cd feeds/packages
-rm -rf net/xtables-addons
+rm -rf net/xtables-addons 
 git_clone_path master https://github.com/openwrt/packages net/xtables-addons
 cd ../../
 
+cd package
+rm -rf network/services/dnsmasq
+git_clone_path master https://github.com/openwrt/openwrt network/services/dnsmasq
 #cd package
 #rm -rf devel/kselftests-bpf devel/perf 
 
-#cd ../
+cd ../
