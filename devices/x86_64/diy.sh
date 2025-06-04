@@ -32,9 +32,3 @@ sed -i 's/DEFAULT_PACKAGES +=/DEFAULT_PACKAGES += kmod-fs-f2fs kmod-mmc kmod-sdh
 mv -f tmp/r81* feeds/miaogongzi/
 
 sed -i 's/256/1024/g' target/linux/x86/image/Makefile
-echo '
-CONFIG_PACKAGE_nftables-json=n
-CONFIG_PACKAGE_miniupnpd-nftables=m
-CONFIG_PACKAGE_miniupnpd-iptables=y
-CONFIG_PACKAGE_kmod-nft-core=m
-' >> ./target/linux/x86/config-6.12
