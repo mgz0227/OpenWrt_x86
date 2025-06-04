@@ -8,8 +8,12 @@
    VARIANT:=full
    PROVIDES:=dnsmasq
  endef
-@@ -115,7 +114,7 @@
- 		default n
+@@ -112,10 +111,10 @@
+ 		default y
+ 	config PACKAGE_dnsmasq_full_ipset
+ 		bool "Build with IPset support."
+-		default n
++		default y
  	config PACKAGE_dnsmasq_full_nftset
  		bool "Build with Nftset support."
 -		default y
