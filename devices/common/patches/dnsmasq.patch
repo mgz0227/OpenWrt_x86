@@ -1,0 +1,19 @@
+--- a/package/network/services/dnsmasq/Makefile
++++ b/package/network/services/dnsmasq/Makefile
+@@ -67,7 +67,6 @@
+   DEPENDS+=+PACKAGE_dnsmasq_full_dnssec:libnettle \
+ 	+PACKAGE_dnsmasq_full_ipset:kmod-ipt-ipset \
+ 	+PACKAGE_dnsmasq_full_conntrack:libnetfilter-conntrack \
+-	+PACKAGE_dnsmasq_full_nftset:nftables-json
+   VARIANT:=full
+   PROVIDES:=dnsmasq
+ endef
+@@ -115,7 +114,7 @@
+ 		default n
+ 	config PACKAGE_dnsmasq_full_nftset
+ 		bool "Build with Nftset support."
+-		default y
++		default n
+ 	config PACKAGE_dnsmasq_full_conntrack
+ 		bool "Build with Conntrack support."
+ 		default y
