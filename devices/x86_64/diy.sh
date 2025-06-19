@@ -14,7 +14,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch
 #rm -rf target/linux/generic/backport-6.12/780-33-v6.15-r8169-disable-RTL8126-ZRX-DC-timeout.patch
-#rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
+rm -rf target/linux/generic/backport-6.12/421-01-v6.16-spi-bcm63xx-spi-fix-shared-reset.patch
 
 #wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
 
