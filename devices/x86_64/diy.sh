@@ -15,8 +15,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf target/linux/generic/backport-6.12/610-06-v6.16-net-dsa-b53-do-not-enable-RGMII-delay-on-bcm63xx.patch
 rm -rf target/linux/generic/backport-6.12/421-02-v6.16-spi-bcm63xx-hsspi-fix-shared-reset.patch
 rm -rf target/linux/generic/backport-6.12/421-01-v6.16-spi-bcm63xx-spi-fix-shared-reset.patch
+rm -rf target/linux/generic/backport-6.12/610-09-v6.16-net-dsa-b53-do-not-touch-DLL_IQQD-on-bcm53115.patch
 
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/6d14c619869b5bd2b339b2fd5972fb3e8cc7f7f4/target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch -P target/linux/generic/backport-6.12/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
