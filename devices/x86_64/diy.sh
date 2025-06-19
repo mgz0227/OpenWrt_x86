@@ -12,7 +12,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 
-#rm -rf target/linux/generic/backport-6.12/780-27-v6.15-r8169-don-t-scan-PHY-addresses-0.patch
+rm -rf target/linux/generic/backport-6.12/610-06-v6.16-net-dsa-b53-do-not-enable-RGMII-delay-on-bcm63xx.patch
 rm -rf target/linux/generic/backport-6.12/421-02-v6.16-spi-bcm63xx-hsspi-fix-shared-reset.patch
 rm -rf target/linux/generic/backport-6.12/421-01-v6.16-spi-bcm63xx-spi-fix-shared-reset.patch
 
