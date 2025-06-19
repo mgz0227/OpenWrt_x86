@@ -276,22 +276,24 @@ jobs:
       run: |
                 shopt -s extglob
                 cd openwrt/bin/targets/*/*/
-        
-                # Unzip .gz files
-                for file in *.gz; do
-                  gunzip "$file"
-                done
-        
-                # Rename all files, including IMG files after decompression
-                find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
-        
-                # Recompress all IMG files back to .gz format
-                for file in *.img; do
-                gzip "$file"
-                done
-                
+                cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
+                cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
                 Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
                 echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
+                # Unzip .gz files
+               # for file in *.gz; do
+             #     gunzip "$file"
+          #     done
+        
+            #    # Rename all files, including IMG files after decompression
+          #      find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2024-/" {} + || true
+        
+           #     # Recompress all IMG files back to .gz format
+         #       for file in *.img; do
+         #       gzip "$file"
+         #       done
+                
+
 
                 
     - name: Organize Release files
