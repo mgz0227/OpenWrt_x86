@@ -12,12 +12,14 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 
-rm -rf target/linux/generic/backport-6.12/610-06-v6.16-net-dsa-b53-do-not-enable-RGMII-delay-on-bcm63xx.patch
-rm -rf target/linux/generic/backport-6.12/421-02-v6.16-spi-bcm63xx-hsspi-fix-shared-reset.patch
+
 rm -rf target/linux/generic/backport-6.12/421-01-v6.16-spi-bcm63xx-spi-fix-shared-reset.patch
+rm -rf target/linux/generic/backport-6.12/421-02-v6.16-spi-bcm63xx-hsspi-fix-shared-reset.patch
+rm -rf target/linux/generic/backport-6.12/610-06-v6.16-net-dsa-b53-do-not-enable-RGMII-delay-on-bcm63xx.patch
+rm -rf target/linux/generic/backport-6.12/610-08-v6.16-net-dsa-b53-allow-RGMII-for-bcm63xx-RGMII-ports.patch
 rm -rf target/linux/generic/backport-6.12/610-09-v6.16-net-dsa-b53-do-not-touch-DLL_IQQD-on-bcm53115.patch
 rm -rf target/linux/generic/backport-6.12/611-v6.16-net-dsa-tag_brcm-legacy-fix-pskb_may_pull-length.patch
-rm -rf target/linux/generic/backport-6.12/610-08-v6.16-net-dsa-b53-allow-RGMII-for-bcm63xx-RGMII-ports.patch
+
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/0eb3c7cdca5c499a36f4ad96fd8499bab39f01d3/target/linux/generic/pending-6.12/703-phy-add-detach-callback-to-struct-phy_driver.patch -P target/linux/generic/pending-6.12/
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
