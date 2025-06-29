@@ -11,7 +11,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #内核升级模块
 #开始
-rm -rf target/linux/generic/backport-6.12/300-v6.16-mips-Add-std-flag-specified.patch
+#rm -rf target/linux/generic/backport-6.12/300-v6.16-mips-Add-std-flag-specified.patch
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/66d0c22ec6927f9bb5e6e2dbb76f3b04b669f840/package/kernel/mt76/patches/002-wifi-mt76-replace-strlcpy-with-strscpy.patch -P package/kernel/mt76/patches/
 
