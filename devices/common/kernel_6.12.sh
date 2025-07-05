@@ -2,12 +2,12 @@
 
 shopt -s extglob
 
-rm -rf target/linux package/boot package/firmware package/kernel package/libs package/network
+rm -rf target/linux package/boot package/firmware package/kernel package/libs package/network tools
 mkdir new; cp -rf .git new/.git
 cd new
 git reset --hard origin/master
 
-cp -rf --parents target/linux package/boot package/firmware package/kernel package/libs package/network config/Config-kernel.in ../
+cp -rf --parents target/linux package/boot package/firmware package/kernel package/libs package/network tools config/Config-kernel.in ../
 cd -
 
 cd feeds/packages
