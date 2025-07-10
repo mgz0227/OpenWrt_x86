@@ -15,6 +15,6 @@ rm -rf net/xtables-addons net/strongswan
 git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan
 cd ../../
 
-#cd package
-#rm -rf devel/kselftests-bpf devel/perf
-#cd ../
+cd package
+rm -rf devel/kselftests-bpf devel/perf
+cd ../
