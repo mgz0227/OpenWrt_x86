@@ -28,7 +28,7 @@
 
 --- a/package/network/config/firewall/Makefile
 +++ b/package/network/config/firewall/Makefile
-@@ -30,9 +30,10 @@ define Package/firewall
+@@ -30,9 +30,10 @@
    SECTION:=net
    CATEGORY:=Base system
    TITLE:=OpenWrt C Firewall
@@ -41,10 +41,7 @@
  endef
  
  define Package/firewall/description
- 
-
- define Package/package/network/config/firewall/description
-@@ -59,6 +59,7 @@ define Package/package/network/config/firewall/install
+@@ -57,6 +58,7 @@
  	$(INSTALL_CONF) ./files/firewall.config $(1)/etc/config/firewall
  	$(INSTALL_DIR) $(1)/etc/
  	$(INSTALL_CONF) ./files/firewall.user $(1)/etc/firewall.user
@@ -52,6 +49,7 @@
  	$(INSTALL_DIR) $(1)/usr/share/fw3
  	$(INSTALL_CONF) $(PKG_BUILD_DIR)/helpers.conf $(1)/usr/share/fw3
  endef
+
 
 --- a/package/feeds/luci/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/package/feeds/luci/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
