@@ -1,5 +1,5 @@
---- a/package/feeds/packages/lang/rust/Makefile
-+++ b/package/feeds/packages/lang/rust/Makefile
+--- a/feeds/packages/lang/rust/Makefile
++++ b/feeds/packages/lang/rust/Makefile
 @@ -75,7 +75,7 @@
  	--release-channel=stable \
  	--enable-cargo-native-static \
