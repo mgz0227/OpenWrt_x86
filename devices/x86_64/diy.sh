@@ -14,7 +14,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
 #rm -rf target/linux/generic/backport-6.12/781-04-v6.13-net-phy-realtek-merge-the-drivers-for-internal-NBase.patch
 #rm -rf target/linux/generic/backport-6.12/781-05-v6.13-net-phy-realtek-add-RTL8125D-internal-PHY.patch
-rm -rf target/linux/generic/pending-6.12/680-net-fix-TCP-UDP-fraglist-GRO.patch
+#rm -rf target/linux/generic/pending-6.12/680-net-fix-TCP-UDP-fraglist-GRO.patch
 
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
