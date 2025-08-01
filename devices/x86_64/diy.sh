@@ -17,7 +17,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/pending-6.12/680-net-fix-TCP-UDP-fraglist-GRO.patch
 
 #以下不能动
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
+#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/2be61fbc344d7b00039ae5800b3419b6ac79075f/target/linux/generic/kernel-6.12 -P include/
 
 #结束
 
