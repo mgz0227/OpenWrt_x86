@@ -16,9 +16,6 @@ git_clone_path master https://github.com/openwrt/packages net/xtables-addons net
 
 cd ../../
 
-cd feeds/packages
-rm -rf lang/rust
-git_clone_path Rust https://github.com/mgz0227/packages lang/rust
 
 cd ../../
 
