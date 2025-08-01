@@ -13,7 +13,6 @@ cd -
 cd feeds/packages
 rm -rf net/xtables-addons net/strongswan utils/coremark
 git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan
-
 cd ../../
 
 
