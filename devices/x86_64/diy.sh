@@ -20,8 +20,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 wget -N https://raw.githubusercontent.com/openwrt/openwrt/8284e38421ad3771f0f872b1d4ed1b86b6c2a567/target/linux/generic/config-6.12 -P target/linux/generic/
 #以下不能动
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/886c3d8b92223683706eafb7b904068fa2324993/target/linux/generic/kernel-6.12 -P include/
+#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/886c3d8b92223683706eafb7b904068fa2324993/target/linux/generic/kernel-6.12 -P include/
 
 
 #结束
