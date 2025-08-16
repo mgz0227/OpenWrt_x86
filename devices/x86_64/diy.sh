@@ -18,8 +18,8 @@ wget -N http://cdn.miaogongzi.cc/patch/patch-6.12.41-42.patch -P target/linux/x8
 #rm -rf target/linux/generic/pending-6.12/680-net-fix-TCP-UDP-fraglist-GRO.patch
 #Wget -N https://github.com/mgz0227/packages/raw/refs/heads/Rust/lang/rust/patches/002-bypass-github-actions-ci.patch -P feeds/lang/rust/patches/
 #以下不能动
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
-#wget -N https://raw.githubusercontent.com/openwrt/openwrt/886c3d8b92223683706eafb7b904068fa2324993/target/linux/generic/kernel-6.12 -P include/
+#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
+wget -N https://raw.githubusercontent.com/openwrt/openwrt/886c3d8b92223683706eafb7b904068fa2324993/target/linux/generic/kernel-6.12 -P include/
 
 
 #结束
