@@ -11,7 +11,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #内核升级模块
 #开始
-wget -N http://cdn.miaogongzi.cc/patch/6.12-backport.patch -P target/linux/generic/backport-6.12
+wget -N http://cdn.miaogongzi.cc/patch/patch-6.12.42.patch -P target/linux/x86/patches-6.12
 #rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
 #rm -rf target/linux/generic/backport-6.12/781-04-v6.13-net-phy-realtek-merge-the-drivers-for-internal-NBase.patch
 #rm -rf target/linux/generic/backport-6.12/781-05-v6.13-net-phy-realtek-add-RTL8125D-internal-PHY.patch
