@@ -230,7 +230,14 @@ jobs:
         make defconfig
         fi
         cat .config
-
+        
+    - name: Get kernel version
+      id: kernel
+      run: |
+         cd openwrt
+         KERNEL_VER=$(make -s kernelversion)
+         echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
+         echo "Kernel version detected: $KERNEL_VER"
    # - name: Download package
    #   id: package
    #   run: |
@@ -270,13 +277,7 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
-    - name: Get kernel version
-      id: kernel
-      run: |
-         cd openwrt
-         KERNEL_VER=$(make -s kernelversion)
-         echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
-         echo "Kernel version detected: $KERNEL_VER"
+    
 
 
     - name: Organize files
