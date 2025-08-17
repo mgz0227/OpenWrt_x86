@@ -234,11 +234,19 @@ jobs:
     - name: Get kernel version
       id: kernel
       run: |
-         cd openwrt
-         #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
-         KERNEL_VER=$(make -s -f include/toplevel.mk -C . val.LINUX_VERSION  || true)
-         echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
-         echo "Kernel version detected: $KERNEL_VER"
+        cd openwrt
+        #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
+        # 找到 include/kernel-* 下的版本文件
+        KERNEL_FILE=$(ls include/kernel-* | head -n1)
+        # 提取主版本号
+        BASE_VER=$(basename $KERNEL_FILE | cut -d'-' -f2)
+        # 提取补丁号
+        PATCH_VER=$(grep "^LINUX_VERSION-$BASE_VER" "$KERNEL_FILE" | cut -d= -f2 | tr -d ' .')
+        # 拼接完整版本号
+        KERNEL_FULL="$BASE_VER.$PATCH_VER"
+        echo "KERNEL_VER=$KERNEL_FULL" >> $GITHUB_ENV
+        echo "Kernel full version detected: $KERNEL_FULL"
+
    # - name: Download package
    #   id: package
    #   run: |
