@@ -270,6 +270,15 @@ jobs:
         rm -rf staging_dir/toolchain-*/initial
         df -hT
 
+    - name: Get kernel version
+      id: kernel
+      run: |
+         cd openwrt
+         KERNEL_VER=$(make -s kernelversion)
+         echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
+         echo "Kernel version detected: $KERNEL_VER"
+
+
     - name: Organize files
       id: organize
       continue-on-error: true
@@ -363,7 +372,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
       with:
         files: firmware/${{matrix.target}}/*
-        name: ${{ env.date2 }} ${{matrix.target}} ${{ env.EMOJI }}
+        name: ${{ env.date2 }} ${{matrix.target}} KERNEL:${{ env.KERNEL_VER }} ${{ env.EMOJI }}
         tag_name: ${{ env.date }}_${{matrix.target}}
         body_path: release.txt
     
