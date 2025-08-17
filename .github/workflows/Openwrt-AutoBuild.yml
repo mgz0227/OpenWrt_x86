@@ -235,7 +235,8 @@ jobs:
       id: kernel
       run: |
          cd openwrt
-         KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
+         #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
+         KERNEL_VER=$(make -s -f include/toplevel.mk -C . val.LINUX_VERSION  || true)
          echo "KERNEL_VER=$KERNEL_VER" >> $GITHUB_ENV
          echo "Kernel version detected: $KERNEL_VER"
    # - name: Download package
