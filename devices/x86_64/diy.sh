@@ -12,7 +12,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 #wget -N http://cdn.miaogongzi.cc/patch/patch-6.12.42.patch -P target/linux/x86/patches-6.12
-#rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
+rm -rf target/linux/generic/backport-6.12/612-11-v6.17-net-dsa-b53-prevent-GMII_PORT_OVERRIDE_CTRL-access-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/612-09-v6.17-net-dsa-b53-prevent-DIS_LEARNING-access-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/612-08-v6.17-net-dsa-b53-fix-IP_MULTICAST_CTRL-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/612-07-v6.17-net-dsa-b53-prevent-SWITCH_CTRL-access-on-BCM5325.patch
