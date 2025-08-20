@@ -13,7 +13,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #开始
 #wget -N http://cdn.miaogongzi.cc/patch/patch-6.12.42.patch -P target/linux/x86/patches-6.12
 #rm -rf target/linux/generic/backport-6.12/780-09-v6.13-r8169-add-support-for-RTL8125D.patch
-#rm -rf target/linux/generic/backport-6.12/781-04-v6.13-net-phy-realtek-merge-the-drivers-for-internal-NBase.patch
+rm -rf target/linux/generic/backport-6.12/612-09-v6.17-net-dsa-b53-prevent-DIS_LEARNING-access-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/612-08-v6.17-net-dsa-b53-fix-IP_MULTICAST_CTRL-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/612-07-v6.17-net-dsa-b53-prevent-SWITCH_CTRL-access-on-BCM5325.patch
 #Wget -N https://github.com/mgz0227/packages/raw/refs/heads/Rust/lang/rust/patches/002-bypass-github-actions-ci.patch -P feeds/lang/rust/patches/
