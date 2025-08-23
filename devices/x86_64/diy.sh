@@ -20,7 +20,7 @@ rm -rf target/linux/generic/backport-6.12/612-14-v6.17-net-dsa-b53-ensure-BCM532
 rm -rf target/linux/generic/backport-6.12/830-v6.17-Revert-leds-trigger-netdev-Configure-LED-blink-inter.patch
 
 
-wget -N https://github.com/graysky2/openwrt/blob/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
+wget -N https://github.com/graysky2/openwrt/blob/2098b91ebe22a7479a944368375583f16d138100/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
 wget -N https://github.com/graysky2/openwrt/blob/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
 wget -N https://github.com/graysky2/openwrt/blob/6/target/linux/generic/backport-6.12/612-13-v6.17-net-dsa-b53-fix-b53_imp_vlan_setup-for-BCM5325.patch -P target/linux/generic/backport-6.12/
 wget -N  -P target/linux/generic/backport-6.12/
