@@ -22,7 +22,6 @@ rm -rf target/linux/generic/backport-6.12/830-v6.17-Revert-leds-trigger-netdev-C
 
 wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
 wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
-wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/612-13-v6.17-net-dsa-b53-fix-b53_imp_vlan_setup-for-BCM5325.patch -P target/linux/generic/backport-6.12/
 wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch -P target/linux/generic/backport-6.12/
 #Wget -N https://github.com/mgz0227/packages/raw/refs/heads/Rust/lang/rust/patches/002-bypass-github-actions-ci.patch -P feeds/lang/rust/patches/
 
