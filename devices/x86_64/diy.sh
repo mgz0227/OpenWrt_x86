@@ -12,20 +12,19 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 #wget -N http://cdn.miaogongzi.cc/patch/6.12.43-4.patch -P target/linux/x86/patches-6.12
-rm -rf target/linux/generic/backport-6.12/612-11-v6.17-net-dsa-b53-prevent-GMII_PORT_OVERRIDE_CTRL-access-on-BCM5325.patch
-rm -rf target/linux/generic/backport-6.12/612-09-v6.17-net-dsa-b53-prevent-DIS_LEARNING-access-on-BCM5325.patch
-rm -rf target/linux/generic/backport-6.12/612-08-v6.17-net-dsa-b53-fix-IP_MULTICAST_CTRL-on-BCM5325.patch
-rm -rf target/linux/generic/backport-6.12/612-07-v6.17-net-dsa-b53-prevent-SWITCH_CTRL-access-on-BCM5325.patch
-rm -rf target/linux/generic/backport-6.12/612-14-v6.17-net-dsa-b53-ensure-BCM5325-PHYs-are-enabled.patch
-rm -rf target/linux/generic/backport-6.12/830-v6.17-Revert-leds-trigger-netdev-Configure-LED-blink-inter.patch
+#rm -rf target/linux/generic/backport-6.12/612-11-v6.17-net-dsa-b53-prevent-GMII_PORT_OVERRIDE_CTRL-access-on-BCM5325.patch
+#rm -rf target/linux/generic/backport-6.12/612-09-v6.17-net-dsa-b53-prevent-DIS_LEARNING-access-on-BCM5325.patch
+#rm -rf target/linux/generic/backport-6.12/612-08-v6.17-net-dsa-b53-fix-IP_MULTICAST_CTRL-on-BCM5325.patch
+#rm -rf target/linux/generic/backport-6.12/612-07-v6.17-net-dsa-b53-prevent-SWITCH_CTRL-access-on-BCM5325.patch
 
 
-wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
-wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
-wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch -P target/linux/generic/backport-6.12/
+
+#wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
+#wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
+#wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch -P target/linux/generic/backport-6.12/
 #Wget -N https://github.com/mgz0227/packages/raw/refs/heads/Rust/lang/rust/patches/002-bypass-github-actions-ci.patch -P feeds/lang/rust/patches/
 
-wget -N https://raw.githubusercontent.com/openwrt/openwrt/8284e38421ad3771f0f872b1d4ed1b86b6c2a567/target/linux/generic/config-6.12 -P target/linux/generic/
+#wget -N https://raw.githubusercontent.com/openwrt/openwrt/8284e38421ad3771f0f872b1d4ed1b86b6c2a567/target/linux/generic/config-6.12 -P target/linux/generic/
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P target/linux/generic/
