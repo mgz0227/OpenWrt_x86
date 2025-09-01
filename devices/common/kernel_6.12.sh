@@ -16,7 +16,7 @@ git_clone_path master https://github.com/openwrt/packages net/xtables-addons net
 cd ../../
 
 
-cd package
-rm -rf devel/kselftests-bpf 
+#cd package
+#rm -rf devel/kselftests-bpf 
 #devel/perf
-cd ../
+#cd ../
