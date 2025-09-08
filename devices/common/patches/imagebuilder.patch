@@ -132,6 +132,7 @@
  
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
+
 @@ -230,9 +257,17 @@ package_install: FORCE
  	@echo
  	@echo Installing packages...
