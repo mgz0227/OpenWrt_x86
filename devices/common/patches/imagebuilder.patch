@@ -133,7 +133,7 @@
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
 
-@@ -230,9 +257,17 @@ package_install: FORCE
+@@ -230,9 +260,17 @@ package_install: FORCE
  	@echo
  	@echo Installing packages...
  ifeq ($(CONFIG_USE_APK),)
@@ -152,6 +152,7 @@
  else
  	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/libc-*.apk $(PACKAGE_DIR)/libc-*.apk))
  	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/kernel-*.apk $(PACKAGE_DIR)/kernel-*.apk))
+
 @@ -260,16 +295,19 @@ else
  	)
  endif
