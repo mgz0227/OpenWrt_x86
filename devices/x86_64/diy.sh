@@ -17,7 +17,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/backport-6.12/612-08-v6.17-net-dsa-b53-fix-IP_MULTICAST_CTRL-on-BCM5325.patch
 rm -rf target/linux/generic/backport-6.12/600-01-v6.14-net-dsa-add-hook-to-determine-whether-EEE-is-support.patch
 rm -rf target/linux/generic/backport-6.12/600-02-v6.14-net-dsa-provide-implementation-of-.support_eee.patch
-
+rm -rf target/linux/generic/backport-6.12/610-02-v6.14-net-dsa-b53-bcm_sf2-implement-.support_eee-method.patch
 
 
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
