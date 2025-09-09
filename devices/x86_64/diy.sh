@@ -17,7 +17,7 @@ rm -rf target/linux/generic/backport-6.12/600-02-v6.14-net-dsa-provide-implement
 rm -rf target/linux/generic/backport-6.12/610-02-v6.14-net-dsa-b53-bcm_sf2-implement-.support_eee-method.patch
 rm -rf target/linux/generic/backport-6.12/610-05-v6.16-net-dsa-b53-do-not-enable-EEE-on-bcm63xx.patch
 rm -rf target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch
-
+rm -rf target/linux/generic/pending-6.12/742-net-ethernet-mtk_eth_soc-fix-tx-vlan-tag-for-llc-pac.patch
 
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
