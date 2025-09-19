@@ -18,7 +18,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #rm -rf target/linux/generic/backport-6.12/610-05-v6.16-net-dsa-b53-do-not-enable-EEE-on-bcm63xx.patch
 #rm -rf target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch
 #rm -rf target/linux/generic/pending-6.12/742-net-ethernet-mtk_eth_soc-fix-tx-vlan-tag-for-llc-pac.patch
-
+rm -rf target/linux/generic/backport-6.12/630-v6.17-bpf-Allow-fall-back-to-interpreter-for-programs-with.patch
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-01-v6.14-mtd-rawnand-qcom-cleanup-qcom_nandc-driver.patch -P target/linux/generic/backport-6.12/
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/410-02-v6.14-mtd-rawnand-qcom-Add-qcom-prefix-to-common-api.patch -P target/linux/generic/backport-6.12/
 #wget -N https://github.com/graysky2/openwrt/raw/6/target/linux/generic/backport-6.12/621-proc-fix-missing-pde_set_flags.patch -P target/linux/generic/backport-6.12/
