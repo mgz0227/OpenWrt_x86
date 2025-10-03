@@ -11,7 +11,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #内核升级模块
 #开始
-
+rm -rf target/linux/generic/backport-6.12/787-v6.17-net-sfp-add-quirk-for-FLYPRO-copper-SFP-module.patch
 
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.12/target/linux/generic/kernel-6.12 -P include/
