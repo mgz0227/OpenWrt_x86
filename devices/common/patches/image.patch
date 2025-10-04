@@ -22,20 +22,3 @@
  IMG_ROOTFS:=$(IMG_PREFIX)-rootfs
  IMG_COMBINED:=$(IMG_PREFIX)-combined
  ifeq ($(DUMP),)
-
---- a/target/linux/x86/image/Makefile
-+++ b/target/linux/x86/image/Makefile
-@@ -44,9 +44,12 @@
- 		$(INSTALL_DIR) $@.boot/efi/boot
- 		$(CP) $(STAGING_DIR_IMAGE)/grub2/boot$(if $(CONFIG_x86_64),x64,ia32).efi $@.boot/efi/boot/
- 	)
-+	# 使用 IMG_PREFIX 自定义内部镜像名称（Make 展开）
-+	OUT_IMG := $(BIN_DIR)/$(IMG_PREFIX)-$(notdir $@)
-+	@echo "Generating image: $(OUT_IMG)"
- 	PADDING="1" SIGNATURE="$(IMG_PART_SIGNATURE)" \
- 		$(if $(filter $(1),efi),GUID="$(IMG_PART_DISKGUID)") $(SCRIPT_DIR)/gen_image_generic.sh \
--		$@ \
-+		$(OUT_IMG) \
- 		$(CONFIG_TARGET_KERNEL_PARTSIZE) $@.boot \
- 		$(CONFIG_TARGET_ROOTFS_PARTSIZE) $(IMAGE_ROOTFS) \
- 		256
