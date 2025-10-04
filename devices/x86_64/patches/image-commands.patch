@@ -1,19 +1,15 @@
 --- a/include/image-commands.mk
 +++ b/include/image-commands.mk
-@@ -638,6 +638,21 @@
+@@ -419,6 +419,17 @@ endef
  
  # Convert a raw image into a $1 type image.
  # E.g. | qemu-image vdi <optional extra arguments to qemu-img binary>
 +define Build/qemu-exsi
 +	if command -v qemu-img; then \
 +		name="$(subst .vmdk.zip,,$@)"; \
-+		date_name="meowwrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined"; \
-+		if [ "$(CONFIG_GRUB_EFI_IMAGES)" = "y" ]; then \
-+			date_name="MeowWrt-$(shell date +%m.%d.%Y)-x86-64-generic-ext4-combined-efi"; \
-+		fi; \
-+		qemu-img convert -f raw -O vmdk -o adapter_type=lsilogic -o subformat=monolithicFlat $@ $${date_name}.vmdk; \
++		qemu-img convert -f raw -O $1 $@ $$name.vmdk; \
 +		rm -f $@; \
-+		zip -jm $@ $${date_name}.vmdk $${date_name}-flat.vmdk; \
++		zip -jm $@ $$name*.vmdk; \
 +	else \
 +		echo "WARNING: Install qemu-img to create VDI/VMDK images" >&2; exit 1; \
 +	fi
