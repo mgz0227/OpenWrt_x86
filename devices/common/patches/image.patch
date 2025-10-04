@@ -1,17 +1,24 @@
 --- a/include/image.mk
 +++ b/include/image.mk
-@@ -45,7 +45,13 @@
+@@ -45,7 +45,20 @@
  IMG_PREFIX_VERNUM:=$(if $(CONFIG_VERSION_FILENAMES),$(call sanitize,$(VERSION_NUMBER))-)
  IMG_PREFIX_VERCODE:=$(if $(CONFIG_VERSION_CODE_FILENAMES),$(call sanitize,$(VERSION_CODE))-)
  
 -IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)-$(SUBTARGET)
 +#
-+# 自定义固件命名规则：MeowWrt-月.日.年-架构-子目标
++# MeowWrt 自定义固件命名规则：MeowWrt-月.日.年-架构-子目标
 +# 示例输出：
-+#   MeowWrt-09.28.2025-x86-64-generic-squashfs-combined-efi.img.gz
++#   MeowWrt-10.04.2025-x86-64-generic-squashfs-combined-efi.img.gz
 +#
-+BUILD_DATE := $(shell date +%m.%d.%Y)
-+IMG_PREFIX := MeowWrt-$(BUILD_DATE)-$(BOARD)-$(SUBTARGET)
++# 使用 SOURCE_DATE_EPOCH 保证可复现构建，否则取当前时间
++BUILD_DATE := $(if $(SOURCE_DATE_EPOCH),$(shell date -u -d @$(SOURCE_DATE_EPOCH) +%m.%d.%Y),$(shell date +%m.%d.%Y))
++
++# 清空原有版本号/额外前缀，避免残留 OpenWrt 片段
++IMG_PREFIX_EXTRA :=
++IMG_PREFIX_VERNUM :=
++IMG_PREFIX_VERCODE :=
++override IMG_PREFIX := MeowWrt-$(BUILD_DATE)-$(BOARD)-$(SUBTARGET)
++ 
  IMG_ROOTFS:=$(IMG_PREFIX)-rootfs
  IMG_COMBINED:=$(IMG_PREFIX)-combined
  ifeq ($(DUMP),)
