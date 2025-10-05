@@ -273,13 +273,6 @@ jobs:
         fi
         df -hT
 
-    - name: List scripts directory
-      run: |
-        cd openwrt/scripts
-        ls -la
-        cd ..
-        cd ..
-
     - name: Debug make & IMG_PREFIX
       run: |
         cd openwrt
