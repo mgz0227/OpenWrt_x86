@@ -279,7 +279,6 @@ jobs:
         ls -la
         cd ..
         cd ..
-        rm -f openwrt/scripts/command_all.sh
 
     - name: Debug make & IMG_PREFIX
       run: |
