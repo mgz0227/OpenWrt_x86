@@ -1,0 +1,10 @@
+--- a/scripts/command_all.sh
++++ b/scripts/command_all.sh
+@@ -7,5 +7,5 @@
+ esac
+ 
+ for ELEMENT in $(echo $PATH | tr ":" "\n"); do
+-        PATH=$ELEMENT command -v "$@"
++        PATH=$ELEMENT command -v "$@" 2>/dev/null || true
+ done
+\ No newline at end of file
