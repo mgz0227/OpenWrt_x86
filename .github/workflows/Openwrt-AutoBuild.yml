@@ -104,7 +104,7 @@ jobs:
         libelf-dev device-tree-compiler libgmp3-dev libmpc-dev libfuse-dev dwarves
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
-        sudo rm -f /usr/bin/gmake || true
+        #sudo rm -f /usr/bin/gmake || true
 
         sudo timedatectl set-timezone "Asia/Shanghai"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -273,19 +273,6 @@ jobs:
         fi
         df -hT
 
-    - name: Debug make & IMG_PREFIX
-      run: |
-        cd openwrt
-        echo "=========================="
-        echo "🔧 Checking make version..."
-        which make
-        make -v
-        env | grep -i MAKE || true
-        echo "=========================="
-        echo "🔍 Checking IMG_PREFIX value..."
-        make -p | grep ^IMG_PREFIX
-        echo "=========================="
-        cd ..
 
     - name: Compile the firmware
       id: compile
