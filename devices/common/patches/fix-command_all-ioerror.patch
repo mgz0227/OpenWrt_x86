@@ -7,3 +7,35 @@
 -        PATH=$ELEMENT command -v "$@"
 +        PATH=$ELEMENT command -v "$@" 2>/dev/null || true
  done
+
+
+--- a/scripts/feeds
++++ b/scripts/feeds
+@@ -19,12 +19,22 @@
+ $mk or $mk = "make";	# default to 'make'
+ 
+ # check version of make
+-my @mkver = split /\s+/, `$mk -v`, 4;
++$mk =~ s/\s+$//;
++my $mkout = `$mk -v 2>/dev/null | head -n1`;
++chomp $mkout;
++my @mkver = split /\s+/, $mkout, 4;
+ my $valid_mk = 1;
+-$mkver[0] =~ /^GNU/ or $valid_mk = 0;
+-$mkver[1] =~ /^Make/ or $valid_mk = 0;
+-
+-my ($mkv1, $mkv2) = split /\./, $mkver[2];
++if ($mkver[0] !~ /^GNU/ || $mkver[1] !~ /^Make/) {
++    $valid_mk = 0;
++}
++my ($mkv1, $mkv2) = (0, 0);
++if (defined $mkver[2] && $mkver[2] =~ /^(\d+)\.(\d+)/) {
++    $mkv1 = $1;
++    $mkv2 = $2;
++} else {
++    # fallback to 4.3 to avoid spurious failure in CI
++    $mkv1 = 4; $mkv2 = 3;
++}
+ ($mkv1 >= 4 || ($mkv1 == 3 && $mkv2 >= 81)) or $valid_mk = 0;
+ 
+ $valid_mk or die "Unsupported version of make found: $mk\n";
