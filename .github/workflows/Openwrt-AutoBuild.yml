@@ -273,6 +273,7 @@ jobs:
 
     - name: Debug make & IMG_PREFIX
       run: |
+        cd openwrt
         echo "=========================="
         echo "🔧 Checking make version..."
         which make
@@ -281,6 +282,7 @@ jobs:
         echo "🔍 Checking IMG_PREFIX value..."
         make -p | grep ^IMG_PREFIX
         echo "=========================="
+        cd ..
 
     - name: Compile the firmware
       id: compile
