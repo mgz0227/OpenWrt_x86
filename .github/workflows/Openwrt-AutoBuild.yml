@@ -271,7 +271,16 @@ jobs:
         fi
         df -hT
 
-
+    - name: Debug make & IMG_PREFIX
+      run: |
+        echo "=========================="
+        echo "🔧 Checking make version..."
+        which make
+        make -v
+        echo "=========================="
+        echo "🔍 Checking IMG_PREFIX value..."
+        make -p | grep ^IMG_PREFIX
+        echo "=========================="
 
     - name: Compile the firmware
       id: compile
