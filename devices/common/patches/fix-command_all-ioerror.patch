@@ -7,4 +7,3 @@
 -        PATH=$ELEMENT command -v "$@"
 +        PATH=$ELEMENT command -v "$@" 2>/dev/null || true
  done
-\ No newline at end of file
