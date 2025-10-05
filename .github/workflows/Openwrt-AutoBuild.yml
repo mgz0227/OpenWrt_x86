@@ -272,11 +272,13 @@ jobs:
             rm -rf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
         fi
         df -hT
-        
+
     - name: List scripts directory
       run: |
         cd openwrt/scripts
         ls -la
+        cd ..
+        cd ..
 
     - name: Debug make & IMG_PREFIX
       run: |
