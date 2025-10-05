@@ -280,6 +280,7 @@ jobs:
         echo "🔧 Checking make version..."
         which make
         make -v
+        env | grep -i MAKE || true
         echo "=========================="
         echo "🔍 Checking IMG_PREFIX value..."
         make -p | grep ^IMG_PREFIX
