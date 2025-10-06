@@ -14,8 +14,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf target/linux/generic/backport-6.12/787-v6.17-net-sfp-add-quirk-for-FLYPRO-copper-SFP-module.patch
 
 #以下不能动
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.12/target/linux/generic/kernel-6.12 -P include/
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.12/target/linux/generic/kernel-6.12 -P target/linux/generic/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P target/linux/generic/
 #结束
 
 sed -i 's/kmod-r8169/kmod-r8168/' target/linux/x86/image/64.mk
