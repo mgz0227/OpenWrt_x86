@@ -1,16 +1,3 @@
---- a/package/feeds/luci/luci-mod-network/htdocs/luci-static/resources/view/network/dns.js
-+++ b/package/feeds/luci/luci-mod-network/htdocs/luci-static/resources/view/network/dns.js
-@@ -442,6 +442,9 @@ return view.extend({
- 		so.rmempty = false;
- 		so.datatype = 'ipaddr("nomask")';
- 
-+		so = ss.option(form.Value, 'comments', _('Comments'));
-+		so.rmempty  = true;
-+
- 		var ipaddrs = {};
- 
- 		Object.keys(hosts).forEach(function(mac) {
-
 --- a/package/feeds/luci/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
 +++ b/package/feeds/luci/luci-mod-network/htdocs/luci-static/resources/view/network/dhcp.js
 @@ -347,6 +366,10 @@ return view.extend({
