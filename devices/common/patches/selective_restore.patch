@@ -241,16 +241,16 @@ diff --git a/package/base-files/files/sbin/sysupgrade b/package/base-files/files
 index 75817d178aea18..4a51304f771e20 100755
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
-@@ -22,6 +22,8 @@ CONF_BACKUP_LIST=0
+@@ -20,6 +20,8 @@
  CONF_BACKUP_LIST=0
  CONF_BACKUP=
  CONF_RESTORE=
 +CONF_SELECTIVE_RESTORE=
 +CONF_SELECTIVE_RESTORE_FILELIST=
+ USE_CURR_PART=0
  NEED_IMAGE=
  HELP=0
- TEST=0
-@@ -51,6 +53,7 @@ while [ -n "$1" ]; do
+@@ -49,6 +51,7 @@
  		-u) SKIP_UNCHANGED=1;;
  		-b|--create-backup) CONF_BACKUP="$2" NEED_IMAGE=1; shift;;
  		-r|--restore-backup) CONF_RESTORE="$2" NEED_IMAGE=1; shift;;
@@ -258,7 +258,7 @@ index 75817d178aea18..4a51304f771e20 100755
  		-l|--list-backup) CONF_BACKUP_LIST=1;;
  		-f) CONF_IMAGE="$2"; shift;;
  		-s) USE_CURR_PART=1;;
-@@ -105,6 +108,11 @@ backup-command:
+@@ -101,6 +104,11 @@
  	             restore a .tar.gz created with sysupgrade -b
  	             then exit. Does not flash an image. If file is '-',
  	             the archive is read from stdin.
@@ -270,10 +270,11 @@ index 75817d178aea18..4a51304f771e20 100755
  	-l | --list-backup
  	             list the files that would be backed up when calling
  	             sysupgrade -b. Does not create a backup file.
-@@ -351,6 +359,22 @@ if [ -n "$CONF_RESTORE" ]; then
+@@ -338,6 +346,22 @@
+ 	fi
  	exit $?
  fi
- 
++
 +if [ -n "$CONF_SELECTIVE_RESTORE" ]; then
 +	if [ "$CONF_SELECTIVE_RESTORE" != "-" ] && [ ! -f "$CONF_SELECTIVE_RESTORE" ]; then
 +		echo "Backup archive '$CONF_SELECTIVE_RESTORE' not found." >&2
@@ -289,10 +290,10 @@ index 75817d178aea18..4a51304f771e20 100755
 +	fi
 +	exit $?
 +fi
-+
+ 
  type platform_check_image >/dev/null 2>/dev/null || {
  	echo "Firmware upgrade is not implemented for this platform." >&2
- 	exit 1
+
 diff --git a/target/linux/bcm27xx/base-files/lib/upgrade/platform.sh b/target/linux/bcm27xx/base-files/lib/upgrade/platform.sh
 index 69cc60e2bcb095..b7fffd68b4b450 100644
 --- a/target/linux/bcm27xx/base-files/lib/upgrade/platform.sh
