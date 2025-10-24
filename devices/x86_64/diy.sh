@@ -11,10 +11,7 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 #内核升级模块
 #开始
-rm -rf target/linux/generic/backport-6.12/787-v6.17-net-sfp-add-quirk-for-FLYPRO-copper-SFP-module.patch
-rm -rf target/linux/generic/hack-6.12/941-Revert-ksmbd-limit-repeated-connections-from-clients.patch
-rm -rf target/linux/generic/hack-6.12/940-Revert-ksmbd-extend-the-connection-limiting-mechanism-to-ipv6.patch
-rm -rf target/linux/generic/backport-6.12/541-v6.18-ksmbd-add-max-ip-connections-parameter.patch
+
 rm -rf target/linux/generic/backport-6.12/510-v6.18-ksmbd-fix-recursive-locking-in-RPC-handle-list-access.patch
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
