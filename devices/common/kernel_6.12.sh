@@ -11,8 +11,8 @@ cp -rf --parents target/linux package/boot package/devel package/firmware packag
 cd -
 
 cd feeds/packages
-rm -rf net/xtables-addons net/strongswan net/cgi-io utils/coremark lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
-git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan net/cgi-io lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
+rm -rf net/xtables-addons net/strongswan net/cgi-io net/nginx-util utils/coremark lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
+git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan net/cgi-io net/nginx-util lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
 cd ../../
 
 cd feeds/luci
