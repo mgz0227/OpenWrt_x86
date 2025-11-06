@@ -11,11 +11,11 @@ cp -rf --parents target/linux package/boot package/devel package/firmware packag
 cd -
 
 cd feeds/packages
-rm -rf net/xtables-addons net/strongswan utils/coremark lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
-git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
+rm -rf net/xtables-addons net/strongswan net/cgi-io utils/coremark lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
+git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan net/cgi-io lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
 cd ../../
 
-wget -N https://raw.githubusercontent.com/mgz0227/lucihttp/refs/heads/master/CMakeLists.txt feeds/luci/contrib/package/lucihttp
+#wget -N https://raw.githubusercontent.com/mgz0227/lucihttp/refs/heads/master/CMakeLists.txt feeds/luci/contrib/package/lucihttp
 #cd package
 #rm -rf devel/kselftests-bpf 
 #devel/perf
