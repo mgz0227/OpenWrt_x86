@@ -16,8 +16,8 @@ git_clone_path master https://github.com/openwrt/packages net/xtables-addons net
 cd ../../
 
 cd feeds/luci
-rm -rf /contrib/package/lucihttp libs/rpcd-mod-rrdns
-git_clone_path master https://github.com/openwrt/luci contrib/package/lucihttp libs/rpcd-mod-rrdns
+rm -rf /contrib/package/lucihttp libs/rpcd-mod-rrdns libs
+git_clone_path master https://github.com/openwrt/luci contrib/package/lucihttp libs/rpcd-mod-rrdns libs
 cd ../../
 #wget -N https://raw.githubusercontent.com/mgz0227/lucihttp/refs/heads/master/CMakeLists.txt feeds/luci/contrib/package/lucihttp
 #cd package
