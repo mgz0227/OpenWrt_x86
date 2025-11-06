@@ -15,6 +15,10 @@ rm -rf net/xtables-addons net/strongswan net/cgi-io utils/coremark lang/golang u
 git_clone_path master https://github.com/openwrt/packages net/xtables-addons net/strongswan net/cgi-io lang/golang utils/open-vm-tools libs/rpcsvc-proto libs
 cd ../../
 
+cd feeds/luci
+rm -rf /contrib/package/lucihttp
+git_clone_path master https://github.com/openwrt/luci contrib/package/lucihttp
+cd ../../
 #wget -N https://raw.githubusercontent.com/mgz0227/lucihttp/refs/heads/master/CMakeLists.txt feeds/luci/contrib/package/lucihttp
 #cd package
 #rm -rf devel/kselftests-bpf 
