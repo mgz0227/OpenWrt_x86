@@ -12,10 +12,8 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 #内核升级模块
 #开始
 
-rm -rf target/linux/generic/backport-6.12/510-v6.18-ksmbd-fix-recursive-locking-in-RPC-handle-list-access.patch
+rm -rf target/linux/generic/backport-6.12/830-v6.18-spi-bcm63xx-fix-premature-CS-deassertion-on-RX-only-transactions.patch
 
-
-rm -rf target/linux/generic/backport-6.12/612-01-v6.17-net-dsa-tag_brcm-legacy-reorganize-functions.patch
 #以下不能动
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P target/linux/generic/
