@@ -58,7 +58,7 @@
  
  return baseclass.extend({
  	title: _('System'),
-@@ -32,8 +46,10 @@
+@@ -32,6 +32,9 @@
  		return Promise.all([
  			L.resolveDefault(callSystemBoard(), {}),
  			L.resolveDefault(callSystemInfo(), {}),
@@ -66,11 +66,9 @@
 +			L.resolveDefault(callCPUInfo(), {}),
 +			L.resolveDefault(callTempInfo(), {}),
  			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' }),
--			L.resolveDefault(callGetUnixtime(), 0),
+ 			L.resolveDefault(callGetUnixtime(), 0),
  			uci.load('system')
- 		]);
- 	},
-@@ -41,8 +57,10 @@
+@@ -41,8 +44,11 @@
  	render: function(data) {
  		var boardinfo   = data[0],
  		    systeminfo  = data[1],
@@ -80,8 +78,10 @@
 +		    cpuinfo     = data[3],
 +		    tempinfo    = data[4],
 +		    luciversion = data[5];
++		    unixtime    = data[6];
  
  		luciversion = luciversion.branch + ' ' + luciversion.revision;
+ 
  
 @@ -64,8 +82,6 @@
  

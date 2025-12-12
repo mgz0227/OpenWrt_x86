@@ -29,30 +29,35 @@
 
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
-@@ -284,14 +284,15 @@
+@@ -284,6 +284,16 @@
  		# Part of archive with installed packages info
  		if [ $ret -eq 0 ]; then
  			if [ "$SAVE_INSTALLED_PKGS" -eq 1 ]; then
--				# Format: pkg-name<TAB>{rom,overlay,unknown}
--				# rom is used for pkgs in /rom, even if updated later
--				if [ -d "/usr/lib/opkg/info" ]; then
--					tar_print_member "$INSTALLED_PACKAGES" "$(find /usr/lib/opkg/info -name "*.control" \( \
--						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
--						\( -exec test -f /overlay/upper/{} \; -exec echo {} overlay \; \) -o \
--						\( -exec echo {} unknown \; \) \
--						\) | sed -e 's,.*/,,;s/\.control /\t/')" || ret=1
-+				. /etc/profile.d/opkg.sh && opkg save
++				# Optional: run opkg save if available (ignore failures)
++				[ -r /etc/profile.d/opkg.sh ] && . /etc/profile.d/opkg.sh >/dev/null 2>&1
++				type -t opkg >/dev/null 2>&1 && opkg save >/dev/null 2>&1
++
++				# Ensure ASU defaults script is included in backup (if present in /rom)
 +				[ -f /rom/etc/uci-defaults/zz-asu-defaults ] && {
-+				cp -f /rom/etc/uci-defaults/zz-asu-defaults /etc/uci-defaults/zz-asu-defaults
-+				echo "/etc/uci-defaults/zz-asu-defaults" >> $CONFFILES
++					cp -f /rom/etc/uci-defaults/zz-asu-defaults /etc/uci-defaults/zz-asu-defaults
++					echo "/etc/uci-defaults/zz-asu-defaults" >> "$CONFFILES"
 +				}
++
+ 				# Format: pkg-name<TAB>{rom,overlay,unknown}
+ 				# rom is used for pkgs in /rom, even if updated later
+ 				if [ -d "/usr/lib/opkg/info" ]; then
+@@ -299,6 +309,11 @@
+ 						\( -exec echo {} unknown \; \) \
+ 						\) | sed -e 's,.*/,,;s/\.list /\t/')" || ret=1
+ 				fi
 +			else
++				# If not saving installed packages, reset opkg uci state (ignore failures)
 +				uci -q del opkg.auto
 +				uci -q del opkg.custom
-+				uci commit opkg
- 				elif [ -d "/lib/apk/packages" ]; then
- 					tar_print_member "$INSTALLED_PACKAGES" "$(find /lib/apk/packages -name "*.list" \( \
- 						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
++				uci commit op
+ 			fi
+ 		fi
+ 
 
  
 
