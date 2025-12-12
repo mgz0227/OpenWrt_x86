@@ -69,7 +69,7 @@
  			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' })
  		]);
  	},
-@@ -41,8 +41,11 @@
+@@ -41,8 +41,10 @@
  	render: function(data) {
  		var boardinfo   = data[0],
  		    systeminfo  = data[1],
@@ -79,7 +79,6 @@
 +		    cpuinfo     = data[3],
 +		    tempinfo    = data[4],
 +		    luciversion = data[5];
-+		    unixtime    = data[6];
  
  		luciversion = luciversion.branch + ' ' + luciversion.revision;
  
