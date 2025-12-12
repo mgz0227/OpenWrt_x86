@@ -90,7 +90,7 @@
 
 --- a/target/imagebuilder/files/Makefile
 +++ b/target/imagebuilder/files/Makefile
-@@ -148,6 +148,33 @@
+@@ -144,6 +144,33 @@
  # "-pkgname" in the package list means remove "pkgname" from the package list
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  BUILD_PACKAGES:=$(USER_PACKAGES) $(BUILD_PACKAGES)
@@ -124,7 +124,7 @@
  BUILD_PACKAGES:=$(filter-out $(filter -%,$(BUILD_PACKAGES)) $(patsubst -%,%,$(filter -%,$(BUILD_PACKAGES))),$(BUILD_PACKAGES))
  PACKAGES:=
  
-@@ -162,7 +189,10 @@
+@@ -158,7 +185,10 @@
  	$(MAKE) -s prepare_rootfs
  	$(MAKE) -s build_image
  	$(MAKE) -s json_overview_image_info
@@ -136,13 +136,13 @@
  
  _call_manifest: FORCE
  	rm -rf $(TARGET_DIR)
-@@ -230,9 +260,17 @@
+@@ -225,9 +255,17 @@
  	@echo
  	@echo Installing packages...
  ifeq ($(CONFIG_USE_APK),)
 +    $(eval $(call add_zh_cn_packages))
- 	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/libc_*.ipk $(PACKAGE_DIR)/libc_*.ipk))
- 	$(OPKG) install $(firstword $(wildcard $(LINUX_DIR)/kernel_*.ipk $(PACKAGE_DIR)/kernel_*.ipk))
+ 	$(OPKG) install $(wildcard $(PACKAGE_DIR)/libc_*.ipk)
+ 	$(OPKG) install $(wildcard $(PACKAGE_DIR)/kernel_*.ipk)
 -	$(OPKG) install $(BUILD_PACKAGES)
 +	$(OPKG) install --force-maintainer $(BUILD_PACKAGES) luci-i18n-base-zh-cn || true
 +	$(if $(USER_FILES), \
@@ -153,8 +153,9 @@
 +	)
 +	$(OPKG) install --force-maintainer --force-reinstall my-default-settings 2>/dev/null
  else
- 	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/libc-*.apk $(PACKAGE_DIR)/libc-*.apk))
- 	$(APK) add --no-scripts $(firstword $(wildcard $(LINUX_DIR)/kernel-*.apk $(PACKAGE_DIR)/kernel-*.apk))
+ 	$(APK) add --arch $(ARCH_PACKAGES) --no-scripts $(BUILD_PACKAGES) \
+         "base-files=$(BASE_FILES_VERSION)" \
+
 @@ -260,16 +298,19 @@
  	)
  endif

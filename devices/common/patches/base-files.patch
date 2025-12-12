@@ -29,17 +29,18 @@
 
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
-@@ -277,13 +277,15 @@ create_backup_archive() {
+@@ -284,14 +284,15 @@
  		# Part of archive with installed packages info
  		if [ $ret -eq 0 ]; then
  			if [ "$SAVE_INSTALLED_PKGS" -eq 1 ]; then
 -				# Format: pkg-name<TAB>{rom,overlay,unknown}
 -				# rom is used for pkgs in /rom, even if updated later
--				tar_print_member "$INSTALLED_PACKAGES" "$(find /usr/lib/opkg/info -name "*.control" \( \
--					\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
--					\( -exec test -f /overlay/upper/{} \; -exec echo {} overlay \; \) -o \
--					\( -exec echo {} unknown \; \) \
--					\) | sed -e 's,.*/,,;s/\.control /\t/')" || ret=1
+-				if [ -d "/usr/lib/opkg/info" ]; then
+-					tar_print_member "$INSTALLED_PACKAGES" "$(find /usr/lib/opkg/info -name "*.control" \( \
+-						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
+-						\( -exec test -f /overlay/upper/{} \; -exec echo {} overlay \; \) -o \
+-						\( -exec echo {} unknown \; \) \
+-						\) | sed -e 's,.*/,,;s/\.control /\t/')" || ret=1
 +				. /etc/profile.d/opkg.sh && opkg save
 +				[ -f /rom/etc/uci-defaults/zz-asu-defaults ] && {
 +				cp -f /rom/etc/uci-defaults/zz-asu-defaults /etc/uci-defaults/zz-asu-defaults
@@ -49,17 +50,20 @@
 +				uci -q del opkg.auto
 +				uci -q del opkg.custom
 +				uci commit opkg
- 			fi
- 		fi
+ 				elif [ -d "/lib/apk/packages" ]; then
+ 					tar_print_member "$INSTALLED_PACKAGES" "$(find /lib/apk/packages -name "*.list" \( \
+ 						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
+
  
 
 --- a/package/base-files/files/etc/profile
 +++ b/package/base-files/files/etc/profile
-@@ -22,7 +23,11 @@ esac
+@@ -32,8 +32,11 @@
  
- [ -n "$FAILSAFE" ] || {
- 	for FILE in /etc/profile.d/*.sh; do
--		[ -e "$FILE" ] && . "$FILE"
+ if [ -z "$FAILSAFE" ] ; then
+ 	for FILE in /etc/profile.d/*.sh ; do
+-		[ -f "${FILE%.sh}.hush" ] && continue
+-		[ -f "$FILE" ] && . "$FILE"
 +		if [ "$FILE" == "/etc/profile.d/30-sysinfo.sh" ]; then
 +		 [ "$(which bash)" ] && env -i bash "$FILE"
 +		else
@@ -67,7 +71,9 @@
 +		fi
  	done
  	unset FILE
- }
+ fi
+\ No newline at end of file
+
 
 --- a/package/base-files/files/lib/preinit/02_sysinfo
 +++ b/package/base-files/files/lib/preinit/02_sysinfo

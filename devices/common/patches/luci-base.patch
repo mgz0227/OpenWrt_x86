@@ -119,26 +119,6 @@
 
 --- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
 +++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
-@@ -2560,6 +2560,16 @@ Protocol = baseclass.extend(/** @lends LuCI.network.Protocol.prototype */ {
- 		return (this._ubus('dynamic') == true);
- 	},
- 
-+	/**
-+	 * Checks whether this logical interface is pending.
-+	 *
-+	 * @returns {boolean}
-+	 * returns `true` when the interface is pending or `false` when it is not.
-+	 */
-+	isPending: function() {
-+		return (this._ubus('pending') == true);
-+	},
-+
- 	/**
- 	 * Checks whether this interface is an alias interface.
- 	 *
-
---- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
-+++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
 @@ -4376,4 +4376,10 @@ WifiNetwork = baseclass.extend(/** @lends LuCI.network.WifiNetwork.prototype */
  	}
  });
@@ -310,28 +290,32 @@
  var CBINetworkSelect = form.ListValue.extend({
  	__name__: 'CBI.NetworkSelect',
  
-@@ -645,12 +749,91 @@ var CBIGroupSelect = form.ListValue.extend({
+@@ -734,24 +734,79 @@
  	},
  });
  
-+// how to name a ListValue class which contain domain and mac group
-+
+-var CBIGroupSelect = form.ListValue.extend({
+-	__name__: 'CBI.GroupSelect',
++// ListValue: select wifidogx group by type (domain/mac/wildcard)
 +var CBIWifidogxGroupSelect = form.ListValue.extend({
 +	__name__: 'CBI.WifidogxGroupSelect',
-+
-+	// group_type: 1: Domain Group, 2: MAC Group
-+	// add a new property to store the group type
 +	group_type: '1',
-+
-+	load: function(section_id) {
+ 
+ 	load: function(section_id) {
+-		return getGroups().then(L.bind(function(groups) {
+-			for (var i = 0; i < groups.length; i++) {
+-				this.value(groups[i]);
+-			}
 +		this.sappList = [];
 +		var sections = uci.sections('wifidogx', 'group');
-+		
+ 
+-			return this.super('load', section_id);
+-		}, this));
 +		for (var i = 0; i < sections.length; i++) {
 +			if (sections[i]['g_type'] == this.group_type)
 +				this.sappList.push(sections[i]['.name']);
 +		}
-+		
++
 +		return this.super('load', section_id);
 +	},
 +
@@ -341,12 +325,13 @@
 +		} else if (group_type == 'wildcard') {
 +			this.group_type = '3';
 +		}
-+	},
-+
-+	filter: function(section_id, value) {
-+		return true;
-+	},
-+
+ 	},
+ 
+ 	filter: function(section_id, value) {
+ 		return true;
+ 	},
+-});
+ 
 +	renderWidget: function(section_id, option_index, cfgvalue) {
 +		var values = L.toArray((cfgvalue != null) ? cfgvalue : this.default),
 +		    choices = {},
@@ -366,7 +351,7 @@
 +			if (checked[name])
 +				values.push(name);
 +
-+			choices[name] =  E('span', { 'class': 'ifacebadge' }, name);
++			choices[name] = E('span', { 'class': 'ifacebadge' }, name);
 +		}
 +
 +		var widget = new ui.Dropdown(this.multiple ? values : values[0], choices, {
@@ -394,14 +379,13 @@
  
  return L.Class.extend({
  	ZoneSelect: CBIZoneSelect,
- 	ZoneForwards: CBIZoneForwards,
-+	IPSelect: CBIIPSelect,
- 	NetworkSelect: CBINetworkSelect,
+@@ -761,4 +816,5 @@
  	DeviceSelect: CBIDeviceSelect,
  	UserSelect: CBIUserSelect,
  	GroupSelect: CBIGroupSelect,
 +	WifidogxGroupSelect: CBIWifidogxGroupSelect,
  });
+
 
 --- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/validation.js
 +++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/validation.js
