@@ -1,7 +1,5 @@
-diff --git a/collections/luci/Makefile b/collections/luci/Makefile
-index 399f0a144076..40414347c839 100644
---- a/collections/luci/Makefile
-+++ b/collections/luci/Makefile
+--- a/feeds/luci/collections/luci/Makefile
++++ b/feeds/luci/collections/luci/Makefile
 @@ -13,8 +13,7 @@ LUCI_TITLE:=LuCI interface with Uhttpd as Webserver (default)
  LUCI_DESCRIPTION:=Standard OpenWrt set including package management and attended sysupgrades support
  LUCI_DEPENDS:= \
@@ -10,10 +8,9 @@ index 399f0a144076..40414347c839 100644
 -	+luci-app-attendedsysupgrade
 +	+luci-app-package-manager
  PKG_LICENSE:=Apache-2.0
-diff --git a/collections/luci-nginx/Makefile b/collections/luci-nginx/Makefile
-index c22a172422c7..7f268d002bad 100644
---- a/collections/luci-nginx/Makefile
-+++ b/collections/luci-nginx/Makefile
+
+--- a/feeds/luci/collections/luci-nginx/Makefile
++++ b/feeds/luci/collections/luci-nginx/Makefile
 @@ -15,7 +15,6 @@ LUCI_DEPENDS:= \
  	+IPV6:luci-proto-ipv6 \
  	+luci-app-firewall \
@@ -22,10 +19,9 @@ index c22a172422c7..7f268d002bad 100644
  	+luci-mod-admin-full \
  	+luci-proto-ppp \
  	+luci-theme-bootstrap \
-diff --git a/collections/luci-ssl/Makefile b/collections/luci-ssl/Makefile
-index 2f6d75b0c05b..6c89b6abad39 100644
---- a/collections/luci-ssl/Makefile
-+++ b/collections/luci-ssl/Makefile
+
+--- a/feeds/luci/collections/luci-ssl/Makefile
++++ b/feeds/luci/collections/luci-ssl/Makefile
 @@ -13,8 +13,7 @@ LUCI_TITLE:=LuCI with HTTPS support (mbedtls as SSL backend)
  LUCI_DEPENDS:=+luci-light \
  	+libustream-mbedtls \
@@ -34,10 +30,9 @@ index 2f6d75b0c05b..6c89b6abad39 100644
 -	+luci-app-attendedsysupgrade
 +	+luci-app-package-manager
  PKG_LICENSE:=Apache-2.0
-diff --git a/collections/luci-ssl-openssl/Makefile b/collections/luci-ssl-openssl/Makefile
-index 0baae5aad822..df019b2ebb5a 100644
---- a/collections/luci-ssl-openssl/Makefile
-+++ b/collections/luci-ssl-openssl/Makefile
+
+--- a/feeds/luci/collections/luci-ssl-openssl/Makefile
++++ b/feeds/luci/collections/luci-ssl-openssl/Makefile
 @@ -17,8 +17,7 @@ LUCI_DESCRIPTION:=LuCI with OpenSSL as the SSL backend (libustream-openssl).
  LUCI_DEPENDS:=+luci-light \
  	+libustream-openssl \
