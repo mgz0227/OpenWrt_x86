@@ -15,6 +15,10 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf target/linux/generic/backport-6.12/830-v6.18-spi-bcm63xx-fix-premature-CS-deassertion-on-RX-only-transactions.patch
 
 #以下不能动
+cd feeds/luci
+rm -rf modules/luci-mod-system modules/luci-mod-status modules/luci-mod-dashboard modules/luci-base
+git_clone_path openwrt-24.10 https://github.com/openwrt/luci modules/luci-mod-system modules/luci-mod-status modules/luci-mod-dashboard modules/luci-base
+cd ../..
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/main/target/linux/generic/kernel-6.12 -P target/linux/generic/
 #结束
