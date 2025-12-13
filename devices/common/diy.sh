@@ -11,6 +11,7 @@ sed -i 's#https://git.openwrt.org/feed/routing.git#https://github.com/openwrt/ro
 
 sed -i '$a src-git miaogongzi https://github.com/mgz0227/OP-Packages.git;master' feeds.conf.default
 sed -i "/telephony/d" feeds.conf.default
+sed -i "/video/d" feeds.conf.default
 
 sed -i "s?targets/%S/packages?targets/%S/\$(LINUX_VERSION)?" include/feeds.mk
 
