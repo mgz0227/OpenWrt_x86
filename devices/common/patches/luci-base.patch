@@ -1,6 +1,14 @@
 --- a/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
 +++ b/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
-@@ -192,6 +192,7 @@ const methods = {
+@@ -9,7 +9,6 @@
+ import { init_list, init_index, init_enabled, init_action, conntrack_list, process_list } from 'luci.sys';
+ import { revision, branch } from 'luci.version';
+ import { statvfs, uname } from 'luci.core';
+-import { connect } from 'ubus';
+ 
+ import timezones from 'luci.zoneinfo';
+ 
+@@ -222,6 +221,7 @@
  
  	getFeatures: {
  		call: function() {
@@ -8,62 +16,45 @@
  			let result = {
  				firewall:   access('/sbin/fw3') == true,
  				firewall4:  access('/sbin/fw4') == true,
-@@ -199,6 +200,7 @@ const methods = {
+@@ -229,6 +229,7 @@
  				bonding:    access('/sys/module/bonding'),
  				mii_tool:   access('/usr/sbin/mii-tool'),
  				offloading: access('/sys/module/xt_FLOWOFFLOAD/refcnt') == true || access('/sys/module/nft_flow_offload/refcnt') == true,
 +				fullcone:   access(`/lib/modules/${kernel_version}/xt_FULLCONENAT.ko`) == true || access(`/lib/modules/${kernel_version}/nft_fullcone.ko`) == true,
  				br2684ctl:  access('/usr/sbin/br2684ctl') == true,
  				swconfig:   access('/sbin/swconfig') == true,
- 				odhcpd:     access('/usr/sbin/odhcpd') == true,
-@@ -538,6 +540,99 @@ const methods = {
- 		call: function() {
- 			return { result: process_list() };
+ 				zram:       access('/sys/class/zram-control') == true,
+@@ -656,30 +657,75 @@
  		}
-+	},
-+
-+	getCPUBench: {
-+		call: function() {
-+			return { cpubench: readfile('/etc/bench.log') || '' };
-+		}
-+	},
-+
-+	getCPUInfo: {
-+		call: function() {
-+			if (!access('/sbin/cpuinfo'))
-+				return {};
-+
-+			const fd = popen('/sbin/cpuinfo');
-+			if (fd) {
-+				let cpuinfo = fd.read('all');
-+				fd.close();
-+
-+				return { cpuinfo: cpuinfo };
-+			} else {
-+				return { cpuinfo: error() };
-+			}
-+		}
-+	},
-+
+ 	},
+ 
+-	getOdhcp6cStats: {
 +	getCPUUsage: {
-+		call: function() {
+ 		call: function() {
+-			const ubus = connect();
+-			const devs = ubus.call('network.device', 'status');
 +			const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%", 100 - $8)}\'');
 +			if (fd) {
 +				let cpuusage = fd.read('all');
 +				fd.close();
-+
+ 
+-			if (!devs)
+-				return false;
 +				return { cpuusage: cpuusage };
 +			} else {
 +				return { cpuusage: error() };
 +			}
 +		}
 +	},
-+
+ 
+-			const dev_stats = {};
 +	getETHInfo: {
 +		call: function() {
 +			if (!access('/sbin/ethinfo'))
 +				return {};
-+
+ 
+-			for (let dev in devs) {
+-				const m = ubus.call(`odhcp6c.${dev}`, 'get_statistics');
 +			const fd = popen('/sbin/ethinfo');
 +			if (fd) {
 +				let ethinfo = fd.read('all');
@@ -71,7 +62,10 @@
 +					ethinfo = '{}';
 +				ethinfo = json(ethinfo);
 +				fd.close();
-+
+ 
+-				// not all interfaces are exposed unless odhcp6c runs on it
+-				if (!m)
+-					continue;
 +				return { ethinfo: ethinfo };
 +			} else {
 +				return { ethinfo: error() };
@@ -88,14 +82,17 @@
 +			if (fd) {
 +				let tempinfo = fd.read('all');
 +				fd.close();
-+
+ 
+-				push(dev_stats, dev);
+-				dev_stats[dev] = m;
 +				return { tempinfo: tempinfo };
 +			} else {
 +				return { tempinfo: error() };
-+			}
+ 			}
 +		}
 +	},
-+
+ 
+-			return { result: dev_stats };
 +	getOnlineUsers: {
 +		call: function() {
 +			const fd = open('/proc/net/arp', 'r');
@@ -112,7 +109,7 @@
 +			} else {
 +				return { onlineusers: error() };
 +			}
-+		}
+ 		}
  	}
  };
  
