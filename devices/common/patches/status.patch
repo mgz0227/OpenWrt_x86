@@ -59,27 +59,31 @@
  return baseclass.extend({
  	title: _('System'),
  
-@@ -25,6 +45,9 @@ return baseclass.extend({
+@@ -32,6 +32,9 @@
  		return Promise.all([
  			L.resolveDefault(callSystemBoard(), {}),
  			L.resolveDefault(callSystemInfo(), {}),
 +			L.resolveDefault(callCPUBench(), {}),
 +			L.resolveDefault(callCPUInfo(), {}),
 +			L.resolveDefault(callTempInfo(), {}),
- 			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' })
- 		]);
- 	},
-@@ -32,7 +56,10 @@ return baseclass.extend({
+ 			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' }),
+ 			L.resolveDefault(callGetUnixtime(), 0),
+ 			uci.load('system')
+@@ -41,8 +44,11 @@
  	render: function(data) {
  		var boardinfo   = data[0],
  		    systeminfo  = data[1],
--		    luciversion = data[2];
+-		    luciversion = data[2],
+-		    unixtime    = data[3];
 +		    cpubench    = data[2],
 +		    cpuinfo     = data[3],
 +		    tempinfo    = data[4],
-+		    luciversion = data[5];
++		    luciversion = data[5],
++		    unixtime    = data[6];
  
  		luciversion = luciversion.branch + ' ' + luciversion.revision;
+ 
+
  
 @@ -53,8 +81,6 @@ return baseclass.extend({
  
