@@ -37,10 +37,10 @@
 
 --- a/package/feeds/luci/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
 +++ b/package/feeds/luci/luci-mod-status/htdocs/luci-static/resources/view/status/include/10_system.js
-@@ -24,6 +24,20 @@
- 	object: 'system',
+@@ -18,6 +18,21 @@ var callSystemInfo = rpc.declare({
  	method: 'info'
  });
+ 
 +var callCPUBench = rpc.declare({
 +	object: 'luci',
 +	method: 'getCPUBench'
@@ -55,35 +55,33 @@
 +	object: 'luci',
 +	method: 'getTempInfo'
 +});
- 
++
  return baseclass.extend({
  	title: _('System'),
-@@ -32,6 +32,9 @@
+ 
+@@ -25,6 +45,9 @@ return baseclass.extend({
  		return Promise.all([
  			L.resolveDefault(callSystemBoard(), {}),
  			L.resolveDefault(callSystemInfo(), {}),
 +			L.resolveDefault(callCPUBench(), {}),
 +			L.resolveDefault(callCPUInfo(), {}),
 +			L.resolveDefault(callTempInfo(), {}),
- 			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' }),
- 			L.resolveDefault(callGetUnixtime(), 0),
- 			uci.load('system')
-@@ -41,8 +44,11 @@
+ 			L.resolveDefault(callLuciVersion(), { revision: _('unknown version'), branch: 'LuCI' })
+ 		]);
+ 	},
+@@ -32,7 +56,10 @@ return baseclass.extend({
  	render: function(data) {
  		var boardinfo   = data[0],
  		    systeminfo  = data[1],
--		    luciversion = data[2],
--		    unixtime    = data[3];
+-		    luciversion = data[2];
 +		    cpubench    = data[2],
 +		    cpuinfo     = data[3],
 +		    tempinfo    = data[4],
 +		    luciversion = data[5];
-+		    unixtime    = data[6];
  
  		luciversion = luciversion.branch + ' ' + luciversion.revision;
  
- 
-@@ -64,8 +82,6 @@
+@@ -53,8 +81,6 @@ return baseclass.extend({
  
  		var fields = [
  			_('Hostname'),         boardinfo.hostname,
@@ -92,8 +90,6 @@
  			_('Target Platform'),  (L.isObject(boardinfo.release) ? boardinfo.release.target : ''),
  			_('Firmware Version'), (L.isObject(boardinfo.release) ? boardinfo.release.description + ' / ' : '') + (luciversion || ''),
  			_('Kernel Version'),   boardinfo.kernel,
-
-
 @@ -67,6 +93,24 @@ return baseclass.extend({
  			) : null
  		];
