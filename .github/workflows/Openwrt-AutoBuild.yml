@@ -230,6 +230,7 @@ jobs:
             sed -n '/# Video Support/,/# end of Video Support/p' .config | sed -e 's/=m/=n/' >>.config
         fi
         make defconfig
+        make oldconfig
         fi
         cat .config
         
