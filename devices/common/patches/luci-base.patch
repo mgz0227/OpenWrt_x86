@@ -1,14 +1,6 @@
 --- a/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
 +++ b/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
-@@ -9,7 +9,6 @@
- import { init_list, init_index, init_enabled, init_action, conntrack_list, process_list } from 'luci.sys';
- import { revision, branch } from 'luci.version';
- import { statvfs, uname } from 'luci.core';
--import { connect } from 'ubus';
- 
- import timezones from 'luci.zoneinfo';
- 
-@@ -222,6 +221,7 @@
+@@ -192,6 +192,7 @@ const methods = {
  
  	getFeatures: {
  		call: function() {
@@ -16,45 +8,62 @@
  			let result = {
  				firewall:   access('/sbin/fw3') == true,
  				firewall4:  access('/sbin/fw4') == true,
-@@ -229,6 +229,7 @@
+@@ -199,6 +200,7 @@ const methods = {
  				bonding:    access('/sys/module/bonding'),
  				mii_tool:   access('/usr/sbin/mii-tool'),
  				offloading: access('/sys/module/xt_FLOWOFFLOAD/refcnt') == true || access('/sys/module/nft_flow_offload/refcnt') == true,
 +				fullcone:   access(`/lib/modules/${kernel_version}/xt_FULLCONENAT.ko`) == true || access(`/lib/modules/${kernel_version}/nft_fullcone.ko`) == true,
  				br2684ctl:  access('/usr/sbin/br2684ctl') == true,
  				swconfig:   access('/sbin/swconfig') == true,
- 				zram:       access('/sys/class/zram-control') == true,
-@@ -656,30 +657,75 @@
- 		}
- 	},
- 
--	getOdhcp6cStats: {
-+	getCPUUsage: {
+ 				odhcpd:     access('/usr/sbin/odhcpd') == true,
+@@ -538,6 +540,99 @@ const methods = {
  		call: function() {
--			const ubus = connect();
--			const devs = ubus.call('network.device', 'status');
+ 			return { result: process_list() };
+ 		}
++	},
++
++	getCPUBench: {
++		call: function() {
++			return { cpubench: readfile('/etc/bench.log') || '' };
++		}
++	},
++
++	getCPUInfo: {
++		call: function() {
++			if (!access('/sbin/cpuinfo'))
++				return {};
++
++			const fd = popen('/sbin/cpuinfo');
++			if (fd) {
++				let cpuinfo = fd.read('all');
++				fd.close();
++
++				return { cpuinfo: cpuinfo };
++			} else {
++				return { cpuinfo: error() };
++			}
++		}
++	},
++
++	getCPUUsage: {
++		call: function() {
 +			const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%", 100 - $8)}\'');
 +			if (fd) {
 +				let cpuusage = fd.read('all');
 +				fd.close();
- 
--			if (!devs)
--				return false;
++
 +				return { cpuusage: cpuusage };
 +			} else {
 +				return { cpuusage: error() };
 +			}
 +		}
 +	},
- 
--			const dev_stats = {};
++
 +	getETHInfo: {
 +		call: function() {
 +			if (!access('/sbin/ethinfo'))
 +				return {};
- 
--			for (let dev in devs) {
--				const m = ubus.call(`odhcp6c.${dev}`, 'get_statistics');
++
 +			const fd = popen('/sbin/ethinfo');
 +			if (fd) {
 +				let ethinfo = fd.read('all');
@@ -62,10 +71,7 @@
 +					ethinfo = '{}';
 +				ethinfo = json(ethinfo);
 +				fd.close();
- 
--				// not all interfaces are exposed unless odhcp6c runs on it
--				if (!m)
--					continue;
++
 +				return { ethinfo: ethinfo };
 +			} else {
 +				return { ethinfo: error() };
@@ -82,17 +88,14 @@
 +			if (fd) {
 +				let tempinfo = fd.read('all');
 +				fd.close();
- 
--				push(dev_stats, dev);
--				dev_stats[dev] = m;
++
 +				return { tempinfo: tempinfo };
 +			} else {
 +				return { tempinfo: error() };
- 			}
++			}
 +		}
 +	},
- 
--			return { result: dev_stats };
++
 +	getOnlineUsers: {
 +		call: function() {
 +			const fd = open('/proc/net/arp', 'r');
@@ -109,10 +112,44 @@
 +			} else {
 +				return { onlineusers: error() };
 +			}
- 		}
++		}
  	}
  };
  
+
+--- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
++++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
+@@ -2560,6 +2560,16 @@ Protocol = baseclass.extend(/** @lends LuCI.network.Protocol.prototype */ {
+ 		return (this._ubus('dynamic') == true);
+ 	},
+ 
++	/**
++	 * Checks whether this logical interface is pending.
++	 *
++	 * @returns {boolean}
++	 * returns `true` when the interface is pending or `false` when it is not.
++	 */
++	isPending: function() {
++		return (this._ubus('pending') == true);
++	},
++
+ 	/**
+ 	 * Checks whether this interface is an alias interface.
+ 	 *
+
+--- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
++++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/network.js
+@@ -4376,4 +4376,10 @@ WifiNetwork = baseclass.extend(/** @lends LuCI.network.WifiNetwork.prototype */
+ 	}
+ });
+ 
++setTimeout(function(){
++try{
++  document.getElementsByClassName('cbi-button-apply')[0].children[3].children[0].value='1'
++}catch(err) {
++}},1000)
++
+ return Network;
 
 --- a/package/feeds/luci/luci-base/ucode/dispatcher.uc
 +++ b/package/feeds/luci/luci-base/ucode/dispatcher.uc
@@ -163,12 +200,10 @@
  
  function getUsers() {
      return fs.lines('/etc/passwd').then(function(lines) {
-@@ -645,6 +646,83 @@ var CBIGroupSelect = form.ListValue.extend({
+@@ -752,6 +752,81 @@ var CBIGroupSelect = form.ListValue.extend({
  	},
  });
  
-+// how to name a ListValue class which contain domain and mac group
-+
 +var CBIWifidogxGroupSelect = form.ListValue.extend({
 +	__name__: 'CBI.WifidogxGroupSelect',
 +
@@ -247,7 +282,7 @@
  
  return L.Class.extend({
  	ZoneSelect: CBIZoneSelect,
-@@ -653,4 +731,5 @@ return L.Class.extend({
+@@ -761,4 +836,5 @@ return L.Class.extend({
  	DeviceSelect: CBIDeviceSelect,
  	UserSelect: CBIUserSelect,
  	GroupSelect: CBIGroupSelect,
