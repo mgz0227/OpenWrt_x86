@@ -41,7 +41,7 @@ sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 
 rm -rf package/libs/openssl package/network/services/ppp
 git_clone_path openwrt-25.12 https://github.com/immortalwrt/immortalwrt package/libs/openssl package/network/services/ppp 
-wget -N https://github.com/openwrt/luci/raw/refs/heads/master/libs/rpcd-mod-luci/src/luci.c -P feeds/luci/libs/rpcd-mod-luci/src/
+
 
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile
