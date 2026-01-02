@@ -98,15 +98,14 @@ jobs:
       run: |
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential clang flex bison g++ gawk \
-        gcc-multilib g++-multilib gettext git libncurses5-dev libssl-dev \
+        gcc-multilib gcc g++-multilib gettext git libncurses5-dev libssl-dev \
         python3-setuptools rsync swig unzip zlib1g-dev file wget \
+        libboost-system-dev libboost-filesystem-dev libpcre3-dev libv4l-dev \
         llvm python3-pyelftools libpython3-dev aria2 jq qemu-utils ccache rename \
         libelf-dev device-tree-compiler libgmp3-dev libmpc-dev libfuse-dev dwarves
         sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
         #sudo rm -f /usr/bin/gmake || true
-        cmake --version
-        gmake --version
 
         sudo timedatectl set-timezone "Asia/Shanghai"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -125,7 +124,7 @@ jobs:
         set -x
         TAG_INFO="$(curl -gs -H 'Content-Type: application/json' \
            -H "Authorization: Bearer ${{ secrets.TOKEN_MGZ0227 }}" \
-           -X POST -d '{ "query": "query {repository(owner: \"openwrt\", name: \"openwrt\") {refs(refPrefix: \"refs/tags/\", first: 4, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {nodes {name target { ... on Tag {tagger {date}}}}}}}"}' https://api.github.com/graphql)"
+           -X POST -d '{ "query": "query {repository(owner: \"mgz0227\", name: \"openwrt\") {refs(refPrefix: \"refs/tags/\", first: 4, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {nodes {name target { ... on Tag {tagger {date}}}}}}}"}' https://api.github.com/graphql)"
         TAG_DATE="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[] | select(.name | startswith("v25")) | .target.tagger.date' | head -n 1)"
         if [[ $(( ($(date +%s) - $(date -d "$TAG_DATE" +%s)) / 86400 )) -lt 20 ]]; then
         REPO_BRANCH="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[].name' | grep v25 | head -n 1)"
@@ -154,6 +153,8 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         sudo mkdir -p -m 777 /mnt/openwrt/dl /mnt/openwrt/staging_dir /mnt/openwrt/build_dir
+        ln -sf /mnt/openwrt/dl openwrt/dl
+        ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
         ln -sf /mnt/openwrt/build_dir openwrt/build_dir
 
     - name: Load custom configuration
@@ -229,10 +230,12 @@ jobs:
         if [[ "${{matrix.target}}" == "rockchip_rk35xx" ]]; then 
             sed -n '/# Video Support/,/# end of Video Support/p' .config | sed -e 's/=m/=n/' >>.config
         fi
+
         make defconfig
         #make oldconfig
         fi
         cat .config
+
         
     - name: Get kernel version
       id: kernel
@@ -250,12 +253,12 @@ jobs:
         echo "KERNEL_VER=$KERNEL_FULL" >> $GITHUB_ENV
         echo "Kernel full version detected: $KERNEL_FULL"
 
-    - name: Download package
-      id: package
-      run: |
-        cd openwrt
-        make download -j$(($(nproc)+1)) &
-        sleep 5
+ #   - name: Download package
+ #     id: package
+ #     run: |
+ #       cd openwrt
+ #       make download -j$(($(nproc)+1)) &
+  #      sleep 5
 
     - name: Cache
       uses: stupidloud/cachewrtbuild@main
@@ -270,7 +273,7 @@ jobs:
         shopt -s extglob
         cd openwrt
         if [[ -f staging_dir/*${{ env.MTARGET }}*/bin ]]; then
-            rm -rf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
+            rm -rvf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
         fi
         df -hT
 
@@ -283,12 +286,6 @@ jobs:
         echo -e "$(($(nproc)+1)) thread compile"
         make -j$(($(nproc)+1)) || make V=sc &>error1.log || (tail -50 error1.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1)
         #make -j1 V=sc || make V=sc &>build.log || (tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1)
-        #make tools -j$(($(nproc)+1)) # 编译主机端工具
-        #make toolchain -j$(($(nproc)+1)) # 编译交叉编译工具链
-        #make tools/install -j$(($(nproc)+1))
-        #make toolchain/install -j$(($(nproc)+1)) 
-        #make target/linux -j$(($(nproc)+1))
-        #make target/linux/install -j$(($(nproc)+1))
         sed -i "s/# CONFIG_IB is not set/CONFIG_IB=y/" .config
         rm -rf staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
         rm -rf staging_dir/toolchain-*/initial
@@ -361,7 +358,7 @@ jobs:
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
         REMOTE_PORT: ${{ secrets.SERVER_PORT }}
         REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+        TARGET: "/www/wwwroot/op.miaogongzi.cc/24.10"
 
     - name: Upload firmware for artifact
       uses: actions/upload-artifact@main

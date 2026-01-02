@@ -29,56 +29,46 @@
 
 --- a/package/base-files/files/sbin/sysupgrade
 +++ b/package/base-files/files/sbin/sysupgrade
-@@ -284,6 +284,16 @@
- 		# Part of archive with installed packages info
- 		if [ $ret -eq 0 ]; then
- 			if [ "$SAVE_INSTALLED_PKGS" -eq 1 ]; then
-+				# Optional: run opkg save if available (ignore failures)
-+				[ -r /etc/profile.d/opkg.sh ] && . /etc/profile.d/opkg.sh >/dev/null 2>&1
-+				type -t opkg >/dev/null 2>&1 && opkg save >/dev/null 2>&1
-+
-+				# Ensure ASU defaults script is included in backup (if present in /rom)
-+				[ -f /rom/etc/uci-defaults/zz-asu-defaults ] && {
-+					cp -f /rom/etc/uci-defaults/zz-asu-defaults /etc/uci-defaults/zz-asu-defaults
-+					echo "/etc/uci-defaults/zz-asu-defaults" >> "$CONFFILES"
-+				}
-+
+@@ -287,11 +287,7 @@ create_backup_archive() {
  				# Format: pkg-name<TAB>{rom,overlay,unknown}
  				# rom is used for pkgs in /rom, even if updated later
  				if [ -d "/usr/lib/opkg/info" ]; then
-@@ -299,6 +309,11 @@
+-					tar_print_member "$INSTALLED_PACKAGES" "$(find /usr/lib/opkg/info -name "*.control" \( \
+-						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
+-						\( -exec test -f /overlay/upper/{} \; -exec echo {} overlay \; \) -o \
+-						\( -exec echo {} unknown \; \) \
+-						\) | sed -e 's,.*/,,;s/\.control /\t/')" || ret=1
++					. /etc/profile.d/opkg.sh && opkg save
+ 				elif [ -d "/lib/apk/packages" ]; then
+ 					tar_print_member "$INSTALLED_PACKAGES" "$(find /lib/apk/packages -name "*.list" \( \
+ 						\( -exec test -f /rom/{} \; -exec echo {} rom \; \) -o \
+@@ -299,6 +295,10 @@ create_backup_archive() {
  						\( -exec echo {} unknown \; \) \
  						\) | sed -e 's,.*/,,;s/\.list /\t/')" || ret=1
  				fi
 +			else
-+				# If not saving installed packages, reset opkg uci state (ignore failures)
 +				uci -q del opkg.auto
 +				uci -q del opkg.custom
-+				uci commit op
++				uci commit opkg
  			fi
  		fi
  
 
- 
-
 --- a/package/base-files/files/etc/profile
 +++ b/package/base-files/files/etc/profile
-@@ -32,8 +32,11 @@
- 
+@@ -33,7 +33,11 @@ esac
  if [ -z "$FAILSAFE" ] ; then
  	for FILE in /etc/profile.d/*.sh ; do
--		[ -f "${FILE%.sh}.hush" ] && continue
+ 		[ -f "${FILE%.sh}.hush" ] && continue
 -		[ -f "$FILE" ] && . "$FILE"
 +		if [ "$FILE" == "/etc/profile.d/30-sysinfo.sh" ]; then
 +		 [ "$(which bash)" ] && env -i bash "$FILE"
 +		else
-+		 [ -e "$FILE" ] && . "$FILE"
++		 [ -f "$FILE" ] && . "$FILE"
 +		fi
  	done
  	unset FILE
  fi
-\ No newline at end of file
-
 
 --- a/package/base-files/files/lib/preinit/02_sysinfo
 +++ b/package/base-files/files/lib/preinit/02_sysinfo
@@ -90,4 +80,3 @@
  }
  
  boot_hook_add preinit_main do_sysinfo_generic
-
