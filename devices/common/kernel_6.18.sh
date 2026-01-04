@@ -13,7 +13,7 @@ cd -
 
 
 #nat46: fix reproducible-build failure and use latest git
-wget -N https://github.com/graysky2/openwrt/commit/e52d04b65d1942f581533cb2054e74f4ff5bd70b.patch -P devices/common/patches/
+#wget -N https://github.com/graysky2/openwrt/commit/e52d04b65d1942f581533cb2054e74f4ff5bd70b.patch -P devices/common/patches/
 
 
 cd feeds/packages
