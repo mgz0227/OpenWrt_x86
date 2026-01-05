@@ -345,20 +345,7 @@ jobs:
         REMOTE_PORT: ${{ secrets.PORT }}
         REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
         TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
-                        
 
-    - name: Deploy imagebuilder to server
-      uses: easingthemes/ssh-deploy@main
-      continue-on-error: true
-      if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avzr"
-        SOURCE: openwrt/bin/targets
-        REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-        REMOTE_PORT: ${{ secrets.SERVER_PORT }}
-        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
 
     - name: Upload firmware for artifact
       uses: actions/upload-artifact@main
@@ -393,6 +380,20 @@ jobs:
         tag_name: ${{ env.date }}_${{matrix.target}}
         body_path: release.txt
     
+    - name: Deploy imagebuilder to server
+      uses: easingthemes/ssh-deploy@main
+      continue-on-error: true
+      if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
+      with:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        ARGS: "-avzr"
+        SOURCE: openwrt/bin/targets
+        REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+        REMOTE_PORT: ${{ secrets.SERVER_PORT }}
+        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+
+
     - name: WeChat notification
       continue-on-error: true
       if: env.SCKEY
