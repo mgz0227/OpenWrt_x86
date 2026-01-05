@@ -17,15 +17,9 @@ cd -
 
 
 cd feeds/packages
-rm -rf libs/libpfring/patches/* libs/libmariadb
-rm -rf libs/libpfring/Makefile
+rm -rf libs/libmariadb
 git_clone_path libmaria https://github.com/graysky2/packages libs/libmariadb
-
-wget -N https://raw.githubusercontent.com/graysky2/packages/91f0b3e8621ae529d01356bfe411c91d25e22b4b/libs/libpfring/patches/0001-fix-cross-compiling.patch -P libs/libpfring/patches/
-wget -N https://raw.githubusercontent.com/graysky2/packages/91f0b3e8621ae529d01356bfe411c91d25e22b4b/libs/libpfring/patches/010-gcc14.patch -P libs/libpfring/patches/
-wget -N https://raw.githubusercontent.com/graysky2/packages/91f0b3e8621ae529d01356bfe411c91d25e22b4b/libs/libpfring/patches/100-fix-compilation-warning.patch -P libs/libpfring/patches/
-wget -N https://raw.githubusercontent.com/graysky2/packages/91f0b3e8621ae529d01356bfe411c91d25e22b4b/libs/libpfring/patches/200-net-s-dev_get_flags-netif_get_flags.patch -P libs/libpfring/patches/
-wget -N https://raw.githubusercontent.com/graysky2/packages/91f0b3e8621ae529d01356bfe411c91d25e22b4b/libs/libpfring/Makefile -P libs/libpfring/
+git_clone_path master https://github.com/openwrt/packages libs/libpfring
 cd ../../
 
 
