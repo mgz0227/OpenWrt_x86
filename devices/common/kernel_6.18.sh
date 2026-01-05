@@ -19,15 +19,14 @@ cd -
 cd feeds/packages
 rm -rf libs/libmariadb
 git_clone_path libmaria https://github.com/graysky2/packages libs/libmariadb
-git_clone_path master https://github.com/openwrt/packages libs/libpfring
 cd ../../
 
 
 
 cd feeds/packages
-rm -rf net/xtables-addons net/jool kernel/v4l2loopback
-#libs/libpfring
-git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2loopback
+rm -rf net/xtables-addons net/jool kernel/v4l2loopback libs/libpfring
+
+git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2loopback libs/libpfring
 git_clone_path 6.18-xt-addons https://github.com/graysky2/packages net/xtables-addons
 wget -N https://raw.githubusercontent.com/graysky2/packages/c55afaa2bebca50a0e019a249c2748e7d7f745b7/kernel/ovpn-dco/Makefile -P kernel/ovpn-dco/
 
