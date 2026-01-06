@@ -326,7 +326,8 @@ jobs:
       run: |
               shopt -s extglob
               mkdir -p firmware/${{matrix.target}}          
-              cp -rf openwrt/bin/targets/*/*/*{combined,bin,imagebuilder,rootfs,256}* ./firmware/${{matrix.target}}/ || true
+              cp -rf openwrt/bin/targets/*/*/*{combined,imagebuilder,rootfs,256}* ./firmware/${{matrix.target}}/ || true
+              cp -rf openwrt/bin/targets/*/*/*.bin* ./firmware/${{matrix.target}}/ || true
                 Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
                 echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
                 if [ ${{matrix.target}} == "x86_64" ]; then
