@@ -64,7 +64,10 @@ done
 
 mv -f feeds/miaogongzi/r81* tmp/
 
-wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+
+
+rm -rf package/kernel/mt76/patches/002-add-kernel-version-compatibility-for-timer-APIs.patch
+
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
