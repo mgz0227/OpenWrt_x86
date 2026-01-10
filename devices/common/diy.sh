@@ -66,7 +66,6 @@ mv -f feeds/miaogongzi/r81* tmp/
 
 
 
-rm -rf package/kernel/mt76/patches/002-add-kernel-version-compatibility-for-timer-APIs.patch
 
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
