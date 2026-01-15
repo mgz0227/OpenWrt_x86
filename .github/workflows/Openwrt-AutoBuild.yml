@@ -243,7 +243,7 @@ jobs:
         cd openwrt
         #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
         # 找到 include/kernel-* 下的版本文件
-        KERNEL_FILE=$(ls target/genetic/kernel-* | head -n1)
+        KERNEL_FILE=$(ls target/linux/generic/kernel-* | head -n1)
         # 提取主版本号
         BASE_VER=$(basename $KERNEL_FILE | cut -d'-' -f2)
         # 提取补丁号
