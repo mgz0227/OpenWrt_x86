@@ -14,9 +14,10 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 
 rm -rf target/linux/generic/backport-6.12/510-v6.18-ksmbd-fix-recursive-locking-in-RPC-handle-list-access.patch
 #以下不能动
+rm -rf target/linux/generic/kernel-*
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P include/
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
-rm -rf target/linux/generic/kernel-6.12
+
 #结束
 
 #sed -i 's/kmod-r8169/kmod-r8168/' target/linux/x86/image/64.mk
