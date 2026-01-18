@@ -12,6 +12,15 @@ rm -rf target/linux/bcm53xx
 cd -
 
 
+rm -rf package/network/services/dnsmasq
+mkdir new1; cp -rf .git new1/.git
+cd new1
+git reset --hard origin/dnsmasq292
+
+cp -rf --parents package/network/services/dnsmasq ../
+rm -rf target/linux/bcm53xx
+cd -
+
 #nat46: fix reproducible-build failure and use latest git
 #wget -N https://github.com/graysky2/openwrt/commit/e52d04b65d1942f581533cb2054e74f4ff5bd70b.patch -P devices/common/patches/
 
@@ -39,7 +48,8 @@ cd ../../
 
 
 cd package
-rm -rf devel/kselftests-bpf  libs/libnl/Makefile 
+rm -rf devel/kselftests-bpf  libs/libnl/Makefile
+
 
 #wget -N https://patch-diff.githubusercontent.com/raw/openwrt/mt76/pull/1026.patch -P kernel/mt76/patches/
 #mv kernel/mt76/patches/1026.patch kernel/mt76/patches/002-fix-mt76-timer-compat.patch
@@ -47,4 +57,3 @@ rm -rf devel/kselftests-bpf  libs/libnl/Makefile
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18-libnl/package/libs/libnl/Makefile -P libs/libnl/ 
 
 cd ../
-
