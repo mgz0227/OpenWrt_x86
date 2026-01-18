@@ -11,14 +11,6 @@ cp -rf --parents target/linux package/boot package/devel package/firmware packag
 rm -rf target/linux/bcm53xx
 cd -
 
-
-rm -rf package/network/services/dnsmasq
-mkdir new1; cp -rf .git new1/.git
-cd new1
-git reset --hard origin/dnsmasq292
-cp -rf --parents package/network/services/dnsmasq ../
-cd -
-
 #nat46: fix reproducible-build failure and use latest git
 #wget -N https://github.com/graysky2/openwrt/commit/e52d04b65d1942f581533cb2054e74f4ff5bd70b.patch -P devices/common/patches/
 
