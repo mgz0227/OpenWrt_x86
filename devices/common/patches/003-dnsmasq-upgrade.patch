@@ -1,4 +1,4 @@
-From 2be190fa640e96e05702bc4499f2f99d7ef7894a Mon Sep 17 00:00:00 2001
+From 74e851afa6f33eb0f93ccf3e1cbf8b2ee7c00af2 Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Mon, 19 Jan 2026 00:43:55 +0800
 Subject: [PATCH] dnsmasq: bump release to 2.92
@@ -11,15 +11,18 @@ all remaining patches not required
 
 Changelog for version 2.92 https://thekelleys.org.uk/dnsmasq/CHANGELOG
 
+Modify dnsmasq Makefile default options
+
+Updated default build options for dnsmasq package.
 Signed-off-by: gongzi miao <miaogongzi0227@gmail.com>
 ---
- package/network/services/dnsmasq/Makefile     |  6 +++---
+ package/network/services/dnsmasq/Makefile     | 13 ++++++------
  ...00-remove-old-runtime-kernel-support.patch |  8 ++++----
  .../dnsmasq/patches/200-ubus_dns.patch        | 20 +++++++++----------
- 3 files changed, 17 insertions(+), 17 deletions(-)
+ 3 files changed, 20 insertions(+), 21 deletions(-)
 
 diff --git a/package/network/services/dnsmasq/Makefile b/package/network/services/dnsmasq/Makefile
-index 480f1dfc2b029d..5872a5344971ac 100644
+index 480f1dfc2b029d..0ba7b7833f2ccb 100644
 --- a/package/network/services/dnsmasq/Makefile
 +++ b/package/network/services/dnsmasq/Makefile
 @@ -8,13 +8,13 @@
@@ -39,6 +42,29 @@ index 480f1dfc2b029d..5872a5344971ac 100644
  
  PKG_LICENSE:=GPL-2.0
  PKG_LICENSE_FILES:=COPYING
+@@ -67,8 +67,7 @@ $(call Package/dnsmasq/Default)
+   TITLE += (with DNSSEC, DHCPv6, Auth DNS, IPset, Nftset, Conntrack, NO_ID enabled by default)
+   DEPENDS+=+PACKAGE_dnsmasq_full_dnssec:libnettle \
+ 	+PACKAGE_dnsmasq_full_ipset:kmod-ipt-ipset \
+-	+PACKAGE_dnsmasq_full_conntrack:libnetfilter-conntrack \
+-	+PACKAGE_dnsmasq_full_nftset:nftables-json
++	+PACKAGE_dnsmasq_full_conntrack:libnetfilter-conntrack
+   VARIANT:=full
+   PROVIDES:=dnsmasq
+ endef
+@@ -113,10 +112,10 @@ define Package/dnsmasq-full/config
+ 		default y
+ 	config PACKAGE_dnsmasq_full_ipset
+ 		bool "Build with IPset support."
+-		default n
++		default y
+ 	config PACKAGE_dnsmasq_full_nftset
+ 		bool "Build with Nftset support."
+-		default y
++		default n
+ 	config PACKAGE_dnsmasq_full_conntrack
+ 		bool "Build with Conntrack support."
+ 		default y
 diff --git a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch b/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
 index 26c1b463b94c7e..1c1150a8d1381b 100644
 --- a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
