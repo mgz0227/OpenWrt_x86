@@ -1,0 +1,23 @@
+From bebfebee7d6186704c88b24d128a64780d47d790 Mon Sep 17 00:00:00 2001
+From: miaogongzi <miaogongzi0227@gmail.com>
+Date: Wed, 21 Jan 2026 00:25:14 +0800
+Subject: [PATCH] Update Makefile
+
+Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
+---
+ net/adblock/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/net/adblock/Makefile b/net/adblock/Makefile
+index 57565ebca436a..b5f30d5df5aad 100644
+--- a/feeds/packages/net/adblock/Makefile
++++ b/feeds/packages/net/adblock/Makefile
+@@ -17,7 +17,7 @@ define Package/adblock
+ 	SECTION:=net
+ 	CATEGORY:=Network
+ 	TITLE:=adblock blocks ad/abuse domains by using DNS
+-	DEPENDS:=+jshn +jsonfilter +firewall4 +coreutils +coreutils-sort +gawk +ca-bundle +rpcd +rpcd-mod-rpcsys
++	DEPENDS:=+jshn +jsonfilter +coreutils +coreutils-sort +gawk +ca-bundle +rpcd +rpcd-mod-rpcsys
+ 	PKGARCH:=all
+ endef
+ 
