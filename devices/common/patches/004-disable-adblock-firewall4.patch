@@ -9,10 +9,10 @@ Subject: [PATCH] remove-firewall4
  net/adblock/files/adblock.sh              | 190 ++++++----------------
  3 files changed, 51 insertions(+), 163 deletions(-)
 
-diff --git a/net/adblock/Makefile b/net/adblock/Makefile
+diff --git a/feeds/packages/net/adblock/Makefile b/net/adblock/Makefile
 index 57565ebca436aa..b5f30d5df5aad5 100644
---- a/net/adblock/Makefile
-+++ b/net/adblock/Makefile
+--- a/feeds/packages/net/adblock/Makefile
++++ b/feeds/packages/net/adblock/Makefile
 @@ -17,7 +17,7 @@ define Package/adblock
  	SECTION:=net
  	CATEGORY:=Network
@@ -22,10 +22,10 @@ index 57565ebca436aa..b5f30d5df5aad5 100644
  	PKGARCH:=all
  endef
  
-diff --git a/net/adblock/files/95-adblock-housekeeping b/net/adblock/files/95-adblock-housekeeping
+diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 index bb7c62070710ef..5a79269f359225 100755
---- a/net/adblock/files/95-adblock-housekeeping
-+++ b/net/adblock/files/95-adblock-housekeeping
+--- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
++++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -11,7 +11,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
  config="adblock"
  old_options="adb_sources adb_forcedns adb_fetchutil adb_hag_sources adb_hst_sources adb_stb_sources adb_utc_sources \
@@ -66,10 +66,10 @@ index bb7c62070710ef..5a79269f359225 100755
 -	/etc/init.d/firewall reload
 -fi
  exit 0
-diff --git a/net/adblock/files/adblock.sh b/net/adblock/files/adblock.sh
+diff --git a/feeds/packages/net/adblock/files/adblock.sh b/feeds/packages/net/adblock/files/adblock.sh
 index b4504202c603c9..ab29592801dfb8 100755
---- a/net/adblock/files/adblock.sh
-+++ b/net/adblock/files/adblock.sh
+--- a/feeds/packages/net/adblock/files/adblock.sh
++++ b/feeds/packages/net/adblock/files/adblock.sh
 @@ -13,19 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
  
  adb_enabled="0"
