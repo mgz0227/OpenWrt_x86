@@ -42,29 +42,6 @@ index 480f1dfc2b029d..0ba7b7833f2ccb 100644
  
  PKG_LICENSE:=GPL-2.0
  PKG_LICENSE_FILES:=COPYING
-@@ -67,8 +67,7 @@ $(call Package/dnsmasq/Default)
-   TITLE += (with DNSSEC, DHCPv6, Auth DNS, IPset, Nftset, Conntrack, NO_ID enabled by default)
-   DEPENDS+=+PACKAGE_dnsmasq_full_dnssec:libnettle \
- 	+PACKAGE_dnsmasq_full_ipset:kmod-ipt-ipset \
--	+PACKAGE_dnsmasq_full_conntrack:libnetfilter-conntrack \
--	+PACKAGE_dnsmasq_full_nftset:nftables-json
-+	+PACKAGE_dnsmasq_full_conntrack:libnetfilter-conntrack
-   VARIANT:=full
-   PROVIDES:=dnsmasq
- endef
-@@ -113,10 +112,10 @@ define Package/dnsmasq-full/config
- 		default y
- 	config PACKAGE_dnsmasq_full_ipset
- 		bool "Build with IPset support."
--		default n
-+		default y
- 	config PACKAGE_dnsmasq_full_nftset
- 		bool "Build with Nftset support."
--		default y
-+		default n
- 	config PACKAGE_dnsmasq_full_conntrack
- 		bool "Build with Conntrack support."
- 		default y
 diff --git a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch b/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
 index 26c1b463b94c7e..1c1150a8d1381b 100644
 --- a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
