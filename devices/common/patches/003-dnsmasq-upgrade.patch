@@ -1,4 +1,4 @@
-From 37a5a3badda87ab56ffdd1f031ddbed63f4121a6 Mon Sep 17 00:00:00 2001
+From 2be190fa640e96e05702bc4499f2f99d7ef7894a Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Mon, 19 Jan 2026 00:43:55 +0800
 Subject: [PATCH] dnsmasq: bump release to 2.92
