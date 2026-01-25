@@ -27,15 +27,15 @@ From: miaogongzi <miaogongzi0227@gmail.com>
 Date: Sun, 25 Jan 2026 14:41:21 +0800
 Subject: [PATCH] Update 95-adblock-housekeeping
 
-Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
+Signed-off-by: gongzi miao <miaogongzi0227@gmail.com>
 ---
  net/adblock/files/95-adblock-housekeeping | 28 ++---------------------
  1 file changed, 2 insertions(+), 26 deletions(-)
 
-diff --git a/net/adblock/files/95-adblock-housekeeping b/net/adblock/files/95-adblock-housekeeping
+diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 index 4451d166944b2..7f0aa46415313 100755
---- a/net/adblock/files/95-adblock-housekeeping
-+++ b/net/adblock/files/95-adblock-housekeeping
+--- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
++++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -11,7 +11,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
  config="adblock"
  old_options="adb_sources adb_forcedns adb_fetchutil adb_hag_sources adb_hst_sources adb_stb_sources adb_utc_sources \
