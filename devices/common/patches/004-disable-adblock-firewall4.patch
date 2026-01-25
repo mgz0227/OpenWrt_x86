@@ -1,16 +1,16 @@
-From 2c585b9f7a5877b9f60f63bca6af4f9d7fbb4c21 Mon Sep 17 00:00:00 2001
+From 03fdd72c6ccc74af717f525f86333eb2d2d565ce Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Sun, 25 Jan 2026 22:47:55 +0800
 Subject: [PATCH] remove firewall4
 
 ---
  net/adblock/Makefile                      |   2 +-
- net/adblock/files/95-adblock-housekeeping |  26 +---
- net/adblock/files/adblock.sh              | 162 +++-------------------
- 3 files changed, 22 insertions(+), 168 deletions(-)
+ net/adblock/files/95-adblock-housekeeping |  26 +--
+ net/adblock/files/adblock.sh              | 209 +++++++---------------
+ 3 files changed, 68 insertions(+), 169 deletions(-)
 
 diff --git a/feeds/packages/net/adblock/Makefile b/feeds/packages/net/adblock/Makefile
-index e09ca1cdf5c75..c0116596ae855 100644
+index e09ca1cdf5c75a..c0116596ae855d 100644
 --- a/feeds/packages/net/adblock/Makefile
 +++ b/feeds/packages/net/adblock/Makefile
 @@ -17,7 +17,7 @@ define Package/adblock
@@ -23,7 +23,7 @@ index e09ca1cdf5c75..c0116596ae855 100644
  endef
  
 diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
-index 4451d166944b2..a30c1ac4ef871 100755
+index 4451d166944b2c..a30c1ac4ef871e 100755
 --- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
 +++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -44,6 +44,9 @@ for option in ${old_options}; do
@@ -72,7 +72,7 @@ index 4451d166944b2..a30c1ac4ef871 100755
 -fi
  exit 0
 diff --git a/feeds/packages/net/adblock/files/adblock.sh b/feeds/packages/net/adblock/files/adblock.sh
-index de9fd26eb9720..5724c0b1344c8 100755
+index de9fd26eb97202..10956781b12402 100755
 --- a/feeds/packages/net/adblock/files/adblock.sh
 +++ b/feeds/packages/net/adblock/files/adblock.sh
 @@ -13,15 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
@@ -100,19 +100,7 @@ index de9fd26eb9720..5724c0b1344c8 100755
  		f_rmdns
  		f_jsnup "disabled"
  		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
-@@ -130,9 +121,10 @@ f_load() {
- 		f_log "info" "please install the package 'tcpdump' or 'tcpdump-mini' to use the reporting feature"
- 	elif [ -x "${adb_dumpcmd}" ]; then
- 		bg_pid="$("${adb_pgrepcmd}" -nf "${adb_reportdir}/adb_report.pcap")"
--		if [ "${adb_report}" = "0" ] || { [ -n "${bg_pid}" ] && { [ "${adb_action}" = "stop" ] || [ "${adb_action}" = "restart" ]; }; }; then
-+		if [ -n "${bg_pid}" ] && { [ "${adb_report}" = "0" ] || [ "${adb_action}" = "stop" ] || [ "${adb_action}" = "restart" ]; }; then
- 			if kill -HUP "${bg_pid}" 2>/dev/null; then
--				while kill -0 "${bg_pid}" 2>/dev/null; do
-+				for cnt in 1 2 3; do
-+					kill -0 "${bg_pid}" >/dev/null 2>&1 || break
- 					sleep 1
- 				done
- 			fi
+
 @@ -180,7 +172,6 @@ f_env() {
  	f_jsnup "processing"
  	f_extconf
@@ -154,7 +142,61 @@ index de9fd26eb9720..5724c0b1344c8 100755
  
  	case "${adb_dns}" in
  		"dnsmasq")
-@@ -710,125 +706,6 @@ f_etag() {
+@@ -616,7 +612,52 @@ f_extconf() {
+ 			fi
+ 			;;
+ 	esac
+-	f_uci "${config}"
++
++	[ -n "${config}" ] && f_uci "${config}"
++	fwcfg="$(uci -qNX show "firewall" | "${adb_awkcmd}" 'BEGIN{FS="[.=]"};/adblock_/{if(zone==$2){next}else{ORS=" ";zone=$2;print zone}}')"
++	if [ "${adb_enabled}" = "1" ] && [ "${adb_dnsforce}" = "1" ] &&
++		/etc/init.d/firewall enabled; then
++		for zone in ${adb_zonelist}; do
++			for port in ${adb_portlist}; do
++				if ! printf "%s" "${fwcfg}" | "${adb_grepcmd}" -q "adblock_${zone}${port}"; then
++					config="firewall"
++					if "${adb_lookupcmd}" "localhost." "127.0.0.1:${port}" >/dev/null 2>&1; then
++						uci -q batch <<-EOC
++							set firewall."adblock_${zone}${port}"="redirect"
++							set firewall."adblock_${zone}${port}".name="Adblock DNS (${zone}, ${port})"
++							set firewall."adblock_${zone}${port}".src="${zone}"
++							set firewall."adblock_${zone}${port}".proto="tcp udp"
++							set firewall."adblock_${zone}${port}".src_dport="53"
++							set firewall."adblock_${zone}${port}".dest_port="${port}"
++							set firewall."adblock_${zone}${port}".target="DNAT"
++							set firewall."adblock_${zone}${port}".family="any"
++						EOC
++					else
++						uci -q batch <<-EOC
++							set firewall."adblock_${zone}${port}"="rule"
++							set firewall."adblock_${zone}${port}".name="Adblock DNS (${zone}, ${port})"
++							set firewall."adblock_${zone}${port}".src="${zone}"
++							set firewall."adblock_${zone}${port}".proto="tcp udp"
++							set firewall."adblock_${zone}${port}".dest_port="${port}"
++							set firewall."adblock_${zone}${port}".target="REJECT"
++							set firewall."adblock_${zone}${port}".dest="*"
++						EOC
++					fi
++				fi
++				fwcfg="${fwcfg/adblock_${zone}${port}[ |\$]/}"
++			done
++		done
++		fwcfg="${fwcfg#"${fwcfg%%[![:space:]]*}"}"
++		fwcfg="${fwcfg%"${fwcfg##*[![:space:]]}"}"
++	fi
++	if [ "${adb_enabled}" = "0" ] || [ "${adb_dnsforce}" = "0" ] || [ -n "${fwcfg}" ]; then
++		for section in ${fwcfg}; do
++			uci_remove firewall "${section}"
++		done
++	fi
++	if [ -n "$(uci -q changes firewall)" ]; then
++		f_uci "firewall"
++	fi
+ }
+ 
+ # restart dns backend
+@@ -710,125 +751,6 @@ f_etag() {
  	return "${out_rc}"
  }
  
@@ -280,7 +322,7 @@ index de9fd26eb9720..5724c0b1344c8 100755
  
  # backup/restore/remove blocklists
  #
-@@ -1281,8 +1158,8 @@ f_jsnup() {
+@@ -1281,8 +1203,8 @@ f_jsnup() {
  	json_add_string "dns_backend" "${adb_dns:-"-"} (${dns_ver:-"-"}), ${adb_finaldir:-"-"}, ${dns_mem:-"0"} MB"
  	json_add_string "run_ifaces" "trigger: ${adb_trigger:-"-"}, report: ${adb_repiface:-"-"}"
  	json_add_string "run_directories" "base: ${adb_basedir}, dns: ${adb_dnsdir}, backup: ${adb_backupdir}, report: ${adb_reportdir}"
@@ -291,7 +333,7 @@ index de9fd26eb9720..5724c0b1344c8 100755
  	json_add_string "system_info" "cores: ${adb_cores}, fetch: ${adb_fetchcmd##*/}, ${adb_sysver}"
  	json_dump >"${adb_rtfile}"
  
-@@ -1902,7 +1779,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
+@@ -1902,7 +1824,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
  adb_dumpcmd="$(f_cmd tcpdump optional)"
  adb_mailcmd="$(f_cmd msmtp optional)"
  adb_logreadcmd="$(f_cmd logread optional)"
@@ -299,7 +341,7 @@ index de9fd26eb9720..5724c0b1344c8 100755
  
  # handle different adblock actions
  #
-@@ -1911,7 +1787,6 @@ case "${adb_action}" in
+@@ -1911,7 +1832,6 @@ case "${adb_action}" in
  	"stop")
  		f_temp
  		f_jsnup "stopped"
@@ -307,7 +349,7 @@ index de9fd26eb9720..5724c0b1344c8 100755
  		f_rmdns
  		;;
  	"suspend")
-@@ -1932,7 +1807,6 @@ case "${adb_action}" in
+@@ -1932,7 +1852,6 @@ case "${adb_action}" in
  		;;
  	"restart")
  		f_jsnup "processing"
