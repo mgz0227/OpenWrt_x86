@@ -100,20 +100,7 @@ index de9fd26eb97202..54eedc88204884 100755
  		f_rmdns
  		f_jsnup "disabled"
  		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
-@@ -130,9 +121,10 @@ f_load() {
- 		f_log "info" "please install the package 'tcpdump' or 'tcpdump-mini' to use the reporting feature"
- 	elif [ -x "${adb_dumpcmd}" ]; then
- 		bg_pid="$("${adb_pgrepcmd}" -nf "${adb_reportdir}/adb_report.pcap")"
--		if [ "${adb_report}" = "0" ] || { [ -n "${bg_pid}" ] && { [ "${adb_action}" = "stop" ] || [ "${adb_action}" = "restart" ]; }; }; then
-+		if [ -n "${bg_pid}" ] && { [ "${adb_report}" = "0" ] || [ "${adb_action}" = "stop" ] || [ "${adb_action}" = "restart" ]; }; then
- 			if kill -HUP "${bg_pid}" 2>/dev/null; then
--				while kill -0 "${bg_pid}" 2>/dev/null; do
-+				for cnt in 1 2 3; do
-+					kill -0 "${bg_pid}" >/dev/null 2>&1 || break
- 					sleep 1
- 				done
- 			fi
-@@ -180,7 +172,6 @@ f_env() {
+@@ -181,7 +172,6 @@ f_env() {
  	f_jsnup "processing"
  	f_extconf
  	f_temp
@@ -121,7 +108,7 @@ index de9fd26eb97202..54eedc88204884 100755
  	json_init
  	if [ -s "${adb_customfeedfile}" ]; then
  		if json_load_file "${adb_customfeedfile}" >/dev/null 2>&1; then
-@@ -582,7 +573,7 @@ f_count() {
+@@ -583,7 +573,7 @@ f_count() {
  # set external config options
  #
  f_extconf() {
@@ -130,7 +117,7 @@ index de9fd26eb97202..54eedc88204884 100755
  
  	case "${adb_dns}" in
  		"dnsmasq")
-@@ -616,7 +607,52 @@ f_extconf() {
+@@ -617,7 +607,52 @@ f_extconf() {
  			fi
  			;;
  	esac
@@ -184,7 +171,7 @@ index de9fd26eb97202..54eedc88204884 100755
  }
  
  # restart dns backend
-@@ -710,125 +746,6 @@ f_etag() {
+@@ -711,125 +746,6 @@ f_etag() {
  	return "${out_rc}"
  }
  
@@ -310,7 +297,7 @@ index de9fd26eb97202..54eedc88204884 100755
  
  # backup/restore/remove blocklists
  #
-@@ -1281,7 +1198,7 @@ f_jsnup() {
+@@ -1282,7 +1198,7 @@ f_jsnup() {
  	json_add_string "dns_backend" "${adb_dns:-"-"} (${dns_ver:-"-"}), ${adb_finaldir:-"-"}, ${dns_mem:-"0"} MB"
  	json_add_string "run_ifaces" "trigger: ${adb_trigger:-"-"}, report: ${adb_repiface:-"-"}"
  	json_add_string "run_directories" "base: ${adb_basedir}, dns: ${adb_dnsdir}, backup: ${adb_backupdir}, report: ${adb_reportdir}"
@@ -319,7 +306,7 @@ index de9fd26eb97202..54eedc88204884 100755
  	json_add_string "last_run" "${runtime:-"-"}"
  	json_add_string "system_info" "cores: ${adb_cores}, fetch: ${adb_fetchcmd##*/}, ${adb_sysver}"
  	json_dump >"${adb_rtfile}"
-@@ -1902,7 +1819,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
+@@ -1903,7 +1819,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
  adb_dumpcmd="$(f_cmd tcpdump optional)"
  adb_mailcmd="$(f_cmd msmtp optional)"
  adb_logreadcmd="$(f_cmd logread optional)"
@@ -327,7 +314,7 @@ index de9fd26eb97202..54eedc88204884 100755
  
  # handle different adblock actions
  #
-@@ -1911,7 +1827,6 @@ case "${adb_action}" in
+@@ -1912,7 +1827,6 @@ case "${adb_action}" in
  	"stop")
  		f_temp
  		f_jsnup "stopped"
@@ -335,7 +322,7 @@ index de9fd26eb97202..54eedc88204884 100755
  		f_rmdns
  		;;
  	"suspend")
-@@ -1932,7 +1847,6 @@ case "${adb_action}" in
+@@ -1933,7 +1847,6 @@ case "${adb_action}" in
  		;;
  	"restart")
  		f_jsnup "processing"
