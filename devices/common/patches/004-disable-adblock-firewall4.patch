@@ -1,7 +1,7 @@
-diff --git a/net/adblock/Makefile b/net/adblock/Makefile
+diff --git a/feeds/packages/net/adblock/Makefile b/feeds/packages/net/adblock/Makefile
 index e09ca1cdf5c75a..c0116596ae855d 100644
---- a/net/adblock/Makefile
-+++ b/net/adblock/Makefile
+--- a/feeds/packages/net/adblock/Makefile
++++ b/feeds/packages/net/adblock/Makefile
 @@ -17,7 +17,7 @@ define Package/adblock
  	SECTION:=net
  	CATEGORY:=Network
@@ -11,10 +11,10 @@ index e09ca1cdf5c75a..c0116596ae855d 100644
  	PKGARCH:=all
  endef
  
-diff --git a/net/adblock/files/95-adblock-housekeeping b/net/adblock/files/95-adblock-housekeeping
+diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 index 4451d166944b2c..6f3c61f233133b 100755
---- a/net/adblock/files/95-adblock-housekeeping
-+++ b/net/adblock/files/95-adblock-housekeeping
+--- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
++++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -60,8 +60,8 @@ for option in ${old_options}; do
  						uci -q add_list ${config}.global.adb_hag_feed="wildcard/${value}"
  					fi
@@ -42,10 +42,10 @@ index 4451d166944b2c..6f3c61f233133b 100755
 -	/etc/init.d/firewall reload
 -fi
  exit 0
-diff --git a/net/adblock/files/adblock.sh b/net/adblock/files/adblock.sh
+diff --git a/feeds/packages/net/adblock/files/adblock.sh b/feeds/packages/net/adblock/files/adblock.sh
 index de9fd26eb97202..64381c65f35d30 100755
---- a/net/adblock/files/adblock.sh
-+++ b/net/adblock/files/adblock.sh
+--- a/feeds/packages/net/adblock/files/adblock.sh
++++ b/feeds/packages/net/adblock/files/adblock.sh
 @@ -13,15 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
  
  adb_enabled="0"
