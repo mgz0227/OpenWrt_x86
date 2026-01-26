@@ -3,6 +3,8 @@
 shopt -s extglob
 
 #临时切换mirror
+sed -i -e 's#git.openwrt.org/feed/packages.git#github.com/openwrt/packages.git#g;s#git.openwrt.org/project/luci.git#github.com/openwrt/luci.git#g;s#git.openwrt.org/feed/routing.git#github.com/openwrt/routing.git#g' feeds.conf.default
+
 #sed -i 's#https://git.openwrt.org/feed/packages.git#https://github.com/openwrt/packages.git#g' feeds.conf.default
 #sed -i 's#https://git.openwrt.org/project/luci.git#https://github.com/openwrt/luci.git#g' feeds.conf.default
 #sed -i 's#https://git.openwrt.org/feed/routing.git#https://github.com/openwrt/routing.git#g' feeds.conf.default
