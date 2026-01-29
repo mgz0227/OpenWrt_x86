@@ -1,27 +1,18 @@
-From a74960223f5fc80fdc082a4c36d39a97350bd6fc Mon Sep 17 00:00:00 2001
+From 386596a6afa138423202e40e11825e46426ecc75 Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Mon, 26 Jan 2026 02:25:21 +0800
 Subject: [PATCH] adblock-remove-firewall4
 
 ---
- net/adblock/Makefile                      |   4 +-
+ net/adblock/Makefile                      |   2 +-
  net/adblock/files/95-adblock-housekeeping |  26 +--
  net/adblock/files/adblock.sh              | 202 +++++++---------------
- 3 files changed, 68 insertions(+), 164 deletions(-)
+ 3 files changed, 67 insertions(+), 163 deletions(-)
 
 diff --git a/feeds/packages/net/adblock/Makefile b/feeds/packages/net/adblock/Makefile
-index 59823d666cae0..c0116596ae855 100644
+index 6c62b1e7897909..e8417d54a59564 100644
 --- a/feeds/packages/net/adblock/Makefile
 +++ b/feeds/packages/net/adblock/Makefile
-@@ -7,7 +7,7 @@ include $(TOPDIR)/rules.mk
- 
- PKG_NAME:=adblock
- PKG_VERSION:=4.5.0
--PKG_RELEASE:=3
-+PKG_RELEASE:=2
- PKG_LICENSE:=GPL-3.0-or-later
- PKG_MAINTAINER:=Dirk Brenken <dev@brenken.org>
- 
 @@ -17,7 +17,7 @@ define Package/adblock
  	SECTION:=net
  	CATEGORY:=Network
@@ -32,7 +23,7 @@ index 59823d666cae0..c0116596ae855 100644
  endef
  
 diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
-index 4451d166944b2..a30c1ac4ef871 100755
+index 4451d166944b2c..a30c1ac4ef871e 100755
 --- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
 +++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -44,6 +44,9 @@ for option in ${old_options}; do
@@ -81,7 +72,7 @@ index 4451d166944b2..a30c1ac4ef871 100755
 -fi
  exit 0
 diff --git a/feeds/packages/net/adblock/files/adblock.sh b/feeds/packages/net/adblock/files/adblock.sh
-index f90181ad97bae..9e6b3f538cde0 100755
+index 2f989a123cc0cd..56b255bf33e805 100755
 --- a/feeds/packages/net/adblock/files/adblock.sh
 +++ b/feeds/packages/net/adblock/files/adblock.sh
 @@ -13,15 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
@@ -109,7 +100,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  		f_rmdns
  		f_jsnup "disabled"
  		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
-@@ -181,7 +172,6 @@ f_env() {
+@@ -179,7 +170,6 @@ f_env() {
  	f_jsnup "processing"
  	f_extconf
  	f_temp
@@ -117,7 +108,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  	json_init
  	if [ -s "${adb_customfeedfile}" ]; then
  		if json_load_file "${adb_customfeedfile}" >/dev/null 2>&1; then
-@@ -583,7 +573,7 @@ f_count() {
+@@ -581,7 +571,7 @@ f_count() {
  # set external config options
  #
  f_extconf() {
@@ -126,7 +117,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  
  	case "${adb_dns}" in
  		"dnsmasq")
-@@ -617,7 +607,52 @@ f_extconf() {
+@@ -615,7 +605,52 @@ f_extconf() {
  			fi
  			;;
  	esac
@@ -180,7 +171,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  }
  
  # restart dns backend
-@@ -711,125 +746,6 @@ f_etag() {
+@@ -709,125 +744,6 @@ f_etag() {
  	return "${out_rc}"
  }
  
@@ -306,7 +297,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  
  # backup/restore/remove blocklists
  #
-@@ -1021,13 +937,23 @@ f_list() {
+@@ -1019,13 +935,23 @@ f_list() {
  			file_name="${adb_finaldir}/${adb_dnsfile}"
  			rm -f "${file_name}"
  			[ -n "${adb_dnsheader}" ] && printf "%b" "${adb_dnsheader}" >>"${file_name}"
@@ -333,7 +324,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  			if [ "${adb_dnsshift}" = "1" ] && [ ! -L "${adb_dnsdir}/${adb_dnsfile}" ]; then
  				ln -fs "${file_name}" "${adb_dnsdir}/${adb_dnsfile}"
  			elif [ "${adb_dnsshift}" = "0" ] && [ -s "${adb_backupdir}/${adb_dnsfile}" ]; then
-@@ -1035,6 +961,7 @@ f_list() {
+@@ -1033,6 +959,7 @@ f_list() {
  			fi
  			out_rc="0"
  			;;
@@ -341,7 +332,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  	esac
  	f_count "${mode}" "${file_name}"
  	out_rc="${out_rc:-"${in_rc}"}"
-@@ -1282,7 +1209,7 @@ f_jsnup() {
+@@ -1280,7 +1207,7 @@ f_jsnup() {
  	json_add_string "dns_backend" "${adb_dns:-"-"} (${dns_ver:-"-"}), ${adb_finaldir:-"-"}, ${dns_mem:-"0"} MB"
  	json_add_string "run_ifaces" "trigger: ${adb_trigger:-"-"}, report: ${adb_repiface:-"-"}"
  	json_add_string "run_directories" "base: ${adb_basedir}, dns: ${adb_dnsdir}, backup: ${adb_backupdir}, report: ${adb_reportdir}"
@@ -350,7 +341,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  	json_add_string "last_run" "${runtime:-"-"}"
  	json_add_string "system_info" "cores: ${adb_cores}, fetch: ${adb_fetchcmd##*/}, ${adb_sysver}"
  	json_dump >"${adb_rtfile}"
-@@ -1903,7 +1830,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
+@@ -1909,7 +1836,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
  adb_dumpcmd="$(f_cmd tcpdump optional)"
  adb_mailcmd="$(f_cmd msmtp optional)"
  adb_logreadcmd="$(f_cmd logread optional)"
@@ -358,7 +349,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  
  # handle different adblock actions
  #
-@@ -1912,7 +1838,6 @@ case "${adb_action}" in
+@@ -1918,7 +1844,6 @@ case "${adb_action}" in
  	"stop")
  		f_temp
  		f_jsnup "stopped"
@@ -366,7 +357,7 @@ index f90181ad97bae..9e6b3f538cde0 100755
  		f_rmdns
  		;;
  	"suspend")
-@@ -1933,7 +1858,6 @@ case "${adb_action}" in
+@@ -1939,7 +1864,6 @@ case "${adb_action}" in
  		;;
  	"restart")
  		f_jsnup "processing"
