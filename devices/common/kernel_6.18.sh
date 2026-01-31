@@ -38,7 +38,7 @@ cd ../../
 
 
 cd package
-rm -rf devel/kselftests-bpf  libs/libnl/Makefile kernel/mt76
+rm -rf devel/kselftests-bpf  libs/libnl/Makefile
 
 
 #wget -N https://patch-diff.githubusercontent.com/raw/openwrt/mt76/pull/1026.patch -P kernel/mt76/patches/
