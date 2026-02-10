@@ -1,4 +1,4 @@
-From 386596a6afa138423202e40e11825e46426ecc75 Mon Sep 17 00:00:00 2001
+From dab9e12d5e6a1f895a92ba8eb132a5545f0eb67b Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Mon, 26 Jan 2026 02:25:21 +0800
 Subject: [PATCH] adblock-remove-firewall4
@@ -6,11 +6,12 @@ Subject: [PATCH] adblock-remove-firewall4
 ---
  net/adblock/Makefile                      |   2 +-
  net/adblock/files/95-adblock-housekeeping |  26 +--
- net/adblock/files/adblock.sh              | 202 +++++++---------------
- 3 files changed, 67 insertions(+), 163 deletions(-)
+ net/adblock/files/adblock.sh              | 221 ++++++----------------
+ 3 files changed, 67 insertions(+), 182 deletions(-)
+ mode change 100755 => 100644 net/adblock/files/adblock.sh
 
 diff --git a/feeds/packages/net/adblock/Makefile b/feeds/packages/net/adblock/Makefile
-index 6c62b1e7897909..e8417d54a59564 100644
+index 7f436c3172dce..670b78decbe04 100644
 --- a/feeds/packages/net/adblock/Makefile
 +++ b/feeds/packages/net/adblock/Makefile
 @@ -17,7 +17,7 @@ define Package/adblock
@@ -23,7 +24,7 @@ index 6c62b1e7897909..e8417d54a59564 100644
  endef
  
 diff --git a/feeds/packages/net/adblock/files/95-adblock-housekeeping b/feeds/packages/net/adblock/files/95-adblock-housekeeping
-index 4451d166944b2c..a30c1ac4ef871e 100755
+index 4451d166944b2..a30c1ac4ef871 100755
 --- a/feeds/packages/net/adblock/files/95-adblock-housekeeping
 +++ b/feeds/packages/net/adblock/files/95-adblock-housekeeping
 @@ -44,6 +44,9 @@ for option in ${old_options}; do
@@ -72,10 +73,12 @@ index 4451d166944b2c..a30c1ac4ef871e 100755
 -fi
  exit 0
 diff --git a/feeds/packages/net/adblock/files/adblock.sh b/feeds/packages/net/adblock/files/adblock.sh
-index 2f989a123cc0cd..56b255bf33e805 100755
+old mode 100755
+new mode 100644
+index 5f83b066ce1e1..7d0f11ef800a7
 --- a/feeds/packages/net/adblock/files/adblock.sh
 +++ b/feeds/packages/net/adblock/files/adblock.sh
-@@ -13,15 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
+@@ -13,18 +13,7 @@ export PATH="/usr/sbin:/usr/bin:/sbin:/bin"
  
  adb_enabled="0"
  adb_debug="0"
@@ -88,11 +91,14 @@ index 2f989a123cc0cd..56b255bf33e805 100755
 -adb_nftblock="0"
 -adb_nftmacblock=""
 -adb_nftdevblock=""
+-adb_nftremote="0"
+-adb_nftremotetimeout="15"
+-adb_nftmacremote=""
 +adb_dnsforce="0"
  adb_allowdnsv4=""
  adb_allowdnsv6=""
- adb_blockdnsv4=""
-@@ -114,7 +106,6 @@ f_load() {
+ adb_remotednsv4=""
+@@ -119,7 +108,6 @@ f_load() {
  	if [ "${adb_enabled}" = "0" ]; then
  		f_extconf
  		f_temp
@@ -100,7 +106,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  		f_rmdns
  		f_jsnup "disabled"
  		f_log "info" "adblock is currently disabled, please set the config option 'adb_enabled' to '1' to use this service"
-@@ -179,7 +170,6 @@ f_env() {
+@@ -184,7 +172,6 @@ f_env() {
  	f_jsnup "processing"
  	f_extconf
  	f_temp
@@ -108,7 +114,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  	json_init
  	if [ -s "${adb_customfeedfile}" ]; then
  		if json_load_file "${adb_customfeedfile}" >/dev/null 2>&1; then
-@@ -581,7 +571,7 @@ f_count() {
+@@ -586,7 +573,7 @@ f_count() {
  # set external config options
  #
  f_extconf() {
@@ -117,7 +123,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  
  	case "${adb_dns}" in
  		"dnsmasq")
-@@ -615,7 +605,52 @@ f_extconf() {
+@@ -620,7 +607,52 @@ f_extconf() {
  			fi
  			;;
  	esac
@@ -171,7 +177,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  }
  
  # restart dns backend
-@@ -709,125 +744,6 @@ f_etag() {
+@@ -714,141 +746,6 @@ f_etag() {
  	return "${out_rc}"
  }
  
@@ -182,7 +188,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
 -
 -	# only proceed if at least one feature is enabled
 -	#
--	if [ "${adb_nftallow}" = "0" ] && [ "${adb_nftblock}" = "0" ] && [ "${adb_nftforce}" = "0" ]; then
+-	if [ "${adb_nftallow}" = "0" ] && [ "${adb_nftblock}" = "0" ] && [ "${adb_nftremote}" = "0" ] && [ "${adb_nftforce}" = "0" ]; then
 -		return
 -	fi
 -
@@ -194,9 +200,18 @@ index 2f989a123cc0cd..56b255bf33e805 100755
 -			printf "%s\n" "delete table inet adblock"
 -		fi
 -		printf "%s\n" "add table inet adblock"
+-		# allow Set
+-		#
 -		if [ "${adb_nftallow}" = "1" ] && [ -n "${adb_nftmacallow}" ]; then
 -			printf "%s\n" "add set inet adblock mac_allow { type ether_addr; flags interval; auto-merge; elements = { ${adb_nftmacallow// /, } }; }"
 -		fi
+-		# remote allow Set with timeout, for MACs that should be temporary allowed to bypass dns blocking
+-		#
+-		if [ "${adb_nftremote}" = "1" ] && [ -n "${adb_nftmacremote}" ]; then
+-			printf "%s\n" "add set inet adblock mac_remote { type ether_addr; flags timeout; timeout ${adb_nftremotetimeout}m; }"
+-		fi
+-		# block Set
+-		#
 -		if [ "${adb_nftblock}" = "1" ] && [ -n "${adb_nftmacblock}" ]; then
 -			printf "%s\n" "add set inet adblock mac_block { type ether_addr; flags interval; auto-merge; elements = { ${adb_nftmacblock// /, } }; }"
 -		fi
@@ -219,6 +234,13 @@ index 2f989a123cc0cd..56b255bf33e805 100755
 -				[ -n "${adb_allowdnsv4}" ] && printf "%s\n" "add rule inet adblock pre-routing iifname \"${device}\" meta nfproto ipv4 meta l4proto { udp, tcp } th dport 53 counter dnat to ${adb_allowdnsv4}:53"
 -				[ -n "${adb_allowdnsv6}" ] && printf "%s\n" "add rule inet adblock pre-routing iifname \"${device}\" meta nfproto ipv6 meta l4proto { udp, tcp } th dport 53 counter dnat to [${adb_allowdnsv6}]:53"
 -			done
+-		fi
+-
+-		# external remote allow rules
+-		#
+-		if [ "${adb_nftremote}" = "1" ]; then
+-			[ -n "${adb_remotednsv4}" ] && printf "%s\n" "add rule inet adblock pre-routing meta nfproto ipv4 ether saddr @mac_remote meta l4proto { udp, tcp } th dport 53 counter dnat to ${adb_remotednsv4}:53"
+-			[ -n "${adb_remotednsv6}" ] && printf "%s\n" "add rule inet adblock pre-routing meta nfproto ipv6 ether saddr @mac_remote meta l4proto { udp, tcp } th dport 53 counter dnat to [${adb_remotednsv6}]:53"
 -		fi
 -
 -		# external block rules
@@ -297,7 +319,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  
  # backup/restore/remove blocklists
  #
-@@ -1019,13 +935,23 @@ f_list() {
+@@ -1040,13 +937,23 @@ f_list() {
  			file_name="${adb_finaldir}/${adb_dnsfile}"
  			rm -f "${file_name}"
  			[ -n "${adb_dnsheader}" ] && printf "%b" "${adb_dnsheader}" >>"${file_name}"
@@ -324,7 +346,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  			if [ "${adb_dnsshift}" = "1" ] && [ ! -L "${adb_dnsdir}/${adb_dnsfile}" ]; then
  				ln -fs "${file_name}" "${adb_dnsdir}/${adb_dnsfile}"
  			elif [ "${adb_dnsshift}" = "0" ] && [ -s "${adb_backupdir}/${adb_dnsfile}" ]; then
-@@ -1033,6 +959,7 @@ f_list() {
+@@ -1054,6 +961,7 @@ f_list() {
  			fi
  			out_rc="0"
  			;;
@@ -332,16 +354,16 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  	esac
  	f_count "${mode}" "${file_name}"
  	out_rc="${out_rc:-"${in_rc}"}"
-@@ -1280,7 +1207,7 @@ f_jsnup() {
+@@ -1305,7 +1213,7 @@ f_jsnup() {
  	json_add_string "dns_backend" "${adb_dns:-"-"} (${dns_ver:-"-"}), ${adb_finaldir:-"-"}, ${dns_mem:-"0"} MB"
  	json_add_string "run_ifaces" "trigger: ${adb_trigger:-"-"}, report: ${adb_repiface:-"-"}"
  	json_add_string "run_directories" "base: ${adb_basedir}, dns: ${adb_dnsdir}, backup: ${adb_backupdir}, report: ${adb_reportdir}"
--	json_add_string "run_flags" "shift: $(f_char ${adb_dnsshift}), custom feed: $(f_char ${custom_feed}), ext. DNS (std/prot): $(f_char ${nft_unfiltered})/$(f_char ${nft_filtered}), force: $(f_char ${nft_force}), flush: $(f_char ${adb_dnsflush}), tld: $(f_char ${adb_tld}), search: $(f_char ${adb_safesearch}), report: $(f_char ${adb_report}), mail: $(f_char ${adb_mail}), jail: $(f_char ${jail})"
+-	json_add_string "run_flags" "shift: $(f_char ${adb_dnsshift}), custom feed: $(f_char ${custom_feed}), ext. DNS (std/prot/remote): $(f_char ${nft_unfiltered})/$(f_char ${nft_filtered})/$(f_char ${nft_remote}), force: $(f_char ${nft_force}), flush: $(f_char ${adb_dnsflush}), tld: $(f_char ${adb_tld}), search: $(f_char ${adb_safesearch}), report: $(f_char ${adb_report}), mail: $(f_char ${adb_mail}), jail: $(f_char ${jail})"
 +	json_add_string "run_flags" "shift: $(f_char ${adb_dnsshift}), custom feed: $(f_char ${custom_feed}), force: $(f_char ${adb_dnsforce}), flush: $(f_char ${adb_dnsflush}), tld: $(f_char ${adb_tld}), search: $(f_char ${adb_safesearch}), report: $(f_char ${adb_report}), mail: $(f_char ${adb_mail}), jail: $(f_char ${adb_jail})"
  	json_add_string "last_run" "${runtime:-"-"}"
  	json_add_string "system_info" "cores: ${adb_cores}, fetch: ${adb_fetchcmd##*/}, ${adb_sysver}"
  	json_dump >"${adb_rtfile}"
-@@ -1909,7 +1836,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
+@@ -1937,7 +1845,6 @@ adb_lookupcmd="$(f_cmd nslookup)"
  adb_dumpcmd="$(f_cmd tcpdump optional)"
  adb_mailcmd="$(f_cmd msmtp optional)"
  adb_logreadcmd="$(f_cmd logread optional)"
@@ -349,7 +371,7 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  
  # handle different adblock actions
  #
-@@ -1918,7 +1844,6 @@ case "${adb_action}" in
+@@ -1946,7 +1853,6 @@ case "${adb_action}" in
  	"stop")
  		f_temp
  		f_jsnup "stopped"
@@ -357,9 +379,9 @@ index 2f989a123cc0cd..56b255bf33e805 100755
  		f_rmdns
  		;;
  	"suspend")
-@@ -1939,7 +1864,6 @@ case "${adb_action}" in
- 		;;
+@@ -1968,7 +1874,6 @@ case "${adb_action}" in
  	"restart")
+ 		f_temp
  		f_jsnup "processing"
 -		f_nftremove
  		f_rmdns
