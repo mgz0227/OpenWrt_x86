@@ -1,0 +1,35 @@
+From e05aef3f9aa7df8d4ab1c2a07683d9ee3b9e6537 Mon Sep 17 00:00:00 2001
+From: miaogongzi <miaogongzi0227@gmail.com>
+Date: Thu, 12 Feb 2026 00:54:26 +0800
+Subject: [PATCH] nginx: bump release to 1.29.5
+
+nginx: bump release to 1.29.5
+changelog: https://nginx.org/en/CHANGES
+
+Signed-off-by: gongzi miao <miaogongzi0227@gmail.com>
+
+Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
+---
+ feeds/packages/net/nginx/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/feeds/packages/net/nginx/Makefile b/feeds/packages/net/nginx/Makefile
+index 6a86d896a007d..6d75368c973df 100644
+--- a/feeds/packages/net/nginx/Makefile
++++ b/feeds/packages/net/nginx/Makefile
+@@ -8,12 +8,12 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=nginx
+-PKG_VERSION:=1.26.3
+-PKG_RELEASE:=3
++PKG_VERSION:=1.29.5
++PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=nginx-$(PKG_VERSION).tar.gz
+ PKG_SOURCE_URL:=https://nginx.org/download/
+-PKG_HASH:=69ee2b237744036e61d24b836668aad3040dda461fe6f570f1787eab570c75aa
++PKG_HASH:=6744768a4114880f37b13a0443244e731bcb3130c0a065d7e37d8fd589ade374
+ 
+ PKG_MAINTAINER:=Thomas Heil <heil@terminal-consulting.de> \
+ 				Christian Marangi <ansuelsmth@gmail.com>
