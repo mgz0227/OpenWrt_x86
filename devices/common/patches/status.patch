@@ -134,12 +134,12 @@
 
 --- a/package/feeds/luci/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
 +++ b/package/feeds/luci/luci-mod-status/htdocs/luci-static/resources/view/status/include/29_ports.js
-@@ -309,8 +309,6 @@ return baseclass.extend({
+@@ -425,8 +425,6 @@ return baseclass.extend({
  	},
  
- 	render: function(data) {
+ 	render(data) {
 -		if (L.hasSystemFeature('swconfig'))
 -			return null;
  
- 		var board = JSON.parse(data[1]),
- 		    known_ports = [],
+ 		const board = JSON.parse(data[1]),
+ 		      port_map = buildInterfaceMapping(data[2], data[3]),

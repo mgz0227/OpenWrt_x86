@@ -271,10 +271,10 @@
 
 --- a/package/feeds/luci/luci-base/htdocs/luci-static/resources/validation.js
 +++ b/package/feeds/luci/luci-base/htdocs/luci-static/resources/validation.js
-@@ -403,6 +403,14 @@ const ValidatorFactory = baseclass.extend({
- 			return this.assert(false, _('valid hostname'));
- 		},
- 
+@@ -804,6 +804,14 @@ const ValidatorFactory = baseclass.extend(/** @lends LuCI.validation.ValidatorFa
+ 		 * @function LuCI.validation.ValidatorFactory.types#network
+ 		 * @returns {@link LuCI.validation.Validator#assert assert()} {boolean}
+ 		 */
 +		wildcard() {
 +			// must start with '.', then remove it and check if it's a valid hostname
 +			if (this.value[0] != '.')

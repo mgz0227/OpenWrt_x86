@@ -55,10 +55,11 @@ index c3a02f7876ac46..83de4adbf4290d 100644
 
 --- a/package/feeds/luci/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
 +++ b/package/feeds/luci/luci-app-firewall/htdocs/luci-static/resources/view/firewall/zones.js
-@@ -58,6 +58,51 @@
+@@ -55,6 +55,51 @@ return view.extend({
+ 		};
  
  		o = s.option(form.Flag, 'drop_invalid', _('Drop invalid packets'));
- 
++ 
 +		if (L.hasSystemFeature('fullcone')) {
 +			o = s.option(form.Flag, 'fullcone', _('Enable FullCone NAT'));
 +			if (fw4) {
@@ -103,10 +104,9 @@ index c3a02f7876ac46..83de4adbf4290d 100644
 +		o.depends('ex_backend', '1');
 +		o.rmempty = false;
 +		o.datatype = 'integer';
-+
- 		var p = [
+ 
+ 		let p = [
  			s.option(form.ListValue, 'input', _('Input')),
- 			s.option(form.ListValue, 'output', _('Output')),
 
 --- a/package/network/config/firewall/files/firewall.init
 +++ b/package/network/config/firewall/files/firewall.init
