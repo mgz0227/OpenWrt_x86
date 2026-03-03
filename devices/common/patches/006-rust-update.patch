@@ -1,14 +1,14 @@
-From 0e8a572ab82538556b563d0f2421246910c54209 Mon Sep 17 00:00:00 2001
+From 8c8c4fe36ac9ea0c81f8b638c09b7632c5c9ba35 Mon Sep 17 00:00:00 2001
 From: gongzi miao <miaogongzi0227@gmail.com>
 Date: Tue, 3 Mar 2026 21:20:42 +0800
 Subject: [PATCH] rust: bump 1.90.0 to 1.93.1
 
 ---
- feeds/packages/lang/rust/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lang/rust/Makefile | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/feeds/packages/lang/rust/Makefile b/feeds/packages/lang/rust/Makefile
-index 717b15d46e164..28eea30573377 100644
+index 717b15d46e164..0b7b238aca7bf 100644
 --- a/feeds/packages/lang/rust/Makefile
 +++ b/feeds/packages/lang/rust/Makefile
 @@ -5,12 +5,12 @@
@@ -20,9 +20,17 @@ index 717b15d46e164..28eea30573377 100644
  PKG_RELEASE:=1
  
  PKG_SOURCE:=rustc-$(PKG_VERSION)-src.tar.xz
- PKG_SOURCE_URL:=https://static.rust-feeds/packages/lang.org/dist/
+ PKG_SOURCE_URL:=https://static.rust-lang.org/dist/
 -PKG_HASH:=6bfeaddd90ffda2f063492b092bfed925c4b8c701579baf4b1316e021470daac
 +PKG_HASH:=518872275a3648f735471d7add854d39171c5a6b17f423c4d7f931f52120c2af
  HOST_BUILD_DIR:=$(BUILD_DIR)/host/rustc-$(PKG_VERSION)-src
  
  PKG_MAINTAINER:=Luca Barbato <lu_zero@luminem.org>
+@@ -90,6 +90,7 @@ define Host/Compile
+ 	TARGET_CFLAGS="$(TARGET_CFLAGS)" \
+ 	$(PYTHON) $(HOST_BUILD_DIR)/x.py \
+ 		--build-dir $(HOST_BUILD_DIR)/build \
++		--ci false \
+ 		dist build-manifest rustc rust-std cargo llvm-tools rust-src
+ endef
+ 
