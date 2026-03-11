@@ -1,0 +1,23 @@
+From 64376c90f98ab8e0b2843d87c998812afde0953d Mon Sep 17 00:00:00 2001
+From: miaogongzi <miaogongzi0227@gmail.com>
+Date: Thu, 12 Mar 2026 05:34:47 +0800
+Subject: [PATCH] Use mkdir -p to create intel-ucode-ipkg directory
+
+Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
+---
+ package/firmware/intel-microcode/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/package/firmware/intel-microcode/Makefile b/package/firmware/intel-microcode/Makefile
+index 224c878dd646ea..13c2fa45564c58 100644
+--- a/package/firmware/intel-microcode/Makefile
++++ b/package/firmware/intel-microcode/Makefile
+@@ -39,7 +39,7 @@ endef
+ 
+ define Build/Compile
+ 	IUCODE_TOOL=$(STAGING_DIR)/../host/bin/iucode_tool $(MAKE) -C $(PKG_BUILD_DIR)
+-	mkdir $(PKG_BUILD_DIR)/intel-ucode-ipkg
++	mkdir -p $(PKG_BUILD_DIR)/intel-ucode-ipkg
+ 	$(STAGING_DIR)/../host/bin/iucode_tool -q \
+ 		--write-firmware=$(PKG_BUILD_DIR)/intel-ucode-ipkg $(PKG_BUILD_DIR)/$(MICROCODE).bin
+ endef
