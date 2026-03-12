@@ -220,6 +220,18 @@ jobs:
         CONFIG_FAT_DEFAULT_IOCHARSET="utf8" \
         ' `find target/linux -path "target/linux/*/config-*"`
 
+    - name: Write custom APK keys
+      run: |
+        cat > private-key.pem <<'EOF'
+        ${{ secrets.APK_PRIVATE_KEY }}
+        EOF
+
+        cat > public-key.pem <<'EOF'
+        ${{ secrets.APK_PUBLIC_KEY }}
+        EOF
+
+        chmod 600 private-key.pem
+        ls -l private-key.pem public-key.pem
 
     - name: Defconfig
       run: |
