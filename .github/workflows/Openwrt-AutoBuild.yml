@@ -283,7 +283,7 @@ jobs:
         shopt -s extglob
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
-        make package/install -j1 V=s
+        make -j1 V=sc
         #make -j$(($(nproc)+1)) || { log=$(mktemp);make V=s &>$log; } || { tail -50 $log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1; }
         #make -j1 V=sc || make V=sc &>build.log || {tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1;}
         sed -i "s/# CONFIG_IB is not set/CONFIG_IB=y/" .config
