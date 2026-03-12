@@ -1,7 +1,7 @@
 From d40453c42115c9c5d59ef678dc35e01725a8b18a Mon Sep 17 00:00:00 2001
 From: miaogongzi <miaogongzi0227@gmail.com>
 Date: Fri, 13 Mar 2026 01:03:53 +0800
-Subject: [PATCH] Update Makefile
+Subject: [PATCH] strongswan: avoid postinst failure when opkg is unavailable
 
 Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
 ---
