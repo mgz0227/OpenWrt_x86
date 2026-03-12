@@ -1,0 +1,29 @@
+From d40453c42115c9c5d59ef678dc35e01725a8b18a Mon Sep 17 00:00:00 2001
+From: miaogongzi <miaogongzi0227@gmail.com>
+Date: Fri, 13 Mar 2026 01:03:53 +0800
+Subject: [PATCH] Update Makefile
+
+Signed-off-by: miaogongzi <miaogongzi0227@gmail.com>
+---
+ net/strongswan/Makefile | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/feeds/packages/net/strongswan/Makefile b/feeds/packages/net/strongswan/Makefile
+index 73cbcf632808a1..acb15f908e091f 100644
+--- a/feeds/packages/net/strongswan/Makefile
++++ b/feeds/packages/net/strongswan/Makefile
+@@ -547,9 +547,11 @@ define Package/strongswan-ipsec/postinst
+ 
+ [ -z "$${IPKG_INSTROOT}" ] || exit 0
+ 
+-opkg list-changed-conffiles | grep -qx /etc/ipsec.conf || {
+-	rm -f /etc/ipsec.conf-opkg
+-}
++if command -v opkg >/dev/null 2>&1; then
++	opkg list-changed-conffiles | grep -qx /etc/ipsec.conf || rm -f /etc/ipsec.conf-opkg
++else
++	rm -f /etc/ipsec.conf-opkg 2>/dev/null
++fi
+ endef
+ 
+ define Package/strongswan-pki/install
