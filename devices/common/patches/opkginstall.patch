@@ -73,18 +73,18 @@
 +		
 +			if (L.hasSystemFeature('apk')) {
 +				return Promise.all([
-+					L.resolveDefault(fs.list('/tmp/cache/apk'), []),
++					L.resolveDefault(fs.list('/tmp'), []),
 +					L.resolveDefault(fs.read(resolvPath), '')
 +				]).then(function(results) {
 +					const files = results[0] || [];
 +					const resolvContent = results[1] || '';
-+		
++			
 +					const indexFiles = files.filter(function(f) {
-+						return f.type === 'file' && /^APKINDEX\..+\.tar\.gz$/.test(f.name);
++						return f.type === 'file' && /^luci-indexcache\..+\.json$/.test(f.name);
 +					});
-+		
++			
 +					let needUpdate = false;
-+		
++			
 +					if (indexFiles.length > 0) {
 +						const currentDate = new Date();
 +						const today = new Date(
@@ -92,14 +92,14 @@
 +							currentDate.getMonth(),
 +							currentDate.getDate()
 +						);
-+		
++			
 +						let newestMtime = 0;
-+		
++			
 +						indexFiles.forEach(function(f) {
 +							if (f.mtime && f.mtime > newestMtime)
 +								newestMtime = f.mtime;
 +						});
-+		
++			
 +						if (newestMtime > 0) {
 +							const lastUpdateDate = new Date(newestMtime * 1000);
 +							needUpdate = lastUpdateDate < today;
@@ -111,7 +111,7 @@
 +					else {
 +						needUpdate = true;
 +					}
-+		
++			
 +					const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
 +					return needUpdate && hasResolvContent;
 +				}).catch(function(error) {
