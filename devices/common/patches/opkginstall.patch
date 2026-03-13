@@ -1,12 +1,21 @@
 --- a/package/feeds/luci/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
 +++ b/package/feeds/luci/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
+@@ -100,7 +100,7 @@ const packages = {
+ 
+ const languages = ['en'];
+ 
+-let currentDisplayMode = 'available'
++let currentDisplayMode = 'available';
+ const currentDisplayRows = [];
+ 
+ function parseList(s, dest)
 @@ -186,7 +186,10 @@ function parseList(s, dest)
  			val = RegExp.$2.trim();
  		}
  		else if (pkg) {
 -			dest.pkgs[pkg.name] = pkg;
 +			const cur = dest.pkgs[pkg.name];
-+		
++
 +			if (!cur || compareVersion(pkg.version || '0', cur.version || '0') >= 0)
 +				dest.pkgs[pkg.name] = pkg;
  
@@ -34,7 +43,162 @@
  				btn = E('div', {
  					'class': 'btn cbi-button-positive',
  					'data-package': name,
-@@ -791,7 +794,8 @@ function handleInstall(ev)
+@@ -348,7 +351,7 @@ function handlePage(ev)
+ 
+ 	if ((next && (offset + 100) >= currentDisplayRows.length) ||
+ 	    (!next && (offset < 100)))
+-	    return;
++		return;
+ 
+ 	offset += next ? 100 : -100;
+ 
+@@ -377,8 +380,7 @@ function handlePage(ev)
+ 			E('a', { href: '#', click: handleReset }, _('Reset')), ')'
+ 		];
+ 
+-	cbi_update_table('#packages', currentDisplayRows.slice(offset, offset + 100),
+-		placeholder);
++	cbi_update_table('#packages', currentDisplayRows.slice(offset, offset + 100), placeholder);
+ }
+ 
+ function handleMode(ev)
+@@ -473,17 +475,13 @@ function versionSatisfied(ver, ref, vop)
+ 	case '<':
+ 	case '<=':
+ 		return r <= 0;
+-
+ 	case '>':
+ 	case '>=':
+ 		return r >= 0;
+-
+ 	case '<<':
+ 		return r < 0;
+-
+ 	case '>>':
+ 		return r > 0;
+-
+ 	case '=':
+ 		return r == 0;
+ 	}
+@@ -509,8 +507,7 @@ function pkgStatus(pkg, vop, ver, info)
+ 				info.install.push(repl);
+ 				return E('span', {
+ 					'class': 'label',
+-					'data-tooltip': _('Requires update to %h %h')
+-						.format(repl.name, repl.version)
++					'data-tooltip': _('Requires update to %h %h').format(repl.name, repl.version)
+ 				}, _('Needs upgrade'));
+ 			}
+ 
+@@ -518,8 +515,7 @@ function pkgStatus(pkg, vop, ver, info)
+ 
+ 			return E('span', {
+ 				'class': 'label warning',
+-				'data-tooltip': _('Require version %h %h,\ninstalled %h')
+-					.format(vop, ver, pkg.version)
++				'data-tooltip': _('Require version %h %h,\ninstalled %h').format(vop, ver, pkg.version)
+ 			}, _('Version incompatible'));
+ 		}
+ 
+@@ -532,17 +528,15 @@ function pkgStatus(pkg, vop, ver, info)
+ 		}
+ 
+ 		info.errors.push(_('The repository version of package <em>%h</em> is not compatible, require %s but only %s is available.')
+-				.format(pkg.name, truncateVersion(ver, vop), truncateVersion(pkg.version)));
++			.format(pkg.name, truncateVersion(ver, vop), truncateVersion(pkg.version)));
+ 
+ 		return E('span', {
+ 			'class': 'label warning',
+-			'data-tooltip': _('Require version %h %h,\ninstalled %h')
+-				.format(vop, ver, pkg.version)
++			'data-tooltip': _('Require version %h %h,\ninstalled %h').format(vop, ver, pkg.version)
+ 		}, _('Version incompatible'));
+ 	}
+ 	else {
+ 		info.errors.push(_('Required dependency package <em>%h</em> is not available in any repository.').format(pkg.name));
+-
+ 		return E('span', { 'class': 'label warning' }, _('Not available'));
+ 	}
+ }
+@@ -556,8 +550,8 @@ function renderDependencyItem(dep, info, flat)
+ 
+ 	for (let i = 0; dep.pkgs && i < dep.pkgs.length; i++) {
+ 		const pkg = packages.installed.pkgs[dep.pkgs[i]] ||
+-		          packages.available.pkgs[dep.pkgs[i]] ||
+-		          { name: dep.name };
++			packages.available.pkgs[dep.pkgs[i]] ||
++			{ name: dep.name };
+ 
+ 		if (i > 0)
+ 			li.appendChild(document.createTextNode(' | '));
+@@ -580,8 +574,7 @@ function renderDependencyItem(dep, info, flat)
+ 
+ 	if (!li.firstChild)
+ 		li.appendChild(E('span', {},
+-			[ dep.name, ' ',
+-			  pkgStatus({ name: dep.name, missing: true }, vop, ver, info) ]));
++			[ dep.name, ' ', pkgStatus({ name: dep.name, missing: true }, vop, ver, info) ]));
+ 
+ 	if (!flat) {
+ 		const subdeps = renderDependencies(depends, info);
+@@ -621,16 +614,18 @@ function renderDependencies(depends, info, flat)
+ 		const pkgs = [];
+ 
+ 		(packages.installed.providers[dep] || []).forEach(function(p) {
+-			if (pkgs.indexOf(p.name) === -1) pkgs.push(p.name);
++			if (pkgs.indexOf(p.name) === -1)
++				pkgs.push(p.name);
+ 		});
+ 
+ 		(packages.available.providers[dep] || []).forEach(function(p) {
+-			if (pkgs.indexOf(p.name) === -1) pkgs.push(p.name);
++			if (pkgs.indexOf(p.name) === -1)
++				pkgs.push(p.name);
+ 		});
+ 
+ 		info.seen[dep] = {
+-			name:    dep,
+-			pkgs:    pkgs,
++			name: dep,
++			pkgs: pkgs,
+ 			version: [vop, ver]
+ 		};
+ 
+@@ -657,7 +652,6 @@ function truncateVersion(v, op)
+ function handleReset(ev)
+ {
+ 	const filter = document.querySelector('input[name="filter"]');
+-
+ 	filter.value = '';
+ 	display();
+ }
+@@ -709,7 +703,6 @@ function handleInstall(ev)
+ 
+ 			for (let pkgname in packages.installed.pkgs) {
+ 				const m = pkgname.match(/^luci-([^-]+)-(.+)$/);
+-
+ 				if (m && m[1] != 'i18n')
+ 					basenames.push(m[2]);
+ 			}
+@@ -727,7 +720,6 @@ function handleInstall(ev)
+ 					i18n_packages.push(pkgname);
+ 
+ 			const i18ncache = {};
+-
+ 			i18n_tree = renderDependencies(i18n_packages, i18ncache, true);
+ 
+ 			if (i18ncache.install && i18ncache.install.length) {
+@@ -739,8 +731,7 @@ function handleInstall(ev)
+ 	}
+ 
+ 	inst = E('p', [
+-		_('Require approx. %1024mB size for %d package(s) to install.')
+-			.format(totalsize, totalpkgs),
++		_('Require approx. %1024mB size for %d package(s) to install.').format(totalsize, totalpkgs),
+ 		' ',
+ 		suggestsize ? _('Suggested translations require approx. %1024mB additional space.').format(suggestsize) : ''
+ 	]);
+@@ -791,7 +782,8 @@ function handleInstall(ev)
  						'id': 'overwrite-cb',
  						'type': 'checkbox',
  						'name': 'overwrite',
@@ -44,33 +208,283 @@
  					}), ' ',
  					E('label', { 'for': 'overwrite-cb' }), ' ',
  					_('Allow overwriting conflicting package files')
-@@ -1031,6 +1035,8 @@ function handlePkg(ev)
+@@ -819,14 +811,14 @@ function handleManualInstall(ev)
+ {
+ 	const name_or_url = document.querySelector('input[name="install"]').value;
+ 	let install = E('div', {
+-			'class': 'btn cbi-button-action',
+-			'data-command': 'install',
+-			'data-package': name_or_url,
+-			'click': function(ev) {
+-				document.querySelector('input[name="install"]').value = '';
+-				handlePkg(ev);
+-			}
+-		}, _('Install'));
++		'class': 'btn cbi-button-action',
++		'data-command': 'install',
++		'data-package': name_or_url,
++		'click': function(ev) {
++			document.querySelector('input[name="install"]').value = '';
++			handlePkg(ev);
++		}
++	}, _('Install'));
+ 	let warning;
+ 
+ 	if (!name_or_url.length) {
+@@ -850,7 +842,8 @@ function handleManualInstall(ev)
+ 				'click': ui.hideModal,
+ 				'class': 'btn cbi-button-neutral'
+ 			}, _('Cancel')),
+-			' ', install
++			' ',
++			install
+ 		])
+ 	]);
+ }
+@@ -868,19 +861,22 @@ function handleConfig(ev)
+ 		const files = [];
+ 
+ 		if (L.hasSystemFeature('apk')) {
+-                        files.push(base_dir + '/' + 'repositories.d/customfeeds.list',
+-                                   base_dir + '/' + 'repositories.d/distfeeds.list'
+-                        )
+-                } else {
+-                        files.push(base_dir + '.conf')
+-                }
++			files.push(
++				base_dir + '/' + 'repositories.d/customfeeds.list',
++				base_dir + '/' + 'repositories.d/distfeeds.list'
++			);
++		}
++		else {
++			files.push(base_dir + '.conf');
++		}
+ 
+ 		for (let i = 0; i < partials.length; i++) {
+ 			if (partials[i].type == 'file') {
+ 				if (L.hasSystemFeature('apk')) {
+ 					if (partials[i].name == 'repositories')
+ 						files.push(base_dir + '/' + partials[i].name);
+-				} else if (partials[i].name.match(/\.conf$/)) {
++				}
++				else if (partials[i].name.match(/\.conf$/)) {
+ 					files.push(base_dir + '/' + partials[i].name);
+ 				}
+ 			}
+@@ -888,7 +884,9 @@ function handleConfig(ev)
+ 
+ 		return Promise.all(files.map(function(file) {
+ 			return fs.read(file)
+-				.then(L.bind(function(conf, file, res) { conf[file] = res }, this, conf, file))
++				.then(L.bind(function(conf, file, res) {
++					conf[file] = res;
++				}, this, conf, file))
+ 				.catch(function(err) {
+ 					ui.addNotification(null, E('p', {}, [ _('Unable to read %s: %s').format(file, err) ]));
+ 					ui.hideModal();
+@@ -896,8 +894,8 @@ function handleConfig(ev)
+ 				});
+ 		}));
+ 	}).then(function() {
+-		const opkg_text = _('Below is a listing of the various configuration files used by <em>opkg</em>. Use <em>opkg.conf</em> for global settings and <em>customfeeds.conf</em> for custom repository entries. The configuration in the other files may be changed but is usually not preserved by <em>sysupgrade</em>.')
+-		const apk_text = _('Below is a listing of the various configuration files used by <em>apk</em>. The configuration in the other files may be changed but is usually not preserved by <em>sysupgrade</em>.')
++		const opkg_text = _('Below is a listing of the various configuration files used by <em>opkg</em>. Use <em>opkg.conf</em> for global settings and <em>customfeeds.conf</em> for custom repository entries. The configuration in the other files may be changed but is usually not preserved by <em>sysupgrade</em>.');
++		const apk_text = _('Below is a listing of the various configuration files used by <em>apk</em>. The configuration in the other files may be changed but is usually not preserved by <em>sysupgrade</em>.');
+ 		const body = [
+ 			E('p', {}, L.hasSystemFeature('apk') ? apk_text : opkg_text)
+ 		];
+@@ -922,7 +920,7 @@ function handleConfig(ev)
+ 					const data = {};
+ 					findParent(ev.target, '.modal').querySelectorAll('textarea[name]')
+ 						.forEach(function(textarea) {
+-							data[textarea.getAttribute('name')] = textarea.value
++							data[textarea.getAttribute('name')] = textarea.value;
+ 						});
+ 
+ 					ui.showModal(_('%s Configuration').format(L.hasSystemFeature('apk') ? 'APK' : 'OPKG'), [
+@@ -936,7 +934,7 @@ function handleConfig(ev)
+ 					})).then(ui.hideModal);
+ 				},
+ 				'disabled': isReadonlyView
+-			}, _('Save')),
++			}, _('Save'))
+ 		]));
+ 
+ 		ui.showModal(_('%s Configuration').format(L.hasSystemFeature('apk') ? 'APK' : 'OPKG'), body);
+@@ -972,7 +970,13 @@ function handleRemove(ev)
+ 		desc || '',
+ 		E('div', { 'style': 'display:flex; justify-content:space-between; flex-wrap:wrap' }, [
+ 			E('label', { 'class': 'cbi-checkbox', 'style': 'float:left' }, [
+-				E('input', { 'id': 'autoremove-cb', 'type': 'checkbox', 'checked': 'checked', 'name': 'autoremove', 'disabled': isReadonlyView || L.hasSystemFeature('apk') || null }), ' ',
++				E('input', {
++					'id': 'autoremove-cb',
++					'type': 'checkbox',
++					'checked': 'checked',
++					'name': 'autoremove',
++					'disabled': isReadonlyView || L.hasSystemFeature('apk') || null
++				}), ' ',
+ 				E('label', { 'for': 'autoremove-cb' }), ' ',
+ 				_('Automatically remove unused dependencies')
+ 			]),
+@@ -994,6 +998,24 @@ function handleRemove(ev)
+ 	]);
+ }
+ 
++function clearLuciIndexCache()
++{
++	return L.resolveDefault(fs.list('/tmp'), []).then(function(files) {
++		const targets = (files || []).filter(function(f) {
++			return f.type === 'file' && /^luci-indexcache\..+\.json$/.test(f.name);
++		}).map(function(f) {
++			return '/tmp/' + f.name;
++		});
++
++		if (!targets.length)
++			return Promise.resolve();
++
++		return Promise.all(targets.map(function(path) {
++			return L.resolveDefault(fs.remove(path), null);
++		}));
++	});
++}
++
+ function handlePkg(ev)
+ {
+ 	return new Promise(function(resolveFn, rejectFn) {
+@@ -1010,8 +1032,28 @@ function handlePkg(ev)
+ 
+ 		const argv = [ cmd ];
+ 
++		const refreshLists = function(res) {
++			const done = function() {
++				if (ui.menu && ui.menu.flushCache)
++					ui.menu.flushCache();
++
++				ui.hideModal();
++				updateLists();
++
++				if (res.code !== 0)
++					rejectFn(new Error(res.stderr || '%s error %d'.format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', res.code)));
++				else
++					resolveFn(res);
++			};
++
++			if (cmd === 'update' && res.code === 0)
++				clearLuciIndexCache().then(done).catch(done);
++			else
++				done();
++		};
++
+ 		if (cmd == 'remove')
+-			argv.push('--force-removal-of-dependent-packages')
++			argv.push('--force-removal-of-dependent-packages');
+ 
+ 		if (rem && rem.checked)
+ 			argv.push('--autoremove');
+@@ -1031,33 +1073,31 @@ function handlePkg(ev)
  			if (res.pkmcmd)
  				dlg.appendChild(E('pre', [ res.pkmcmd ]));
  
+-			if (res.stdout)
+-				dlg.appendChild(E('pre', [ res.stdout ]));
 +			const showModalFlag = (cmd !== 'update' && pkg) || res.stderr;
-+			if (showModalFlag) {
- 			if (res.stdout)
- 				dlg.appendChild(E('pre', [ res.stdout ]));
  
-@@ -1058,6 +1064,10 @@ function handlePkg(ev)
- 							resolveFn(res);
- 					}, this, res)
- 				}, _('Dismiss'))));
-+				} else {
-+				ui.hideModal();
-+				updateLists();
+-			if (res.stderr) {
+-				dlg.appendChild(E('h5', _('Errors')));
+-				dlg.appendChild(E('pre', { 'class': 'errors' }, [ res.stderr ]));
+-			}
++			if (showModalFlag) {
++				if (res.stdout)
++					dlg.appendChild(E('pre', [ res.stdout ]));
+ 
+-			if (res.code !== 0)
+-				dlg.appendChild(E('p', _('The <em>%s %h</em> command failed with code <code>%d</code>.').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', cmd, (res.code & 0xff) || -1)));
++				if (res.stderr) {
++					dlg.appendChild(E('h5', _('Errors')));
++					dlg.appendChild(E('pre', { 'class': 'errors' }, [ res.stderr ]));
 +				}
+ 
+-			dlg.appendChild(E('div', { 'class': 'button-row' },
+-				E('div', {
+-					'class': 'btn',
+-					'click': L.bind(function(res) {
+-						if (ui.menu && ui.menu.flushCache)
+-							ui.menu.flushCache();
++				if (res.code !== 0)
++					dlg.appendChild(E('p', _('The <em>%s %h</em> command failed with code <code>%d</code>.').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', cmd, (res.code & 0xff) || -1)));
+ 
+-						ui.hideModal();
+-						updateLists();
+-
+-						if (res.code !== 0)
+-							rejectFn(new Error(res.stderr || '%s error %d'.format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', res.code)));
+-						else
+-							resolveFn(res);
+-					}, this, res)
+-				}, _('Dismiss'))));
++				dlg.appendChild(E('div', { 'class': 'button-row' },
++					E('div', {
++						'class': 'btn',
++						'click': L.bind(function(res) {
++							refreshLists(res);
++						}, this, res)
++					}, _('Dismiss'))));
++			}
++			else {
++				refreshLists(res);
++			}
  		}).catch(function(err) {
  			ui.addNotification(null, E('p', _('Unable to execute <em>%s %s</em> command: %s').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', cmd, err)));
  			ui.hideModal();
-@@ -1152,6 +1162,89 @@ return view.extend({
+@@ -1083,14 +1123,15 @@ function handleUpload(ev)
+ 						fs.remove(path);
+ 					},
+ 					'class': 'btn cbi-button-neutral'
+-				}, _('Cancel')), ' ',
++				}, _('Cancel')),
++				' ',
+ 				E('div', {
+ 					'class': 'btn cbi-button-action',
+ 					'data-command': 'install',
+ 					'data-package': path,
+ 					'click': function(ev) {
+ 						handlePkg(ev).finally(function() {
+-							fs.remove(path)
++							fs.remove(path);
+ 						});
+ 					}
+ 				}, _('Install'))
+@@ -1118,8 +1159,11 @@ function updateLists(data)
+ 
+ 	return (data ? Promise.resolve(data) : downloadLists()).then(function(data) {
+ 		const pg = document.querySelector('.cbi-progressbar');
+-		const mount = L.toArray(data[0].filter(function(m) { return m.mount == '/' || m.mount == '/overlay' }))
+-				.sort(function(a, b) { return a.mount > b.mount })[0] || { size: 0, free: 0 };
++		const mount = L.toArray(data[0].filter(function(m) {
++			return m.mount == '/' || m.mount == '/overlay';
++		})).sort(function(a, b) {
++			return a.mount > b.mount;
++		})[0] || { size: 0, free: 0 };
+ 
+ 		pg.firstElementChild.style.width = Math.floor(mount.size ? (100 / mount.size) * (mount.size - mount.free) : 100) + '%';
+ 		pg.setAttribute('title', _('%s used (%1024mB used of %1024mB, %1024mB free)').format(pg.firstElementChild.style.width, mount.size - mount.free, mount.size, mount.free));
+@@ -1137,7 +1181,8 @@ function updateLists(data)
+ 
+ let inputTimeout = null;
+ 
+-function handleInput(ev) {
++function handleInput(ev)
++{
+ 	if (inputTimeout !== null)
+ 		window.clearTimeout(inputTimeout);
+ 
+@@ -1152,6 +1197,90 @@ return view.extend({
  	},
  
  	render(listData) {
 +		const checkUpdateNeeded = function() {
 +			const resolvPath = '/tmp/resolv.conf.d/resolv.conf.auto';
-+		
++
 +			if (L.hasSystemFeature('apk')) {
 +				return Promise.all([
 +					L.resolveDefault(fs.list('/tmp'), []),
@@ -78,13 +492,13 @@
 +				]).then(function(results) {
 +					const files = results[0] || [];
 +					const resolvContent = results[1] || '';
-+			
++
 +					const indexFiles = files.filter(function(f) {
 +						return f.type === 'file' && /^luci-indexcache\..+\.json$/.test(f.name);
 +					});
-+			
++
 +					let needUpdate = false;
-+			
++
 +					if (indexFiles.length > 0) {
 +						const currentDate = new Date();
 +						const today = new Date(
@@ -92,14 +506,14 @@
 +							currentDate.getMonth(),
 +							currentDate.getDate()
 +						);
-+			
++
 +						let newestMtime = 0;
-+			
++
 +						indexFiles.forEach(function(f) {
 +							if (f.mtime && f.mtime > newestMtime)
 +								newestMtime = f.mtime;
 +						});
-+			
++
 +						if (newestMtime > 0) {
 +							const lastUpdateDate = new Date(newestMtime * 1000);
 +							needUpdate = lastUpdateDate < today;
@@ -111,7 +525,7 @@
 +					else {
 +						needUpdate = true;
 +					}
-+			
++
 +					const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
 +					return needUpdate && hasResolvContent;
 +				}).catch(function(error) {
@@ -119,16 +533,16 @@
 +					return false;
 +				});
 +			}
-+		
++
 +			return Promise.all([
 +				L.resolveDefault(fs.stat('/tmp/opkg-lists'), null),
 +				L.resolveDefault(fs.read(resolvPath), '')
 +			]).then(function(results) {
 +				const stat = results[0];
 +				const resolvContent = results[1];
-+		
++
 +				let needUpdate = false;
-+		
++
 +				if (stat) {
 +					const currentDate = new Date();
 +					const lastUpdateDate = new Date(stat.mtime * 1000);
@@ -137,13 +551,13 @@
 +						currentDate.getMonth(),
 +						currentDate.getDate()
 +					);
-+		
++
 +					needUpdate = lastUpdateDate < today;
 +				}
 +				else {
 +					needUpdate = true;
 +				}
-+		
++
 +				const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
 +				return needUpdate && hasResolvContent;
 +			}).catch(function(error) {
@@ -151,10 +565,26 @@
 +				return false;
 +			});
 +		};
++
  		const query = decodeURIComponent(L.toArray(location.search.match(/\bquery=([^=]+)\b/))[1] || '');
  
  		const view = E([], [
-@@ -1193,6 +1286,7 @@ return view.extend({
+@@ -1184,7 +1313,13 @@ return view.extend({
+ 				E('div', {}, [
+ 					E('label', {}, _('Download and install package') + ':'),
+ 					E('span', { 'class': 'control-group' }, [
+-						E('input', { 'type': 'text', 'name': 'install', 'placeholder': _('Package name or URL…'), 'keydown': function(ev) { if (ev.keyCode === 13) handleManualInstall(ev) }, 'disabled': isReadonlyView }),
++						E('input', {
++							'type': 'text',
++							'name': 'install',
++							'placeholder': _('Package name or URL…'),
++							'keydown': function(ev) { if (ev.keyCode === 13) handleManualInstall(ev); },
++							'disabled': isReadonlyView
++						}),
+ 						E('button', { 'class': 'btn cbi-button cbi-button-action', 'click': handleManualInstall, 'disabled': isReadonlyView }, [ _('OK') ])
+ 					])
+ 				]),
+@@ -1193,6 +1328,7 @@ return view.extend({
  					E('label', {}, _('Actions') + ':'), ' ',
  					E('span', { 'class': 'control-group' }, [
  						E('button', { 'class': 'btn cbi-button-positive', 'data-command': 'update', 'click': handlePkg, 'disabled': isReadonlyView }, [ _('Update lists…') ]), ' ',
@@ -162,22 +592,30 @@
  						E('button', { 'class': 'btn cbi-button-action', 'click': handleUpload, 'disabled': isReadonlyView }, [ _('Upload Package…') ]), ' ',
  						E('button', { 'class': 'btn cbi-button-neutral', 'click': handleConfig }, [ _('Configure %s').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg') ])
  					])
-@@ -1278,7 +1372,17 @@ return view.extend({
+@@ -1262,7 +1398,7 @@ return view.extend({
+ 				E('tr', { 'class': 'tr cbi-section-table-titles' }, [
+ 					E('th', { 'class': 'th col-2 left' }, [ _('Package name') ]),
+ 					E('th', { 'class': 'th col-2 left version' }, [ _('Version') ]),
+-					E('th', { 'class': 'th col-1 center size'}, [ _('Size (%s)').format(L.hasSystemFeature('apk') ? '.apk' : '.ipk') ]),
++					E('th', { 'class': 'th col-1 center size' }, [ _('Size (%s)').format(L.hasSystemFeature('apk') ? '.apk' : '.ipk') ]),
+ 					E('th', { 'class': 'th col-10 left' }, [ _('Description') ]),
+ 					E('th', { 'class': 'th right cbi-section-actions' }, [ '\u00a0' ])
+ 				])
+@@ -1278,7 +1414,16 @@ return view.extend({
  		]);
  
  		requestAnimationFrame(function() {
 -			updateLists(listData)
 +			updateLists(listData);
-+            checkUpdateNeeded().then(function(needUpdate) {
-+                if (needUpdate) {
-+		setTimeout(function() {
-+                    const updateButton = document.querySelector('button[data-command="update"]');
-+                    if (updateButton) {
-+                        updateButton.click();
-+                    }
-+		}, 10)
-+                }
-+            });
++			checkUpdateNeeded().then(function(needUpdate) {
++				if (needUpdate) {
++					setTimeout(function() {
++						const updateButton = document.querySelector('button[data-command="update"]');
++						if (updateButton)
++							updateButton.click();
++					}, 10);
++				}
++			});
  		});
  
  		return view;
