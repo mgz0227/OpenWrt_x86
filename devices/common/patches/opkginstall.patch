@@ -1,15 +1,18 @@
 --- a/package/feeds/luci/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
 +++ b/package/feeds/luci/luci-app-package-manager/htdocs/luci-static/resources/view/package-manager.js
-@@ -186,7 +186,7 @@ function parseList(s, dest)
+@@ -186,7 +186,10 @@ function parseList(s, dest)
  			val = RegExp.$2.trim();
  		}
  		else if (pkg) {
 -			dest.pkgs[pkg.name] = pkg;
-+			dest.pkgs[pkg.name] = dest.pkgs[pkg.name] ? dest.pkgs[pkg.name] : pkg;
++			const cur = dest.pkgs[pkg.name];
++		
++			if (!cur || compareVersion(pkg.version || '0', cur.version || '0') >= 0)
++				dest.pkgs[pkg.name] = pkg;
  
  			const provides = dest.providers[pkg.name] ? [] : [ pkg.name ];
  
-@@ -249,7 +249,7 @@ function display(pattern)
+@@ -249,10 +252,10 @@ function display(pattern)
  			const avail = packages.available.pkgs[name];
  			const inst  = packages.installed.pkgs[name];
  
@@ -17,8 +20,12 @@
 +			if (!inst || !inst.installed || pkg.name.includes('kmod-') || pkg.name.includes('busybox') || pkg.name.includes('base-files'))
  				continue;
  
- 			if (!avail || compareVersion(avail.version, pkg.version) <= 0)
-@@ -289,7 +289,7 @@ function display(pattern)
+-			if (!avail || compareVersion(avail.version, pkg.version) <= 0)
++			if (!avail || compareVersion(avail.version, inst.version) <= 0)
+ 				continue;
+ 
+ 			ver = '%s » %s'.format(
+@@ -289,7 +292,7 @@ function display(pattern)
  					'data-action': 'install',
  					'click': handleInstall
  				}, _('Install…'));
@@ -27,7 +34,7 @@
  				btn = E('div', {
  					'class': 'btn cbi-button-positive',
  					'data-package': name,
-@@ -791,7 +791,8 @@ function handleInstall(ev)
+@@ -791,7 +794,8 @@ function handleInstall(ev)
  						'id': 'overwrite-cb',
  						'type': 'checkbox',
  						'name': 'overwrite',
@@ -37,7 +44,7 @@
  					}), ' ',
  					E('label', { 'for': 'overwrite-cb' }), ' ',
  					_('Allow overwriting conflicting package files')
-@@ -1031,6 +1032,8 @@ function handlePkg(ev)
+@@ -1031,6 +1035,8 @@ function handlePkg(ev)
  			if (res.pkmcmd)
  				dlg.appendChild(E('pre', [ res.pkmcmd ]));
  
@@ -46,7 +53,7 @@
  			if (res.stdout)
  				dlg.appendChild(E('pre', [ res.stdout ]));
  
-@@ -1058,6 +1061,10 @@ function handlePkg(ev)
+@@ -1058,6 +1064,10 @@ function handlePkg(ev)
  							resolveFn(res);
  					}, this, res)
  				}, _('Dismiss'))));
@@ -57,44 +64,97 @@
  		}).catch(function(err) {
  			ui.addNotification(null, E('p', _('Unable to execute <em>%s %s</em> command: %s').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg', cmd, err)));
  			ui.hideModal();
-@@ -1152,6 +1159,36 @@ return view.extend({
+@@ -1152,6 +1162,89 @@ return view.extend({
  	},
  
  	render(listData) {
-+			const checkUpdateNeeded = function() {
-+            return Promise.all([
-+                L.resolveDefault(fs.stat('/tmp/opkg-lists'), null),
-+                L.resolveDefault(fs.read('/tmp/resolv.conf.d/resolv.conf.auto'), '')
-+            ]).then(function(results) {
-+                const stat = results[0];
-+                const resolvContent = results[1];
-+
-+                let needUpdate = false;
-+
-+                if (stat) {
-+                    const currentDate = new Date();
-+                    const lastUpdateDate = new Date(stat.mtime * 1000);  // Convert seconds to milliseconds
-+                    // 检查是否在今天的零点之后更新过
-+                    const today = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-+                    needUpdate = lastUpdateDate < today;
-+                } else {
-+                    needUpdate = true;
-+                }
-+
-+                // 检查 resolv.conf.auto 文件内容
-+                const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
-+
-+                // 只有当需要更新且 resolv.conf.auto 不为空时，才返回 true
-+                return needUpdate && hasResolvContent;
-+            }).catch(function(error) {
-+                console.error('Error checking update status:', error);
-+                return false; // 如果出错，不执行更新
-+            });
-+        };
++		const checkUpdateNeeded = function() {
++			const resolvPath = '/tmp/resolv.conf.d/resolv.conf.auto';
++		
++			if (L.hasSystemFeature('apk')) {
++				return Promise.all([
++					L.resolveDefault(fs.list('/tmp/cache/apk'), []),
++					L.resolveDefault(fs.read(resolvPath), '')
++				]).then(function(results) {
++					const files = results[0] || [];
++					const resolvContent = results[1] || '';
++		
++					const indexFiles = files.filter(function(f) {
++						return f.type === 'file' && /^APKINDEX\..+\.tar\.gz$/.test(f.name);
++					});
++		
++					let needUpdate = false;
++		
++					if (indexFiles.length > 0) {
++						const currentDate = new Date();
++						const today = new Date(
++							currentDate.getFullYear(),
++							currentDate.getMonth(),
++							currentDate.getDate()
++						);
++		
++						let newestMtime = 0;
++		
++						indexFiles.forEach(function(f) {
++							if (f.mtime && f.mtime > newestMtime)
++								newestMtime = f.mtime;
++						});
++		
++						if (newestMtime > 0) {
++							const lastUpdateDate = new Date(newestMtime * 1000);
++							needUpdate = lastUpdateDate < today;
++						}
++						else {
++							needUpdate = true;
++						}
++					}
++					else {
++						needUpdate = true;
++					}
++		
++					const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
++					return needUpdate && hasResolvContent;
++				}).catch(function(error) {
++					console.error('Error checking apk update status:', error);
++					return false;
++				});
++			}
++		
++			return Promise.all([
++				L.resolveDefault(fs.stat('/tmp/opkg-lists'), null),
++				L.resolveDefault(fs.read(resolvPath), '')
++			]).then(function(results) {
++				const stat = results[0];
++				const resolvContent = results[1];
++		
++				let needUpdate = false;
++		
++				if (stat) {
++					const currentDate = new Date();
++					const lastUpdateDate = new Date(stat.mtime * 1000);
++					const today = new Date(
++						currentDate.getFullYear(),
++						currentDate.getMonth(),
++						currentDate.getDate()
++					);
++		
++					needUpdate = lastUpdateDate < today;
++				}
++				else {
++					needUpdate = true;
++				}
++		
++				const hasResolvContent = resolvContent && resolvContent.trim().length > 0;
++				return needUpdate && hasResolvContent;
++			}).catch(function(error) {
++				console.error('Error checking opkg update status:', error);
++				return false;
++			});
++		};
  		const query = decodeURIComponent(L.toArray(location.search.match(/\bquery=([^=]+)\b/))[1] || '');
  
  		const view = E([], [
-@@ -1193,6 +1230,7 @@ return view.extend({
+@@ -1193,6 +1286,7 @@ return view.extend({
  					E('label', {}, _('Actions') + ':'), ' ',
  					E('span', { 'class': 'control-group' }, [
  						E('button', { 'class': 'btn cbi-button-positive', 'data-command': 'update', 'click': handlePkg, 'disabled': isReadonlyView }, [ _('Update lists…') ]), ' ',
@@ -102,7 +162,7 @@
  						E('button', { 'class': 'btn cbi-button-action', 'click': handleUpload, 'disabled': isReadonlyView }, [ _('Upload Package…') ]), ' ',
  						E('button', { 'class': 'btn cbi-button-neutral', 'click': handleConfig }, [ _('Configure %s').format(L.hasSystemFeature('apk') ? 'apk' : 'opkg') ])
  					])
-@@ -1278,7 +1316,17 @@ return view.extend({
+@@ -1278,7 +1372,17 @@ return view.extend({
  		]);
  
  		requestAnimationFrame(function() {
@@ -195,15 +255,17 @@
 
 --- a/package/feeds/luci/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
 +++ b/package/feeds/luci/luci-app-package-manager/root/usr/share/rpcd/acl.d/luci-app-package-manager.json
-@@ -8,6 +8,7 @@
+@@ -8,6 +8,9 @@
  				"/usr/libexec/package-manager-call list-available": [ "exec" ],
  				"/etc/opkg.conf": [ "read" ],
  				"/etc/opkg/*.conf": [ "read" ],
 +				"/tmp/resolv.conf.d/resolv.conf.auto": [ "read" ],
++				"/tmp/cache/apk": [ "list" ],
++				"/tmp/cache/apk/*": [ "read" ],
  				"/etc/apk/repositories": [ "read" ],
  				"/etc/apk/repositories.d/distfeeds.list": [ "read" ],
  				"/etc/apk/repositories.d/customfeeds.list": [ "read" ]
-@@ -24,6 +25,7 @@
+@@ -24,6 +27,7 @@
  				"/usr/libexec/package-manager-call update": [ "exec" ],
  				"/usr/libexec/package-manager-call upgrade": [ "exec" ],
  				"/usr/libexec/package-manager-call upgrade *": [ "exec" ],
