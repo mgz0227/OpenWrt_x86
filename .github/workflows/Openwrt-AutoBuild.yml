@@ -222,6 +222,8 @@ jobs:
 
     - name: Write custom APK keys
       run: |
+        cd openwrt
+
         cat > private-key.pem <<'EOF'
         ${{ secrets.APK_PRIVATE_KEY }}
         EOF
@@ -248,6 +250,13 @@ jobs:
         #make oldconfig
         fi
         cat .config
+        
+    - name: Check key files in TOPDIR
+      run: |
+        cd openwrt
+        pwd
+        ls -l private-key.pem public-key.pem
+        grep -E 'CONFIG_SIGNED_PACKAGES|CONFIG_PACKAGE_openwrt-keyring|CONFIG_SIGNATURE_CHECK' .config || true
 
         
     - name: Get kernel version
