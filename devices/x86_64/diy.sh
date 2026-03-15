@@ -8,7 +8,8 @@ bash $SHELL_FOLDER/../common/kernel_6.18.sh
 
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/x86/base-files/etc/board.d/02_network -P target/linux/x86/base-files/etc/board.d/
 
-
+#apk提示模块输出
+rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
 
