@@ -1,0 +1,32 @@
+--- a/config/Config-kernel.in
++++ b/config/Config-kernel.in
+@@ -1185,13 +1185,13 @@ config KERNEL_POSIX_MQUEUE
+ 
+ config KERNEL_SECCOMP_FILTER
+ 	bool
+-	default y if !SMALL_FLASH
++	default n
+ 
+ config KERNEL_SECCOMP
+ 	bool "Enable seccomp support"
+ 		depends on !(TARGET_uml)
+ 		select KERNEL_SECCOMP_FILTER
+-		default y if !SMALL_FLASH
++		default n
+ 		help
+ 		  Build kernel with support for seccomp.
+ 
+--- a/include/target.mk
++++ b/include/target.mk
+@@ -88,11 +88,6 @@ else
+   endif
+ endif
+ 
+-# include ujail on systems with enough storage
+-ifeq ($(filter small_flash,$(FEATURES)),)
+-  DEFAULT_PACKAGES+=procd-ujail
+-endif
+-
+ # Add device specific packages (here below to allow device type set from subtarget)
+ DEFAULT_PACKAGES += $(DEFAULT_PACKAGES.$(DEVICE_TYPE))
+ 
