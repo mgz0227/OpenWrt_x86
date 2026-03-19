@@ -50,8 +50,6 @@ luci-app-wizard luci-base luci-compat luci-lib-ipkg luci-lib-fs luci-app-log-vie
 luci-app-argon-config luci-app-ddns-go luci-app-openclash luci-app-adguardhome tcpdump-mini open-vm-tools \
 wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-filemanager /" include/target.mk
 
-sed -i "s/procd-ujail//" include/target.mk
-
 sed -i "s/^.*vermagic$/\techo '1' > \$(LINUX_DIR)\/.vermagic/" include/kernel-defaults.mk
 
 status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
