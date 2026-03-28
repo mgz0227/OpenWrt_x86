@@ -8,7 +8,7 @@ cd new
 git reset --hard origin/main
 
 cp -rf --parents target/linux package/boot package/devel package/firmware package/kernel package/libs package/network package/kernel tools toolchain config ../
-rm -rf target/linux/bcm53xx
+
 cd -
 
 #nat46: fix reproducible-build failure and use latest git
