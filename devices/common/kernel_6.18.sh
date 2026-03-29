@@ -21,7 +21,7 @@ cd -
 #kernel: 6.18: backport mxl862xx driver for Linxu 6.18 #22668
 #wget -N https://github.com/dangowrt/openwrt/commit/ae28585b65a80600b5e4502aba594f2cdcc1d52e.patch -P devices/common/patches/
 
-
+wget -N https://raw.githubusercontent.com/immortalwrt-collections/lean-lede/refs/heads/lede/target/linux/x86/patches-6.18/996-intel-igc-i225-i226-disable-eee.patch -P target/linux/x86/patches-6.18/
 
 
 cd feeds/packages
