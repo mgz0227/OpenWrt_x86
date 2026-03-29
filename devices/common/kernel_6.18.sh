@@ -19,7 +19,7 @@ cd -
 #wget -N https://github.com/graysky2/openwrt/commit/e52d04b65d1942f581533cb2054e74f4ff5bd70b.patch -P devices/common/patches/
 
 #kernel: 6.18: backport mxl862xx driver for Linxu 6.18 #22668
-wget -N https://github.com/dangowrt/openwrt/commit/ae28585b65a80600b5e4502aba594f2cdcc1d52e.patch -P devices/common/patches/
+#wget -N https://github.com/dangowrt/openwrt/commit/ae28585b65a80600b5e4502aba594f2cdcc1d52e.patch -P devices/common/patches/
 
 
 
