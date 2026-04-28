@@ -19,18 +19,8 @@ git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2lo
 
 cd ../../
 
-#cd feeds/miaogongzi
-#rm -rf fibocom_QMI_WWAN rkp-ipid
-#cd ../../
-
 cd package
 rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct 
-
-#libs/libnl/Makefile
-#wget -N https://patch-diff.githubusercontent.com/raw/openwrt/mt76/pull/1026.patch -P kernel/mt76/patches/
-#mv kernel/mt76/patches/1026.patch kernel/mt76/patches/002-fix-mt76-timer-compat.patch
-
-#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18-libnl/package/libs/libnl/Makefile -P libs/libnl/ 
 
 cd ../
 
