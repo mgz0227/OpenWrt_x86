@@ -12,10 +12,6 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
-rm -rf target/linux/generic/pending-6.18/360-Revert-MIPS-mm-kmalloc-tlb_vpn-array-to-avoid-stack-.patch
-rm -rf target/linux/generic/pending-6.18/361-Revert-MIPS-mm-Prevent-a-TLB-shutdown-on-initial-uni.patch
-rm -rf target/linux/generic/pending-6.18/795-09-net-ethernet-mtk_ppe-offload-flows-to-MxL862xx-switc.patch
-wget -N https://raw.githubusercontent.com/graysky2/openwrt/f5ea29bca1e9a072f03c0989833ac80d9b77d653/target/linux/generic/pending-6.18/795-09-net-ethernet-mtk_ppe-offload-flows-to-MxL862xx-switc.patch -P target/linux/generic/pending-6.18/
 
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/pending-6.18/360-Revert-MIPS-mm-kmalloc-tlb_vpn-array-to-avoid-stack-.patch -P target/linux/generic/pending-6.18/
 #以下不能动
