@@ -363,13 +363,17 @@ jobs:
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avzr"
+        ARGS: >-
+          -avzr
+          --exclude='*erofs*'
+          --exclude='*squashfs*'
+          --exclude='*targz*'
+          --exclude='*imagebuilder*'
         SOURCE: openwrt/bin/targets
         REMOTE_HOST: ${{ secrets.HOST }}
         REMOTE_PORT: ${{ secrets.PORT }}
         REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
         TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
-
 
     - name: Upload firmware for artifact
       uses: actions/upload-artifact@main
