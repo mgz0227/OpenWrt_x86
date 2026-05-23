@@ -24,4 +24,4 @@ rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct
 
 cd ../
 
-rm -rf package/kernel/ath10k-ct package/kernel/mt76
+rm -rf package/kernel/ath10k-ct package/kernel/mt76 feeds/packages/kernel/ovpn-dco
