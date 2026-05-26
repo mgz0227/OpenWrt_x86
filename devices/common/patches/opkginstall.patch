@@ -20,62 +20,7 @@
  
  			const provides = dest.providers[pkg.name] ? [] : [ pkg.name ];
  
-@@ -202,39 +206,40 @@ function parseList(s, dest)
- }
- 
- function parseApkQueryJson(s, dest) {
--	// Parse the raw JSON text string into an array
- 	let rawData;
- 	try {
- 		rawData = JSON.parse(s);
- 	} catch (e) {
--		console.error("Failed to parse APK JSON:", e);
-+		console.error('Failed to parse APK JSON:', e);
- 		return;
- 	}
--	// Ensure rawData is actually an array before iterating
-+
- 	if (!Array.isArray(rawData))
- 		return;
--	// Ensure our storage objects exist on the destination
-+
- 	dest.pkgs = dest.pkgs || {};
- 	dest.providers = dest.providers || {};
- 
--	// Single pass through each item in the new JSON array
- 	for (const item of rawData) {
--
--		// Rename 'file-size' to 'size' while pulling out 'name'
- 		const { name, 'file-size': size, ...attributes } = item;
--
--		// Construct the package object with the expected 'size' key
- 		const pkg = { name, size, ...attributes };
- 
--		// Add/Update the package in the main map
- 		dest.pkgs[name] = pkg;
- 
--		// Determine all provided names (a package always provides itself)
- 		const provides = [name, ...(Array.isArray(pkg.provides) ? pkg.provides : [])];
--		for (const p of provides) {
--			dest.providers[p] = dest.providers[p] || [];
--			if (!dest.providers[p].includes(pkg))
--				dest.providers[p].push(pkg);
-+
-+		for (const raw of provides) {
-+			const p = String(raw).trim();
-+			const base = p.replace(/[<>=~].*$/, '');
-+
-+			for (const key of new Set([p, base])) {
-+				if (!key)
-+					continue;
-+
-+				dest.providers[key] = dest.providers[key] || [];
-+				if (!dest.providers[key].includes(pkg))
-+					dest.providers[key].push(pkg);
-+			}
- 		}
- 	}
- }
+
 @@ -302,10 +307,10 @@ function display(pattern)
  			const avail = packages.available.pkgs[name];
  			const inst  = packages.installed.pkgs[name];
