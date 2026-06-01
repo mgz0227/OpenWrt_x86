@@ -12,13 +12,12 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
-rm -rf target/linux/generic/pending-6.18/151-net-bridge-do-not-send-arp-replies-if-src-and-target.patch
+#rm -rf target/linux/generic/pending-6.18/151-net-bridge-do-not-send-arp-replies-if-src-and-target.patch
 
-rm -rf target/linux/generic/backport-6.18/742-v7.1-r8152-fix-incorrect-register-write-to-USB_UPHY_XTAL.patch
-rm -rf target/linux/generic/backport-6.18/827-v7.0-crypto-inside-secure-eip93-fix-register-definition.patch
-rm -rf target/linux/generic/backport-6.18/828-v7.0-crypto-inside-secure-eip93-register-hash-before-auth.patch
-rm -rf target/linux/generic/backport-6.18/940-v7.1-net-dsa-realtek-rtl8365mb-fix-mode-mask-calculation.patch
-rm -rf target/linux/generic/pending-6.18/928-crypto-eip93-fix-hmac-setkey-algo-selection.patch
+#rm -rf target/linux/generic/backport-6.18/742-v7.1-r8152-fix-incorrect-register-write-to-USB_UPHY_XTAL.patch
+#rm -rf target/linux/generic/backport-6.18/827-v7.0-crypto-inside-secure-eip93-fix-register-definition.patch
+#rm -rf target/linux/generic/backport-6.18/828-v7.0-crypto-inside-secure-eip93-register-hash-before-auth.patch
+rm -rf target/linux/generic/backport-6.18/627-v7.1-net-pse-pd-fix-sign-on-ENOENT-check-in-of_load_pse_p.patch
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/pending-6.18/360-Revert-MIPS-mm-kmalloc-tlb_vpn-array-to-avoid-stack-.patch -P target/linux/generic/pending-6.18/
 #以下不能动
 
