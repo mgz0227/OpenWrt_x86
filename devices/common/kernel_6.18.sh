@@ -20,8 +20,7 @@ git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2lo
 cd ../../
 
 cd package
-rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct  network/service
-s/dnsmasq
+rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct  network/services/dnsmasq
 
 git_clone_path dnsmasq https://github.com/graysky2/openwrt package/network/services/dnsmasq
 
