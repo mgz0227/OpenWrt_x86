@@ -24,10 +24,10 @@ rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct
 
 cd ../
 
-cd /package/network
-rm -rf  services/dnsmasq
-git_clone_path dnsmasq https://github.com/graysky2/openwrt package/network/services/dnsmasq
+#cd /package/network
+#rm -rf  services/dnsmasq
+#git_clone_path dnsmasq https://github.com/graysky2/openwrt package/network/services/dnsmasq
 
-cd ../
+#cd ../
 
 rm -rf package/kernel/ath10k-ct package/kernel/mt76 
