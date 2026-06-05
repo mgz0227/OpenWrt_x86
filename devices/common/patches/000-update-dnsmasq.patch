@@ -1,0 +1,381 @@
+From 30d6697a04166c250195b6c00610eb43b1f47172 Mon Sep 17 00:00:00 2001
+From: John Audia <therealgraysky@proton.me>
+Date: Fri, 5 Jun 2026 12:48:56 -0400
+Subject: [PATCH] dnsmasq: update to 2.93
+
+Changelog: https://github.com/imp/dnsmasq/blob/master/CHANGELOG#L1-L35
+
+Removed upstreamed patches:
+- 001-CVE-2026-2291.patch
+- 002-CVE-2026-4890.dnsmasq-2.92.patch
+- 003-CVE-2026-4891.patch
+- 004-CVE-2026-4892.patch
+- 005-CVE-2026-4893.patch
+- 006-CVE-2026-5172.patch
+
+All other patches rebased.
+
+Build system: x86/64
+Build-tested: x86/64-glibc
+Run-tested: x86/64-glibc
+
+Signed-off-by: John Audia <therealgraysky@proton.me>
+---
+ package/network/services/dnsmasq/Makefile     |  6 +--
+ .../dnsmasq/patches/001-CVE-2026-2291.patch   | 29 -------------
+ .../002-CVE-2026-4890.dnsmasq-2.92.patch      | 42 -------------------
+ .../dnsmasq/patches/003-CVE-2026-4891.patch   | 32 --------------
+ .../dnsmasq/patches/004-CVE-2026-4892.patch   | 28 -------------
+ .../dnsmasq/patches/005-CVE-2026-4893.patch   | 26 ------------
+ .../dnsmasq/patches/006-CVE-2026-5172.patch   | 26 ------------
+ ...00-remove-old-runtime-kernel-support.patch | 13 +++---
+ .../dnsmasq/patches/200-ubus_dns.patch        | 12 +++---
+ 9 files changed, 17 insertions(+), 197 deletions(-)
+ delete mode 100644 package/network/services/dnsmasq/patches/001-CVE-2026-2291.patch
+ delete mode 100644 package/network/services/dnsmasq/patches/002-CVE-2026-4890.dnsmasq-2.92.patch
+ delete mode 100644 package/network/services/dnsmasq/patches/003-CVE-2026-4891.patch
+ delete mode 100644 package/network/services/dnsmasq/patches/004-CVE-2026-4892.patch
+ delete mode 100644 package/network/services/dnsmasq/patches/005-CVE-2026-4893.patch
+ delete mode 100644 package/network/services/dnsmasq/patches/006-CVE-2026-5172.patch
+
+diff --git a/package/network/services/dnsmasq/Makefile b/package/network/services/dnsmasq/Makefile
+index e191622eabcc80..19ae7b7cd15abe 100644
+--- a/package/network/services/dnsmasq/Makefile
++++ b/package/network/services/dnsmasq/Makefile
+@@ -8,13 +8,13 @@
+ include $(TOPDIR)/rules.mk
+ 
+ PKG_NAME:=dnsmasq
+-PKG_UPSTREAM_VERSION:=2.92
++PKG_UPSTREAM_VERSION:=2.93
+ PKG_VERSION:=$(subst test,~~test,$(subst rc,~rc,$(PKG_UPSTREAM_VERSION)))
+-PKG_RELEASE:=2
++PKG_RELEASE:=1
+ 
+ PKG_SOURCE:=$(PKG_NAME)-$(PKG_UPSTREAM_VERSION).tar.xz
+ PKG_SOURCE_URL:=https://thekelleys.org.uk/dnsmasq/
+-PKG_HASH:=4bf50c2c1018f9fbc26037df51b90ecea0cb73d46162846763b92df0d6c3a458
++PKG_HASH:=0c00d4e5c97c8306e5fb932b348b34269c9c29a0e7df0e8e82958b407092bc19
+ 
+ PKG_LICENSE:=GPL-2.0
+ PKG_LICENSE_FILES:=COPYING
+diff --git a/package/network/services/dnsmasq/patches/001-CVE-2026-2291.patch b/package/network/services/dnsmasq/patches/001-CVE-2026-2291.patch
+deleted file mode 100644
+index 2bb36bccd60dde..00000000000000
+--- a/package/network/services/dnsmasq/patches/001-CVE-2026-2291.patch
++++ /dev/null
+@@ -1,29 +0,0 @@
+-commit ec2fbfbbdaa7d7db1c707dce26ce1a37cfe09660
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Fri Apr 10 16:29:31 2026 +0100
+-
+-    Fix buffer overflow in struct bigname.  CVE-2026-2291
+-    
+-    All buffers capable of holding a domain name should be
+-    at least MAXDNAME*2 + 1 bytes long, where MAXDNAME is the maximum
+-    size of a domain name. The accounts for the trailing zero and the
+-    fact that some characters are escaped in the internal representation
+-    of a domain name in dnsmasq.
+-    
+-    The declaration of struct bigname get this wrong, with the effect
+-    that a remote attacker capable of asking DNS queries or answering DNS
+-    queries can cause a large OOB write in the heap.
+-    
+-    This was first spotted by Andrew S. Fasano.
+-
+---- a/src/dnsmasq.h
+-+++ b/src/dnsmasq.h
+-@@ -479,7 +479,7 @@ struct interface_name {
+- };
+- 
+- union bigname {
+--  char name[MAXDNAME];
+-+  char name[(2*MAXDNAME) + 1];
+-   union bigname *next; /* freelist */
+- };
+- 
+diff --git a/package/network/services/dnsmasq/patches/002-CVE-2026-4890.dnsmasq-2.92.patch b/package/network/services/dnsmasq/patches/002-CVE-2026-4890.dnsmasq-2.92.patch
+deleted file mode 100644
+index cfeb0770f2efd0..00000000000000
+--- a/package/network/services/dnsmasq/patches/002-CVE-2026-4890.dnsmasq-2.92.patch
++++ /dev/null
+@@ -1,42 +0,0 @@
+-commit 4fdb707633afe8028118bcaf39b4882f634b5999
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Fri Apr 10 16:24:02 2026 +0100
+-
+-     Fix NSEC bitmap parsing infinite loop. CVE-2026-4890
+-    
+-     Report from Royce M <royce@xchglabs.com>.
+-    
+-     Location: dnssec.c:1290-1306, dnssec.c:1450-1463
+-    
+-    The bitmap window iteration advances by p[1] instead of p[1]+2
+-    (missing the 2-byte window header). With bitmap_length=0, both rdlen and p are
+-    unchanged, causing an infinite loop and dnsmasq stops responding to all queries.
+-    
+-    Reachable before RRSIG validation
+-    (confirmed by the source comment at line 2125), so no valid
+-    DNSSEC signatures are needed.
+-
+---- a/src/dnssec.c
+-+++ b/src/dnssec.c
+-@@ -1344,8 +1344,8 @@ static int prove_non_existence_nsec(stru
+- 		  break; /* finished checking */
+- 		}
+- 	      
+--	      rdlen -= p[1];
+--	      p +=  p[1];
+-+	      rdlen -= p[1] + 2;
+-+	      p +=  p[1] + 2;
+- 	    }
+- 	  
+- 	  return 0;
+-@@ -1508,8 +1508,8 @@ static int check_nsec3_coverage(struct d
+- 			break; /* finished checking */
+- 		      }
+- 		    
+--		    rdlen -= p[1];
+--		    p +=  p[1];
+-+		    rdlen -= p[1] + 2;
+-+		    p +=  p[1] + 2;
+- 		  }
+- 		
+- 		return 1;
+diff --git a/package/network/services/dnsmasq/patches/003-CVE-2026-4891.patch b/package/network/services/dnsmasq/patches/003-CVE-2026-4891.patch
+deleted file mode 100644
+index a4fdc36b0df512..00000000000000
+--- a/package/network/services/dnsmasq/patches/003-CVE-2026-4891.patch
++++ /dev/null
+@@ -1,32 +0,0 @@
+-commit 2cacea42e4d45717bd0ce3ccfe8e78960245e5da
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Wed Mar 25 23:04:08 2026 +0000
+-
+-    Verify rdlen field in RRSIG packets. CVE-2026-4891
+-    
+-    Bug report from Royce M <royce@xchglabs.com>
+-    
+-    This avoids crafted packets which give a value for rdlen _less_
+-    then the space taken up by the fixed data and the signer's name
+-    and engender a negative calculated length for the signature.
+-
+---- a/src/dnssec.c
+-+++ b/src/dnssec.c
+-@@ -546,10 +546,14 @@ static int validate_rrset(time_t now, st
+- 
+- 	   *ttl_out = ttl;
+- 	 }
+--       
+-+
+-+      /* Don't trust rdlen not to be too small and give us a negative sig_len
+-+	 It has already been checked that it doesn't run us off the end
+-+	 of the packet. */
+-+      if ((sig_len = rdlen - (p - psav)) <= 0)
+-+	return STAT_BOGUS;
+-+
+-       sig = p;
+--      sig_len = rdlen - (p - psav);
+--              
+-       nsigttl = htonl(orig_ttl);
+-       
+-       hash->update(ctx, 18, psav);
+diff --git a/package/network/services/dnsmasq/patches/004-CVE-2026-4892.patch b/package/network/services/dnsmasq/patches/004-CVE-2026-4892.patch
+deleted file mode 100644
+index 0867522a21eb66..00000000000000
+--- a/package/network/services/dnsmasq/patches/004-CVE-2026-4892.patch
++++ /dev/null
+@@ -1,28 +0,0 @@
+-commit 011a36c51438c986535a7248ed2e7f424f8e1078
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Wed Mar 25 23:16:35 2026 +0000
+-
+-    Fix buffer overflow in helper.c with large CLIDs. CVE-2026-4892
+-    
+-    Bug reported bt Royce M <royce@xchglabs.com>
+-    
+-    Location: helper.c:265-270
+-    DHCPv6 CLIDs can be up to 65535 bytes. When --dhcp-script is configured,
+-    the helper hex-encodes raw CLID bytes via sprintf("%.2x") into daemon->packet (5131 bytes).
+-    A 1000-byte CLID writes ~3000 bytes. The helper process retains root privileges.
+-    
+-    Note: log6_packet() correctly caps CLID to 100 bytes for logging, but the helper code path was missed.
+-
+---- a/src/helper.c
+-+++ b/src/helper.c
+-@@ -261,8 +261,8 @@ int create_helper(int event_fd, int err_
+- 		      data.hostname_len + data.ed_len + data.clid_len, RW_READ))
+- 	continue;
+- 
+--      /* CLID into packet */
+--      for (p = daemon->packet, i = 0; i < data.clid_len; i++)
+-+      /* CLID into packet: limit to 100 bytes to avoid overflowing buffer. */
+-+      for (p = daemon->packet, i = 0; i < data.clid_len && i < 100; i++)
+- 	{
+- 	  p += sprintf(p, "%.2x", buf[i]);
+- 	  if (i != data.clid_len - 1) 
+diff --git a/package/network/services/dnsmasq/patches/005-CVE-2026-4893.patch b/package/network/services/dnsmasq/patches/005-CVE-2026-4893.patch
+deleted file mode 100644
+index 664f00f90e6647..00000000000000
+--- a/package/network/services/dnsmasq/patches/005-CVE-2026-4893.patch
++++ /dev/null
+@@ -1,26 +0,0 @@
+-commit 434d68f2eb1a58744470698483a3ae09b5a9a870
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Wed Mar 25 23:22:37 2026 +0000
+-
+-    Fix broken client subnet validation. CVE-2026-4893
+-    
+-    Bug report from Royce M <royce@xchglabs.com>
+-    
+-    Location: forward.c:713, edns0.c:421
+-    
+-    With --add-subnet enabled, process_reply() passes the OPT record
+-    length (~23 bytes) instead of the packet length to check_source().
+-    All internal bounds checks fail, and the function always returns 1.
+-    ECS source validation per RFC 7871 Section 9.2 is completely bypassed.
+-
+---- a/src/forward.c
+-+++ b/src/forward.c
+-@@ -724,7 +724,7 @@ static size_t process_reply(struct dns_h
+-       /* Get extended RCODE. */
+-       rcode |= sizep[2] << 4;
+-       
+--      if (option_bool(OPT_CLIENT_SUBNET) && !check_source(header, plen, pheader, query_source))
+-+      if (option_bool(OPT_CLIENT_SUBNET) && !check_source(header, n, pheader, query_source))
+- 	{
+- 	  my_syslog(LOG_WARNING, _("discarding DNS reply: subnet option mismatch"));
+- 	  return 0;
+diff --git a/package/network/services/dnsmasq/patches/006-CVE-2026-5172.patch b/package/network/services/dnsmasq/patches/006-CVE-2026-5172.patch
+deleted file mode 100644
+index f44234bd5a0c29..00000000000000
+--- a/package/network/services/dnsmasq/patches/006-CVE-2026-5172.patch
++++ /dev/null
+@@ -1,26 +0,0 @@
+-commit fa3c8ddef6712b52f562813317e6a997e1210123
+-Author: Simon Kelley <simon@thekelleys.org.uk>
+-Date:   Mon Mar 30 16:24:33 2026 +0100
+-
+-    Fix buffer overflow vulnerability in extract_addresses() CVE-2026-5172
+-    
+-    Thanks to Hugo Martinez Ray for spotting this.
+-    
+-    The value of rdlen for an RR can be a lie, allowing the
+-    call to extract_name() at rfc1025.c:952 to advance the value of p1
+-    past the calculated end of the record. The makes the calculation
+-    of bytes remaining in the RR underflow to a huge number and results
+-    in a massive heap OOB read and certain crash.
+-
+---- a/src/rfc1035.c
+-+++ b/src/rfc1035.c
+-@@ -943,7 +943,8 @@ int extract_addresses(struct dns_header
+- 			      /* Name, extract it then re-encode. */
+- 			      int len;
+- 			      
+--			      if (!extract_name(header, qlen, &p1, name, EXTR_NAME_EXTRACT, 0))
+-+			      /* rdlen may lie, and extract_name() advances p1 past where it says the record ends. */
+-+			      if (!extract_name(header, qlen, &p1, name, EXTR_NAME_EXTRACT, 0) || (p1 > endrr))
+- 				{
+- 				  blockdata_free(addr.rrblock.rrdata);
+- 				  return 2;
+diff --git a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch b/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
+index 1c1150a8d1381b..c2213439dbdf94 100644
+--- a/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
++++ b/package/network/services/dnsmasq/patches/100-remove-old-runtime-kernel-support.patch
+@@ -26,7 +26,7 @@ Signed-off-by: Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+  
+ --- a/src/dnsmasq.h
+ +++ b/src/dnsmasq.h
+-@@ -1298,7 +1298,7 @@ extern struct daemon {
++@@ -1310,7 +1310,7 @@ extern struct daemon {
+    int inotifyfd;
+  #endif
+  #if defined(HAVE_LINUX_NETWORK)
+@@ -35,7 +35,7 @@ Signed-off-by: Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+  #elif defined(HAVE_BSD_NETWORK)
+    int dhcp_raw_fd, dhcp_icmp_fd, routefd;
+  #endif
+-@@ -1519,9 +1519,6 @@ int read_write(int fd, unsigned char *pa
++@@ -1544,9 +1544,6 @@ int read_writev(int fd, struct iovec *io
+  void close_fds(long max_fd, int spare1, int spare2, int spare3);
+  int wildcard_match(const char* wildcard, const char* match);
+  int wildcard_matchn(const char* wildcard, const char* match, int num);
+@@ -140,11 +140,10 @@ Signed-off-by: Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+       my_syslog(LOG_ERR, _("failed to update ipset %s: %s"), setname, strerror(errno));
+ --- a/src/util.c
+ +++ b/src/util.c
+-@@ -930,22 +930,3 @@ int wildcard_matchn(const char* wildcard
+- 
++@@ -928,25 +928,6 @@ int wildcard_matchn(const char* wildcard
+    return (!num) || (*wildcard == *match);
+  }
+--
++ 
+ -#ifdef HAVE_LINUX_NETWORK
+ -int kernel_version(void)
+ -{
+@@ -163,3 +162,7 @@ Signed-off-by: Kevin Darbyshire-Bryant <ldir@darbyshire-bryant.me.uk>
+ -  return version * 256 + (split ? atoi(split) : 0);
+ -}
+ -#endif
++-
++ #define hash_ptr(x) (((uintptr_t)(x)) & 0xffffff)
++ 
++ void *whine_malloc_real(const char *func, unsigned int line, size_t size)
+diff --git a/package/network/services/dnsmasq/patches/200-ubus_dns.patch b/package/network/services/dnsmasq/patches/200-ubus_dns.patch
+index 26741e0774fe5d..5abc641caed434 100644
+--- a/package/network/services/dnsmasq/patches/200-ubus_dns.patch
++++ b/package/network/services/dnsmasq/patches/200-ubus_dns.patch
+@@ -1,6 +1,6 @@
+ --- a/src/dnsmasq.c
+ +++ b/src/dnsmasq.c
+-@@ -2123,6 +2123,10 @@ static void do_tcp_connection(struct lis
++@@ -2184,6 +2184,10 @@ static void do_tcp_connection(struct lis
+        daemon->pipe_to_parent = pipefd[1];
+      }
+  
+@@ -13,7 +13,7 @@
+       Reset that here. */
+ --- a/src/dnsmasq.h
+ +++ b/src/dnsmasq.h
+-@@ -1722,14 +1722,26 @@ void emit_dbus_signal(int action, struct
++@@ -1747,14 +1747,26 @@ void emit_dbus_signal(int action, struct
+  
+  /* ubus.c */
+  #ifdef HAVE_UBUS
+@@ -65,7 +65,7 @@
+  
+  /* EXTR_NAME_EXTRACT -> extract name
+     EXTR_NAME_COMPARE -> compare name, case insensitive
+-@@ -444,10 +446,65 @@ int private_net6(struct in6_addr *a, int
++@@ -452,10 +454,65 @@ int private_net6(struct in6_addr *a, int
+      ((u32 *)a)[0] == htonl(0x20010db8); /* RFC 6303 4.6 */
+  }
+  
+@@ -132,7 +132,7 @@
+    int done = 0;
+    
+    if (!(p = skip_questions(header, qlen)))
+-@@ -464,7 +521,7 @@ int do_doctor(struct dns_header *header,
++@@ -472,7 +529,7 @@ int do_doctor(struct dns_header *header,
+        
+        GETSHORT(qtype, p); 
+        GETSHORT(qclass, p);
+@@ -141,7 +141,7 @@
+        GETSHORT(rdlen, p);
+        
+        if (qclass == C_IN && qtype == T_A)
+-@@ -475,6 +532,9 @@ int do_doctor(struct dns_header *header,
++@@ -483,6 +540,9 @@ int do_doctor(struct dns_header *header,
+  	  if (!CHECK_LEN(header, p, qlen, INADDRSZ))
+  	    return done;
+  	  
+@@ -151,7 +151,7 @@
+  	  /* alignment */
+  	  memcpy(&addr.addr4, p, INADDRSZ);
+  	  
+-@@ -504,6 +564,14 @@ int do_doctor(struct dns_header *header,
++@@ -512,6 +572,14 @@ int do_doctor(struct dns_header *header,
+  	      break;
+  	    }
+  	}
