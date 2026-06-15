@@ -1,22 +1,21 @@
 [![Build OpenWrt](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml/badge.svg)](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml)
 
-# Linux Kernel Release Timeline (v7.1–v7.4)
+# Linux Kernel Release Timeline (v7.2-v7.5)
 
-| Version | Stage         | Start Date | End Date   |
-|---------|---------------|------------|------------|
-| v7.1    | Merge Window  | 2026-04-13 | 2026-04-25 |
-| v7.1    | -rc1          | 2026-04-26 |            |
-| v7.1    | Final Release | 2026-06-14 |            |
-| v7.2    | Merge Window  | 2026-06-15 | 2026-06-27 |
-| v7.2    | -rc1          | 2026-06-28 |            |
-| v7.2    | Final Release | 2026-08-16 |            |
-| v7.3    | Merge Window  | 2026-08-17 | 2026-08-29 |
-| v7.3    | -rc1          | 2026-08-30 |            |
-| v7.3    | Final Release | 2026-10-18 |            |
-| v7.4    | Merge Window  | 2026-10-19 | 2026-10-31 |
-| v7.4    | -rc1          | 2026-11-01 |            |
-| v7.4    | Final Release | 2026-12-20 |            |
-
+| Version | Stage | Start Date | End Date |
+|-----------|-----------|------------|------------|
+| v7.2 | Merge Window | 2026-06-15 | 2026-06-27 |
+| v7.2 | -rc1 | 2026-06-28 | |
+| v7.2 | Final Release | 2026-08-16 | |
+| v7.3 | Merge Window | 2026-08-17 | 2026-08-29 |
+| v7.3 | -rc1 | 2026-08-30 | |
+| v7.3 | Final Release | 2026-10-18 | |
+| v7.4 | Merge Window | 2026-10-19 | 2026-11-01 |
+| v7.4 | -rc1 | 2026-11-01 | |
+| v7.4 | Final Release | 2026-12-20 | |
+| v7.5 | Merge Window | 2026-12-21 | 2027-01-03 |
+| v7.5 | -rc1 | 2027-01-03 | |
+| v7.5 | Final Release | 2027-02-21 | |
 
 ## 1. **固件**
 
