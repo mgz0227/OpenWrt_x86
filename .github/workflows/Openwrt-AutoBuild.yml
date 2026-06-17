@@ -362,11 +362,15 @@ jobs:
         echo "Runner:"
         curl ip-api.com/json
 
-        echo "=== HK ==="
-        ping -c 5 ${{ secrets.SERVER_HOST }}
+        echo "=== HK SSH ==="
+        timeout 5 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/${{ secrets.SERVER_PORT }}" \
+          && echo "SSH OK" \
+          || echo "SSH FAIL"
 
-        echo "=== CN ==="
-        ping -c 5 ${{ secrets.HOST }}
+        echo "=== CN SSH ==="
+        timeout 5 bash -c "</dev/tcp/${{ secrets.HOST }}/${{ secrets.PORT }}" \
+          && echo "SSH OK" \
+          || echo "SSH FAIL"
 
     - name: Deploy imagebuilder to Ubuntuserver
       uses: easingthemes/ssh-deploy@main
