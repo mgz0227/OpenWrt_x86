@@ -357,6 +357,17 @@ jobs:
                 echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
                 fi
 
+    - name: Network test
+      run: |
+        echo "Runner:"
+        curl ip-api.com/json
+
+        echo "=== HK ==="
+        ping -c 5 ${{ secrets.SERVER_HOST }}
+
+        echo "=== CN ==="
+        ping -c 5 ${{ secrets.HOST }}
+
     - name: Deploy imagebuilder to Ubuntuserver
       uses: easingthemes/ssh-deploy@main
       continue-on-error: true
