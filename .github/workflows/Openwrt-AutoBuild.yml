@@ -361,7 +361,7 @@ jobs:
       run: |
         echo "Runner:"
         curl ip-api.com/json
-
+        echo "\n"
         echo "=== HK SSH ==="
         timeout 5 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/${{ secrets.SERVER_PORT }}" \
           && echo "SSH OK" \
@@ -429,7 +429,10 @@ jobs:
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avr --timeout=600"
+        ARGS: "-avr --timeout=600 --exclude='*erofs*'
+          --exclude='*squashfs*'
+          --exclude='*targz*'
+          --exclude='*imagebuilder*' "
         SSH_CMD_ARGS: "-o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o StrictHostKeyChecking=no"
         SOURCE: openwrt/bin/targets
         REMOTE_HOST: ${{ secrets.SERVER_HOST }}
