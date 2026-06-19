@@ -423,23 +423,52 @@ jobs:
         tag_name: ${{ env.date }}_${{matrix.target}}
         body_path: release.txt
     
-    - name: Deploy imagebuilder to server
-      uses: easingthemes/ssh-deploy@main
+ #   - name: Deploy imagebuilder to server
+ #     uses: easingthemes/ssh-deploy@main
+  #    continue-on-error: true
+  #    if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
+  #    with:
+   #     SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+    #    ARGS: "-avr --timeout=600 --exclude='*erofs*'
+     #     --exclude='*squashfs*'
+      #    --exclude='*targz*'
+       #   --exclude='*imagebuilder*' "
+        #SSH_CMD_ARGS: "-o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o StrictHostKeyChecking=no"
+        #SOURCE: openwrt/bin/targets
+        #REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+        #REMOTE_PORT: ${{ secrets.SERVER_PORT }}
+        #REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+        #TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+
+    - name: Deploy imagebuilder to server (RSYNC)
       continue-on-error: true
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avr --timeout=600 --exclude='*erofs*'
-          --exclude='*squashfs*'
-          --exclude='*targz*'
-          --exclude='*imagebuilder*' "
-        SSH_CMD_ARGS: "-o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o StrictHostKeyChecking=no"
-        SOURCE: openwrt/bin/targets
-        REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-        REMOTE_PORT: ${{ secrets.SERVER_PORT }}
-        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+      shell: bash
+      run: |
+        mkdir -p ~/.ssh
 
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+
+        ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+        rsync -avP \
+          --whole-file \
+          --inplace \
+          --timeout=600 \
+          --exclude='*erofs*' \
+          --exclude='*squashfs*' \
+          --exclude='*targz*' \
+          --exclude='*imagebuilder*' \
+          -e "ssh \
+            -p ${{ secrets.SERVER_PORT }} \
+            -o Compression=no \
+            -o IPQoS=throughput \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=10 \
+            -o StrictHostKeyChecking=no" \
+          openwrt/bin/targets/ \
+          ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:/www/wwwroot/op.miaogongzi.cc/25.12/
 
     - name: WeChat notification
       continue-on-error: true
