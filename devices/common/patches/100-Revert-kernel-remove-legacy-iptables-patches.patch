@@ -379,17 +379,17 @@ index 00000000000000..fd22200a848404
 + 	const struct xt_entry_match *ematch;
 + 	int ret = 0;
 ++	u8 flags = e->ip.flags & IPT_F_MASK;
-+ 
++
 + 	origsize = *size;
 + 	ce = *dstptr;
-+ 	if (copy_to_user(ce, e, sizeof(struct ipt_entry)) != 0 ||
-+ 	    copy_to_user(&ce->counters, &counters[i],
-+-	    sizeof(counters[i])) != 0)
-++	    sizeof(counters[i])) != 0 ||
-++	    copy_to_user(&ce->ip.flags, &flags,
-++	    sizeof(flags)) != 0)
-+ 		return -EFAULT;
-+ 
++ 	if (copy_to_user(ce, e, offsetof(struct compat_ipt_entry, counters)) ||
++-	    copy_to_user(&ce->counters, &counters[i], sizeof(counters[i])))
++-		return -EFAULT;
+++    copy_to_user(&ce->counters, &counters[i],sizeof(counters[i])) ||
+++    copy_to_user(&ce->ip.flags, &flags,
+++                 sizeof(flags)))
+++    return -EFAULT;
++
 + 	*dstptr += sizeof(struct compat_ipt_entry);
 diff --git a/target/linux/generic/pending-6.18/611-netfilter_match_bypass_default_table.patch b/target/linux/generic/pending-6.18/611-netfilter_match_bypass_default_table.patch
 new file mode 100644
