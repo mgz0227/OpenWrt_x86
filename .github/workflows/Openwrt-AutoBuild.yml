@@ -430,7 +430,7 @@ jobs:
       with:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         ARGS: "-avr --timeout=600 --exclude='*erofs*'
-          --exclude='*squashfs*'
+          --exclude='*zip*'
           --exclude='*targz*'
           --exclude='*imagebuilder*' "
         SSH_CMD_ARGS: "-o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o StrictHostKeyChecking=no"
