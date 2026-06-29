@@ -62,7 +62,7 @@
 + DIY云编译教程参考: [Read the details in my blog (in Chinese) | 中文教程](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
 
 
-+ 默认插件包含: Opkg 软件包管理、openclash、ddns-go、adblock（广告拦截）。
++ 默认插件包含: APK 软件包管理、openclash、ddns-go、AdguardHome（广告拦截）。
 其他插件请自行在 后台->软件包 中安装,系统升级不会丢失插件.每次系统升级完成连接网络后,会自动安装所有已自选安装的插件。
 
 
