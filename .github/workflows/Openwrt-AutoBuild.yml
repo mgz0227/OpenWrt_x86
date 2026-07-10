@@ -110,7 +110,7 @@ jobs:
 
       - name: Free disk space
         if: env.FREE_UP_DISK == 'true'
-        uses: coder-xiaomo/free-disk-space@14d098403ea40da32e17b647317b09061853e911 # v1.4.0
+        uses: coder-xiaomo/free-disk-space@20bfc7937f5519190924e19e80c2061d03743e01 # v1.4.0
         with:
           tool-cache: false
           android: true
@@ -402,7 +402,7 @@ jobs:
       - name: Publish GitHub release
         if: env.HAS_RELEASE_TOKEN == 'true' && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
         continue-on-error: true
-        uses: softprops/action-gh-release@2bb465e97f322d3cb2a965294d483e0d26a67aa9 # v3.0.1
+        uses: softprops/action-gh-release@718ea10b132b3b2eba29c1007bb80653f286566b # v3.0.1
         with:
           token: ${{ secrets.TOKEN_MGZ0227 }}
           files: |
