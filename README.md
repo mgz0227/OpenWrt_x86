@@ -1,79 +1,90 @@
 [![Build OpenWrt](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml/badge.svg)](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml)
 
-# Linux Kernel Release Timeline (v7.2-v7.5)
+# MeowWrt x86 构建配置
 
-| Version | Stage | Start Date | End Date |
-|---------|---------------|------------|------------|
-| v7.2 | Merge Window | 2026-06-15 | 2026-06-27 |
-| v7.2 | -rc1 | 2026-06-28 | |
-| v7.2 | Final Release | 2026-08-16 | |
-| v7.3 | Merge Window | 2026-08-17 | 2026-08-29 |
-| v7.3 | -rc1 | 2026-08-30 | |
-| v7.3 | Final Release | 2026-10-18 | |
-| v7.4 | Merge Window | 2026-10-19 | 2026-11-01 |
-| v7.4 | -rc1 | 2026-11-01 | |
-| v7.4 | Final Release | 2026-12-20 | |
-| v7.5 | Merge Window | 2026-12-21 | 2027-01-03 |
-| v7.5 | -rc1 | 2027-01-03 | |
-| v7.5 | Final Release | 2027-02-21 | |
+本仓库保存 x86 固件的配置、补丁和 GitHub Actions 自动构建流程，不包含完整的 OpenWrt 源码，也不是 OpenWrt 官方发布固件。
 
-## 1. **固件**
+## 源码组合
 
-固件生成有2种方式：GitHub编译、本地化编译。
+| 目标 | 基线 | 内核相关源码 | 状态 |
+| --- | --- | --- | --- |
+| `x86_64` | `openwrt-25.12` | OpenWrt `main`，当前为 6.18 | 实验性混合构建 |
 
-可根据需要选择任意一种进行固件生成。
+`x86_64` 会从 OpenWrt 官方 `main` 显式同步 target、toolchain 和内核相关 package 目录，并从 OpenWrt 官方 packages `master` 同步配套内核包。该组合保留了本仓库原有的 6.18 功能，但不属于 OpenWrt 官方支持的版本升级路径。每次 Release 会记录基线、内核源码和内核 package 提交，便于复查。
 
+上游版本由 [`devices/common/settings.ini`](devices/common/settings.ini) 管理。OpenWrt 当前的构建要求和标准步骤以 [OpenWrt 官方 README](https://github.com/openwrt/openwrt/blob/openwrt-25.12/README.md) 与 [Build System Setup](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem) 为准。
 
-## 2. **编译**
-### 2.1 **GitHub编译**
+## GitHub Actions 构建
 
-+ 将仓库进行fork
+1. Fork 本仓库并启用 Actions。
+2. 在 Actions 页面运行 **Repo Dispatcher**。
+3. 仓库仅构建 `x86_64`；也可以直接运行 **Build OpenWrt**。
+4. 定时任务按 `Asia/Shanghai` 每天 12:00 触发。
 
-+ 按需添加相关环境参数REPO_TOKEN、SCKEY、TELEGRAM_CHAT_ID
+可选参数：
 
-+ Actions页面选择 Repo Dispatcher 点击 Run workflow
-### 2.2 **GitHub结合浏览器插件编译**
-请在支持油猴的浏览器中安装 [脚本](https://greasyfork.org/scripts/407616-github-actions-trigger/code/Github%20Actions%20Trigger.user.js) ,仓库右上角会出现 x86_64 Actions,K2P Actions等按钮,点击对应按钮即可.更多玩法 [repo-dispatcher](https://github.com/tete1030/github-repo-dispatcher)
+| 参数 | 作用 |
+| --- | --- |
+| `pkg` | 在构建前触发 OP-Packages 更新 |
+| `nocache` | 清理构建缓存 |
+| `noser` | 跳过服务器部署 |
+| `notg` | 跳过 Telegram 通知 |
+| `cw` | Repo Dispatcher 先取消正在运行的工作流 |
 
-## 3. **使用**
+参数可以用空格组合，例如 `pkg nocache`。
 
-### 3.1 **后台**
+### Secrets
 
-+ 登录地址 192.168.3.1 (若后台无法打开，请尝试插拔交换wan、lan网线顺序。)
+所有密钥均为可选；不配置时仍可生成 Actions Artifact。
 
-+ 默认用户 root
+| Secret | 用途 |
+| --- | --- |
+| `TOKEN_MGZ0227` | 触发 OP-Packages、发布 Release、清理旧记录 |
+| `APK_PRIVATE_KEY` / `APK_PUBLIC_KEY` | 自定义 APK 签名密钥，必须成对配置 |
+| `SSH_PRIVATE_KEY` | 启用服务器部署 |
+| `HOST` / `PORT` | 主服务器地址与端口 |
+| `SERVER_HOST` / `SERVER_PORT` | 次服务器地址与端口 |
+| `SERVER_USERNAME` | SSH 用户名 |
+| `TELEGRAM_TOKEN` / `TELEGRAM_CHAT_ID` | Telegram 构建结果通知 |
 
-+ 默认密码 root
+`TOKEN_MGZ0227` 应使用满足实际 API 调用的最小权限。工作流中的第三方 Action 已固定到完整提交，并由 Dependabot 每周检查更新。
 
+## 本地构建
 
+OpenWrt 官方要求使用 GNU/Linux、BSD 或 macOS 以及区分大小写的文件系统；Cygwin 不受支持。本仓库的自动流程还会拉取外部 feed 和覆盖目录，因此建议先以 Actions 流程作为可复现基准。
 
-## 4. **注意事项**
+官方基础流程为：
 
-+ 第一次使用请采用全新安装,避免出现升级失败以及其他一些可能的Bug.
+```bash
+./scripts/feeds update -a
+./scripts/feeds install -a
+make menuconfig
+make
+```
 
-+ 云编译需要 [在此](https://github.com/settings/tokens) 创建个token,然后在此仓库Settings->Secrets中添加个名字为REPO_TOKEN的Secret,填入token值,否者无法触发编译。
+完整依赖列表请查阅 OpenWrt 官方文档，不要直接照搬过时发行版的软件包名。
 
-+ 在仓库Settings->Secrets中分别添加 PPPOE_USERNAME, PPPOE_PASSWD 可设置默认拨号账号密码
+## 使用与安全
 
-+ 在仓库Settings->Secrets中添加 SCKEY 可通过[Server酱](http://sc.ftqq.com) 推送编译结果到微信。
+- 默认 LAN 地址：`192.168.3.1`
+- 管理用户：`root`
+- 本仓库不会写入固定的 root 密码。首次登录后应立即设置强密码。
+- 首次使用建议全新安装，不建议跨来源保留配置升级。
+- 不要把 LuCI、SSH 或 APK 软件源管理接口直接暴露到 WAN。
 
-+ 在仓库Settings->Secrets中添加 TELEGRAM_CHAT_ID, TELEGRAM_TOKEN 可推送编译结果到Telegram Bot. [教程](https://longnight.github.io/2018/12/12/Telegram-Bot-notifications)
+默认选装内容包括 APK 软件包管理、OpenClash、DDNS-GO 和 AdGuard Home。实际进入固件的包以构建产物中的 `*.config` 和 `*.buildinfo` 为准。
 
-+ DIY云编译教程参考: [Read the details in my blog (in Chinese) | 中文教程](https://p3terx.com/archives/build-openwrt-with-github-actions.html)
+## 仓库约定
 
+- `devices/common/patches/*.patch`：构建时启用。
+- `*.patch.b`、`*.bak`：历史停用补丁，不参与构建。
+- 所有启用补丁必须无 reject、无冲突标记地应用，否则构建立即失败。
+- Shell、YAML、INI 和 patch 文件统一使用 LF。
 
-+ 默认插件包含: APK 软件包管理、openclash、ddns-go、AdguardHome（广告拦截）。
-其他插件请自行在 后台->软件包 中安装,系统升级不会丢失插件.每次系统升级完成连接网络后,会自动安装所有已自选安装的插件。
-
-
-
-## Acknowledgments
-
+## 致谢
 
 - [OpenWrt](https://github.com/openwrt/openwrt)
-- [Lean's OpenWrt](https://github.com/coolsnowwolf/lede)
 - [ImmortalWrt](https://github.com/immortalwrt/immortalwrt)
-- [P3TERX](https://github.com/P3TERX/Actions-OpenWrt/blob/master/LICENSE)
-- [GitHub Actions](https://github.com/features/actions)
-
-
+- [Lean's OpenWrt](https://github.com/coolsnowwolf/lede)
+- [P3TERX Actions-OpenWrt](https://github.com/P3TERX/Actions-OpenWrt)
+- [GitHub Actions](https://docs.github.com/actions)
