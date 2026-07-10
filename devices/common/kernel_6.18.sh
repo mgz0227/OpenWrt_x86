@@ -1,33 +1,44 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-shopt -s extglob
+set -Eeuo pipefail
 
-rm -rf target/linux package/boot package/devel package/firmware package/kernel package/libs package/network tools toolchain
-mkdir new; cp -rf .git new/.git
-cd new
-git reset --hard origin/main
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/functions.sh"
 
-cp -rf --parents target/linux package/boot package/devel package/firmware package/kernel package/libs package/network tools toolchain config ../
+kernel_ref="${KERNEL_SOURCE_REF:-main}"
+source_paths=(
+	target/linux
+	package/boot
+	package/devel
+	package/firmware
+	package/kernel
+	package/libs
+	package/network
+	tools
+	toolchain
+	config
+)
 
-cd -
+echo "Synchronizing OpenWrt kernel tree from $kernel_ref"
+sync_openwrt_paths "$kernel_ref" "${source_paths[@]}"
+printf '%s\n' "$SYNCED_OPENWRT_COMMIT" > .kernel-source-commit
 
+packages_ref="${KERNEL_PACKAGES_SOURCE_REF:-master}"
+package_paths=(
+	net/xtables-addons
+	net/jool
+	kernel/v4l2loopback
+	kernel/ovpn-dco
+	libs/libpfring
+	libs/libmariadb
+)
 
-cd feeds/packages
-rm -rf net/xtables-addons net/jool kernel/v4l2loopback kernel/ovpn-dco libs/libpfring libs/libmariadb
+pushd feeds/packages >/dev/null
+for path in "${package_paths[@]}"; do
+	rm -rf "$path"
+done
+git_clone_path "$packages_ref" https://github.com/openwrt/packages.git "${package_paths[@]}"
+printf '%s\n' "$CLONED_GIT_COMMIT" > "$OLDPWD/.kernel-packages-source-commit"
+popd >/dev/null
 
-git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2loopback libs/libpfring net/xtables-addons libs/libmariadb kernel/ovpn-dco
-
-cd ../../
-
-cd package
-rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct
-
-cd ../
-
-#cd /package/network
-#rm -rf  services/dnsmasq
-#git_clone_path dnsmasq https://github.com/graysky2/openwrt package/network/services/dnsmasq
-
-#cd ../
-
-rm -rf package/kernel/ath10k-ct package/kernel/mt76 
+rm -rf package/devel/kselftests-bpf package/kernel/ath10k-ct package/kernel/mt76

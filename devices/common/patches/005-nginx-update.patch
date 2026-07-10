@@ -1,9 +1,9 @@
 From e05aef3f9aa7df8d4ab1c2a07683d9ee3b9e6537 Mon Sep 17 00:00:00 2001
 From: miaogongzi <miaogongzi0227@gmail.com>
 Date: Thu, 12 Feb 2026 00:54:26 +0800
-Subject: [PATCH] nginx: bump release to 1.29.5
+Subject: [PATCH] nginx: bump release to 1.31.2
 
-nginx: bump release to 1.29.5
+nginx: bump release to 1.31.2
 changelog: https://nginx.org/en/CHANGES
 
 Signed-off-by: gongzi miao <miaogongzi0227@gmail.com>

@@ -1,469 +1,461 @@
-#=================================================
-# https://github.com/P3TERX/Actions-OpenWrt
-# Description: Build OpenWrt using GitHub Actions
-# Lisence: MIT
-# Author: P3TERX
-# Blog: https://p3terx.com
-#=================================================
-
 name: Build OpenWrt
 
-on: 
+on:
   repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      options:
+        description: "Optional flags: pkg, nocache, noser, notg"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: openwrt-x86_64
+  cancel-in-progress: false
 
 env:
-  REPO_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
-  PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
-  PPPOE_PASSWD: ${{ secrets.PPPOE_PASSWD }}
-  SCKEY: ${{ secrets.SCKEY }}
-  TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
-  TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  DOCKER_ID: ${{ secrets.DOCKER_ID }}
-  DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
   TZ: Asia/Shanghai
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    #runs-on: self-hosted
-    
-    name: Build ${{matrix.target}}
-    strategy:
-      fail-fast: false
-      matrix:
-        target: ["${{ github.event.client_payload.target }}"]
-        
+    name: Build x86_64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@main
-      with:
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-    # - name: Set up secret file
-      # run: |
-        # echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
-        # echo ${{ secrets.TELEGRAM_TOKEN }} | sed 's/./& /g'
+      - name: Load build settings
+        env:
+          TARGET: x86_64
+          EVENT_TARGET: ${{ github.event.client_payload.target || 'x86_64' }}
+          BUILD_OPTIONS: ${{ github.event_name == 'repository_dispatch' && github.event.action || inputs.options || '' }}
+        run: |
+          set -Eeuo pipefail
 
-    - name: Load Settings.ini
-      run: |
-        echo ${{matrix.target}}
-        source "${{ github.workspace }}/devices/common/settings.ini"
-        if [ -f "devices/${{matrix.target}}/settings.ini" ]; then
-          source "${{ github.workspace }}/devices/${{matrix.target}}/settings.ini"
-        fi
-        echo "REPO_URL=${REPO_URL}" >> $GITHUB_ENV
-        echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
-        echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
-        echo "DIY_SH=${DIY_SH}" >> $GITHUB_ENV
-        echo "FREE_UP_DISK=${FREE_UP_DISK}" >> $GITHUB_ENV
-        echo "UPLOAD_BIN_DIR_FOR_ARTIFACT=${UPLOAD_BIN_DIR_FOR_ARTIFACT}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_FOR_ARTIFACT=${UPLOAD_FIRMWARE_FOR_ARTIFACT}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_FOR_RELEASE=${UPLOAD_FIRMWARE_FOR_RELEASE}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_TO_COWTRANSFER=${UPLOAD_FIRMWARE_TO_COWTRANSFER}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER}" >> $GITHUB_ENV
-        sed -i "1a REPO_TOKEN=${{ secrets.TOKEN_MGZ0227 }}" ${{ github.workspace }}/devices/common/diy.sh
-        sed -i "1a TARGET=${{matrix.target}}" ${{ github.workspace }}/devices/common/diy.sh
-        if [ ${{matrix.target}} == "x86_64" ]; then
-            echo "ARCH=linux/amd64" >> $GITHUB_ENV
-            echo "MTARGET=x86_64" >> $GITHUB_ENV
-        fi
+          if [[ "$EVENT_TARGET" != "x86_64" ]]; then
+            echo "::error::Only x86_64 is supported: $EVENT_TARGET"
+            exit 1
+          fi
 
-    - name: Trigger Packages Update
-      continue-on-error: true
-      if: contains(github.event.action, 'pkg')
-      run: |
-        status=$(curl -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
-        if [[ "$status" == "completed" ]]; then
-          curl -X POST https://api.github.com/repos/mgz0227/OP-Packages/dispatches \
-            -H "Accept: application/vnd.github.everest-preview+json" \
-            -H "Authorization: token ${{ secrets.TOKEN_MGZ0227 }}" \
-          --data '{"event_type": "update"}'
-        fi
+          if [[ ! "$BUILD_OPTIONS" =~ ^[[:alnum:]_.[:space:]-]*$ ]]; then
+            echo "::error::Build options contain unsupported characters"
+            exit 1
+          fi
 
-    - name: Free disk space
-      uses: coder-xiaomo/free-disk-space@main
-      with:
-        tool-cache: false
-        android: true
-        dotnet: true
-        haskell: true
-        large-packages: true
-        docker-images: true
-        swap-storage: true
+          # shellcheck source=devices/common/settings.ini
+          source "devices/common/settings.ini"
 
-    - name: Initialization environment
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo -E apt-get -qq update
-        sudo -E apt-get -qq install build-essential clang flex bison g++ gawk \
-        gcc-multilib gcc g++-multilib gettext git libncurses5-dev libssl-dev \
-        python3-setuptools rsync swig unzip zlib1g-dev file wget \
-        libboost-system-dev libboost-filesystem-dev libpcre3-dev libv4l-dev \
-        llvm python3-pyelftools libpython3-dev aria2 jq qemu-utils ccache rename \
-        libelf-dev device-tree-compiler libgmp3-dev libmpc-dev libfuse-dev dwarves
-        sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean
-
-        sudo timedatectl set-timezone "Asia/Shanghai"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git config --global user.name "github-actions[bot]"
-
-    - name: Get current date
-      id: date
-      run: |
-        echo "date=$(date +'%d.%m.%Y_%H-%M')" >> $GITHUB_ENV
-        echo "date2=$(date +'%m/%d %Y')" >> $GITHUB_ENV
-        VERSION="$(echo "${{github.event.action}}" | grep -Eo " [0-9.]+" | sed -e 's/ //')" || true
-        [ "$VERSION" ] && echo "VERSION=$VERSION" >> $GITHUB_ENV || echo "VERSION=$(date +'%m.%d')" >> $GITHUB_ENV
-
-    - name: Clone source code
-      run: |
-        set -x
-        TAG_INFO="$(curl -gs -H 'Content-Type: application/json' \
-           -H "Authorization: Bearer ${{ secrets.TOKEN_MGZ0227 }}" \
-           -X POST -d '{ "query": "query {repository(owner: \"openwrt\", name: \"openwrt\") {refs(refPrefix: \"refs/tags/\", first: 4, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {nodes {name target { ... on Tag {tagger {date}}}}}}}"}' https://api.github.com/graphql)"
-        TAG_DATE="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[] | select(.name | startswith("v25")) | .target.tagger.date' | head -n 1)"
-        if [[ $(( ($(date +%s) - $(date -d "$TAG_DATE" +%s)) / 86400 )) -lt 20 ]]; then
-        REPO_BRANCH="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[].name' | grep v25 | head -n 1)"
-        else
-        REPO_BRANCH="openwrt-25.12"
-        fi
-        #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/`echo $REPO_BRANCH  | cut -d . -f 1,2 | sed -e 's/^v//'`\"">>devices/common/.config
-        #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/25.12\"">>devices/common/.config
-        if [[ ! "${{ env.REPO_BRANCH }}" && "$REPO_URL" == "https://github.com/openwrt/openwrt" ]]; then
-            git clone $REPO_URL -b $REPO_BRANCH openwrt
-        elif [[ ! "${{ env.REPO_BRANCH }}" ]]; then
-            git clone $REPO_URL openwrt
-        else
-            REPO_BRANCH="${{env.REPO_BRANCH}}"
-            if [[ ${#REPO_BRANCH} -lt 10 ]]; then
-                git clone $REPO_URL -b ${REPO_BRANCH} openwrt
-            else
-                git clone $REPO_URL openwrt
-                cd openwrt
-                git checkout ${REPO_BRANCH}
+          required_settings=(
+            REPO_URL REPO_BRANCH KERNEL_SOURCE_REF KERNEL_PACKAGES_SOURCE_REF CONFIG_FILE DIY_SH
+            FREE_UP_DISK UPLOAD_FIRMWARE_FOR_ARTIFACT
+            UPLOAD_FIRMWARE_FOR_RELEASE
+          )
+          for name in "${required_settings[@]}"; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error::Missing setting: $name"
+              exit 1
             fi
-        fi
-    
-    - name: Free up disk space
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo mkdir -p -m 777 /mnt/openwrt/dl /mnt/openwrt/staging_dir /mnt/openwrt/build_dir
-        ln -sf /mnt/openwrt/dl openwrt/dl
-        ln -sf /mnt/openwrt/staging_dir openwrt/staging_dir
-        ln -sf /mnt/openwrt/build_dir openwrt/build_dir
+            printf '%s=%s\n' "$name" "${!name}" >> "$GITHUB_ENV"
+          done
 
-    - name: Load custom configuration
-      run: |
-        function git_clone_path() {
-          trap 'rm -rf "$tmpdir"' EXIT
-          branch="$1" rurl="$2" mv="$3"
-          [[ "$mv" != "mv" ]] && shift 2 || shift 3
-          rootdir="$PWD"
-          tmpdir="$(mktemp -d)" || exit 1
-          if [ ${#branch} -lt 10 ]; then
-          git clone -b "$branch" --depth 1 --filter=blob:none --sparse "$rurl" "$tmpdir"
-          cd "$tmpdir"
+          {
+            printf 'TARGET=%s\n' "$TARGET"
+            printf 'BUILD_OPTIONS=%s\n' "$BUILD_OPTIONS"
+          } >> "$GITHUB_ENV"
+
+      - name: Detect optional integrations
+        env:
+          RELEASE_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
+          SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          set -Eeuo pipefail
+          [[ -z "$RELEASE_TOKEN" ]] || echo "HAS_RELEASE_TOKEN=true" >> "$GITHUB_ENV"
+          [[ -z "$SSH_KEY" ]] || echo "HAS_SSH_KEY=true" >> "$GITHUB_ENV"
+          if [[ -n "$TELEGRAM_TOKEN" && -n "$TELEGRAM_CHAT_ID" ]]; then
+            echo "HAS_TELEGRAM=true" >> "$GITHUB_ENV"
+          fi
+
+      - name: Trigger package feed update
+        if: contains(env.BUILD_OPTIONS, 'pkg')
+        continue-on-error: true
+        env:
+          REPO_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
+        run: |
+          set -Eeuo pipefail
+          if [[ -z "$REPO_TOKEN" ]]; then
+            echo "::warning::TOKEN_MGZ0227 is not configured; package update skipped"
+            exit 0
+          fi
+
+          api="https://api.github.com/repos/mgz0227/OP-Packages"
+          headers=(
+            -H "Accept: application/vnd.github+json"
+            -H "Authorization: Bearer $REPO_TOKEN"
+            -H "X-GitHub-Api-Version: 2022-11-28"
+          )
+          status="$(curl --fail-with-body --silent --show-error --retry 3 "${headers[@]}" "$api/actions/runs?per_page=1" |
+            jq -r '.workflow_runs[0].status // "unknown"')"
+
+          if [[ "$status" != "queued" && "$status" != "in_progress" ]]; then
+            curl --fail-with-body --silent --show-error --retry 3 -X POST "${headers[@]}" --data '{"event_type":"update"}' "$api/dispatches"
+          fi
+
+      - name: Free disk space
+        if: env.FREE_UP_DISK == 'true'
+        uses: coder-xiaomo/free-disk-space@14d098403ea40da32e17b647317b09061853e911 # v1.4.0
+        with:
+          tool-cache: false
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Install build dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          set -Eeuo pipefail
+          sudo -E apt-get -qq update
+          sudo -E apt-get -qq install --no-install-recommends aria2 bison build-essential ccache clang device-tree-compiler dwarves file flex g++ g++-multilib gawk gcc-multilib gettext git jq libboost-filesystem-dev libboost-system-dev libelf-dev libfuse-dev libgmp3-dev libmpc-dev libncurses-dev libpcre3-dev libpython3-dev libssl-dev libv4l-dev llvm python3-pyelftools python3-setuptools qemu-utils rename rsync swig unzip wget zlib1g-dev
+          sudo -E apt-get -qq clean
+
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Set build metadata
+        env:
+          EVENT_ACTION: ${{ github.event.action }}
+        run: |
+          set -Eeuo pipefail
+          {
+            printf 'BUILD_DATE=%s\n' "$(date +'%d.%m.%Y_%H-%M')"
+            printf 'BUILD_DATE_DISPLAY=%s\n' "$(date +'%Y-%m-%d')"
+          } >> "$GITHUB_ENV"
+
+          version="$(grep -Eo '(^| )[0-9]+([.][0-9]+)+' <<< "$EVENT_ACTION" | head -n 1 | xargs || true)"
+          printf 'VERSION=%s\n' "${version:-$(date +'%m.%d')}" >> "$GITHUB_ENV"
+
+      - name: Clone OpenWrt source
+        run: |
+          set -Eeuo pipefail
+
+          if [[ "$REPO_BRANCH" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            git init openwrt
+            git -C openwrt remote add origin "$REPO_URL"
+            git -C openwrt fetch --depth 1 origin "$REPO_BRANCH"
+            git -C openwrt checkout --detach FETCH_HEAD
           else
-          git clone --filter=blob:none --sparse "$rurl" "$tmpdir"
-          cd "$tmpdir"
-          git checkout $branch
+            git clone --depth 1 --single-branch --branch "$REPO_BRANCH" "$REPO_URL" openwrt
           fi
-          if [ "$?" != 0 ]; then
-            echo "error on $rurl"
-            return 0
+
+          source_commit="$(git -C openwrt rev-parse HEAD)"
+          printf 'SOURCE_COMMIT=%s\n' "$source_commit" >> "$GITHUB_ENV"
+          echo "Base source: $REPO_URL@$source_commit"
+
+      - name: Move build directories to /mnt
+        if: env.FREE_UP_DISK == 'true'
+        run: |
+          set -Eeuo pipefail
+          sudo install -d -m 0777 /mnt/openwrt/dl /mnt/openwrt/staging_dir /mnt/openwrt/build_dir
+          ln -s /mnt/openwrt/dl openwrt/dl
+          ln -s /mnt/openwrt/staging_dir openwrt/staging_dir
+          ln -s /mnt/openwrt/build_dir openwrt/build_dir
+
+      - name: Load custom configuration
+        run: |
+          set -Eeuo pipefail
+
+          cp -a devices/common/. openwrt/
+          cp -a devices openwrt/
+          cd openwrt
+
+          rm -f .config
+          bash "devices/common/$DIY_SH"
+
+          cp -f "devices/common/$CONFIG_FILE" .config
+          target_config="devices/$TARGET/$CONFIG_FILE"
+          if [[ -f "$target_config" ]]; then
+            printf '\n' >> .config
+            cat "$target_config" >> .config
           fi
-          git sparse-checkout init --cone
-          git sparse-checkout set $@
-          [[ "$mv" != "mv" ]] && cp -rn ./* $rootdir/ || mv -n $@/* $rootdir/$@/
-          cd $rootdir
+
+          target_diy="devices/$TARGET/$DIY_SH"
+          [[ ! -f "$target_diy" ]] || bash "$target_diy"
+
+          [[ ! -d diy ]] || cp -a diy/. ./
+
+      - name: Apply repository patches
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
+
+          patch_dir="devices/$TARGET/patches"
+          mkdir -p "$patch_dir"
+          cp -an devices/common/patches/. "$patch_dir/"
+
+          while IFS= read -r -d '' file; do
+            echo "Applying binary patch: $file"
+            git apply --check "$file"
+            git apply "$file"
+          done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.bin.patch' -print0 | sort -z)
+
+          while IFS= read -r -d '' file; do
+            echo "Reverting patch: $file"
+            patch --batch --forward --merge --no-backup-if-mismatch --reject-file=- -R -p1 < "$file"
+          done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.revert.patch' -print0 | sort -z)
+
+          while IFS= read -r -d '' file; do
+            echo "Applying patch: $file"
+            patch --batch --forward --merge --no-backup-if-mismatch --reject-file=- -p1 < "$file"
+          done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.patch' ! -name '*.revert.patch' ! -name '*.bin.patch' -print0 | sort -z)
+
+          if find . -type f \( -name '*.rej' -o -name '*.orig' \) -print -quit | grep -q .; then
+            echo "::error::Patch backups or rejects were generated"
+            find . -type f \( -name '*.rej' -o -name '*.orig' \) -print
+            exit 1
+          fi
+
+          kernel_patchver="$(sed -n 's/^KERNEL_PATCHVER:=//p' target/linux/x86/Makefile | head -n 1)"
+          [[ -n "$kernel_patchver" ]] || {
+            echo "::error::Unable to determine x86 kernel series"
+            exit 1
           }
-        export -f git_clone_path
-        cp -rf devices/common/. openwrt/
-        cp -rf devices/${{matrix.target}}/. openwrt/
-        cp -rf devices openwrt/
-        cd openwrt
-        chmod +x devices/common/$DIY_SH
-        /bin/bash "devices/common/$DIY_SH"
-        cp -f devices/common/$CONFIG_FILE .config
-        if [ -f "devices/${{matrix.target}}/$CONFIG_FILE" ]; then
-          echo >> .config
-          cat devices/${{matrix.target}}/$CONFIG_FILE >> .config
-        fi
-        if [ -f "devices/${{matrix.target}}/$DIY_SH" ]; then
-          chmod +x devices/${{matrix.target}}/$DIY_SH
-          echo "/bin/bash devices/${{matrix.target}}/$DIY_SH"
-          /bin/bash "devices/${{matrix.target}}/$DIY_SH"
-        fi
-        cp -Rf ./diy/* ./ || true
 
-    - name: Apply patches
-      run: |
-        cd openwrt
-        cp -rn devices/common/patches devices/${{matrix.target}}/
-          if [ -n "$(ls -A devices/${{matrix.target}}/*.bin.patch 2>/dev/null)" ]; then
-            git apply devices/${{matrix.target}}/patches/*.bin.patch
+          set_kernel_option() {
+            local file="$1" option="$2" value="$3"
+            if grep -qE "^(# )?${option}(=| is not set)" "$file"; then
+              sed -i -E "s|^(# )?${option}(=.*| is not set)$|${option}=${value}|" "$file"
+            else
+              printf '%s=%s\n' "$option" "$value" >> "$file"
+            fi
+          }
+
+          x86_config="target/linux/x86/config-${kernel_patchver}"
+          generic_config="target/linux/generic/config-${kernel_patchver}"
+          for governor in POWERSAVE USERSPACE ONDEMAND CONSERVATIVE; do
+            set_kernel_option "$x86_config" "CONFIG_CPU_FREQ_GOV_${governor}" y
+          done
+          set_kernel_option "$generic_config" CONFIG_CRYPTO_CHACHA20POLY1305 y
+          set_kernel_option "$generic_config" CONFIG_FAT_DEFAULT_IOCHARSET '"utf8"'
+
+      - name: Configure custom APK signing keys
+        env:
+          APK_PRIVATE_KEY: ${{ secrets.APK_PRIVATE_KEY }}
+          APK_PUBLIC_KEY: ${{ secrets.APK_PUBLIC_KEY }}
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
+
+          if [[ -n "$APK_PRIVATE_KEY" && -n "$APK_PUBLIC_KEY" ]]; then
+            umask 077
+            printf '%s\n' "$APK_PRIVATE_KEY" > private-key.pem
+            printf '%s\n' "$APK_PUBLIC_KEY" > public-key.pem
+            chmod 0644 public-key.pem
+          elif [[ -n "$APK_PRIVATE_KEY" || -n "$APK_PUBLIC_KEY" ]]; then
+            echo "::error::APK_PRIVATE_KEY and APK_PUBLIC_KEY must be configured together"
+            exit 1
+          else
+            echo "Custom APK keys are not configured; OpenWrt will generate build keys"
           fi
-          find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.revert.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -R -B --merge -p1 --forward"
-          find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.patch' ! -name '*.revert.patch' ! -name '*.bin.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -B --merge -p1 --forward"
-          find feeds -path '*/adguardhome/files/adguardhome.init' -delete
-        sed -i '$a  \
-        CONFIG_CPU_FREQ_GOV_POWERSAVE=y \
-        CONFIG_CPU_FREQ_GOV_USERSPACE=y \
-        CONFIG_CPU_FREQ_GOV_ONDEMAND=y \
-        CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y \
-        CONFIG_CRYPTO_CHACHA20_NEON=y \
-        CONFIG_CRYPTO_CHACHA20POLY1305=y \
-        CONFIG_FAT_DEFAULT_IOCHARSET="utf8" \
-        ' `find target/linux -path "target/linux/*/config-*"`
 
-    - name: Write custom APK keys
-      run: |
-        cd openwrt
+      - name: Generate final configuration
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
+          make defconfig
 
-        cat > private-key.pem <<'EOF'
-        ${{ secrets.APK_PRIVATE_KEY }}
-        EOF
+          grep -q '^CONFIG_TARGET_x86=y$' .config
+          grep -q '^CONFIG_TARGET_x86_64=y$' .config
 
-        cat > public-key.pem <<'EOF'
-        ${{ secrets.APK_PUBLIC_KEY }}
-        EOF
+          ./scripts/diffconfig.sh
 
-        chmod 600 private-key.pem
-        ls -l private-key.pem public-key.pem
+      - name: Detect kernel version
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
 
-    - name: Defconfig
-      run: |
-        cd openwrt
-        make defconfig
-        if [[ ! "${{matrix.target}}" =~ (amlogic_*|armsr_armv8|bcm27xx_*|rockchip_armv8|sunxi_*|x86_*) ]]; then
-        sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
-        sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
-        if [[ "${{matrix.target}}" == "rockchip_rk35xx" ]]; then 
-            sed -n '/# Video Support/,/# end of Video Support/p' .config | sed -e 's/=m/=n/' >>.config
-        fi
+          base="$(sed -n 's/^KERNEL_PATCHVER:=//p' target/linux/x86/Makefile | head -n 1)"
+          kernel_file="target/linux/generic/kernel-${base}"
+          suffix="$(sed -n "s/^LINUX_VERSION-${base}[[:space:]]*=[[:space:]]*//p" "$kernel_file" | head -n 1)"
+          [[ -n "$base" && -n "$suffix" ]] || {
+            echo "::error::Unable to determine kernel version from $kernel_file"
+            exit 1
+          }
 
-        make defconfig
-        #make oldconfig
-        fi
-        cat .config
-        
-    - name: Check key files in TOPDIR
-      run: |
-        cd openwrt
-        pwd
-        ls -l private-key.pem public-key.pem
-        grep -E 'CONFIG_SIGNED_PACKAGES|CONFIG_PACKAGE_openwrt-keyring|CONFIG_SIGNATURE_CHECK' .config || true
+          kernel_version="${base}${suffix}"
+          kernel_source_commit="$(cat .kernel-source-commit 2>/dev/null || printf '%s' "$SOURCE_COMMIT")"
+          kernel_packages_source_commit="$(cat .kernel-packages-source-commit 2>/dev/null || printf 'unknown')"
+          {
+            printf 'KERNEL_VER=%s\n' "$kernel_version"
+            printf 'KERNEL_SOURCE_COMMIT=%s\n' "$kernel_source_commit"
+            printf 'KERNEL_PACKAGES_SOURCE_COMMIT=%s\n' "$kernel_packages_source_commit"
+          } >> "$GITHUB_ENV"
+          echo "Kernel: $kernel_version ($kernel_source_commit)"
 
-        
-    - name: Get kernel version
-      id: kernel
-      run: |
-        cd openwrt
-        #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
-        # 找到 include/kernel-* 下的版本文件
-        KERNEL_FILE=$(ls target/linux/generic/kernel-6.18 | head -n1)
-        # 提取主版本号
-        BASE_VER=$(basename $KERNEL_FILE | cut -d'-' -f2)
-        # 提取补丁号
-        PATCH_VER=$(grep "^LINUX_VERSION-$BASE_VER" "$KERNEL_FILE" | cut -d= -f2 | tr -d ' .')
-        # 拼接完整版本号
-        KERNEL_FULL="$BASE_VER.$PATCH_VER"
-        echo "KERNEL_VER=$KERNEL_FULL" >> $GITHUB_ENV
-        echo "Kernel full version detected: $KERNEL_FULL"
+      - name: Restore build cache
+        uses: stupidloud/cachewrtbuild@b729f807837dbc3455d02fd35192660d9b662121
+        with:
+          ccache: "true"
+          mixkey: x86_64-${{ env.KERNEL_VER }}
+          clean: ${{ contains(env.BUILD_OPTIONS, 'nocache') }}
+          prefix: ${{ github.workspace }}/openwrt
 
- #   - name: Download package
- #     id: package
- #     run: |
- #       cd openwrt
- #       make download -j$(($(nproc)+1)) &
-  #      sleep 5
+      - name: Compile firmware
+        id: compile
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
 
-    - name: Cache
-      uses: stupidloud/cachewrtbuild@main
-      with:
-        ccache: 'true'
-        mixkey: ${{ matrix.target }}
-        clean: ${{ contains(github.event.action, 'nocache') }}
-        prefix: ${{ github.workspace }}/openwrt
-    
-    - name: Check space usage
-      run: |
-        shopt -s extglob
-        cd openwrt
-        if [[ -f staging_dir/*${{ env.MTARGET }}*/bin ]]; then
-            rm -rvf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
-        fi
-        df -hT
+          jobs="$(nproc)"
+          echo "Compiling with $jobs parallel jobs"
+          if ! make -j"$jobs"; then
+            echo "::warning::Parallel build failed; retrying serially with verbose output"
+            make -j1 V=s 2>&1 | tee error.log
+          fi
 
+          rm -f staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
+          rm -rf staging_dir/toolchain-*/initial
+          df -hT
 
-    - name: Compile the firmware
-      id: compile
-      run: |
-        shopt -s extglob
-        cd openwrt
-        echo -e "$(($(nproc)+1)) thread compile"
-        #make -j1 V=sc
-        make -j$(($(nproc)+1)) || { log=$(mktemp);make V=s &>$log; } || { tail -50 $log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1; }
-        #make -j1 V=sc || make V=sc &>build.log || {tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1;}
-        sed -i "s/# CONFIG_IB is not set/CONFIG_IB=y/" .config
-        rm -rf staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
-        rm -rf staging_dir/toolchain-*/initial
-        df -hT
+      - name: Collect build outputs
+        run: |
+          set -Eeuo pipefail
+          cd openwrt
 
-    
+          target_dir="$(find bin/targets -mindepth 2 -maxdepth 2 -type d -print -quit)"
+          [[ -n "$target_dir" ]] || {
+            echo "::error::No target output directory was produced"
+            exit 1
+          }
 
+          cp .config "$target_dir/${TARGET}.config"
+          kernel_config="$(find build_dir -path '*/linux-*/linux-*/.config' -type f -print -quit)"
+          [[ -z "$kernel_config" ]] || cp "$kernel_config" "$target_dir/${TARGET}_kernel.config"
 
-    - name: Organize files
-      id: organize
-      continue-on-error: true
-      run: |
-                shopt -s extglob
-                cd openwrt/bin/targets/*/*/
-                cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
-                cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
-                Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-                echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-                # Unzip .gz files
-             #   for file in *.gz; do
-            #      gunzip "$file"
-           #     done
-        
-                 # Rename all files, including IMG files after decompression
-          #      find . -type f -name "meowwrt-*" -exec rename "s/meowwrt-/MeowWrt-${{ env.VERSION }}.2025-/" {} + || true
-        
-                # Recompress all IMG files back to .gz format
-         #       for file in *.img; do
-         #       gzip "$file"
-        #        done
-                
+      - name: Stage release files
+        if: env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        run: |
+          set -Eeuo pipefail
+          destination="firmware/$TARGET"
+          mkdir -p "$destination"
 
+          release_patterns=( -name '*combined*' -o -name '*rootfs*' -o -name '*imagebuilder*' -o -name '*.bin' -o -name '*.bin.gz' -o -name 'sha256sums' -o -name '*.buildinfo' -o -name 'profiles.json' )
+          while IFS= read -r -d '' file; do
+            cp -a "$file" "$destination/"
+          done < <(find openwrt/bin/targets -mindepth 3 -maxdepth 3 -type f \( "${release_patterns[@]}" \) -print0)
 
-                
-    - name: Organize Release files
-      id: organizeRelease
-      continue-on-error: true
-      run: |
-              shopt -s extglob
-              mkdir -p firmware/${{matrix.target}}          
-              cp -rf openwrt/bin/targets/*/*/*{combined,imagebuilder,rootfs,256}* ./firmware/${{matrix.target}}/ || true
-              cp -rf openwrt/bin/targets/*/*/*.bin* ./firmware/${{matrix.target}}/ || true
-                Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
-                echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-                if [ ${{matrix.target}} == "x86_64" ]; then
-                echo "DOCKERTAG=${{ secrets.DOCKER_ID }}/openwrt-nginx:latest" >> $GITHUB_ENV
-                fi
+          if [[ -z "$(find "$destination" -type f -print -quit)" ]]; then
+            echo "::error::No release files matched the staging rules"
+            exit 1
+          fi
 
-    - name: Network test
-      run: |
-        echo "Runner:"
-        curl ip-api.com/json
-        echo "\n"
-        echo "=== HK SSH ==="
-        timeout 5 bash -c "</dev/tcp/${{ secrets.SERVER_HOST }}/${{ secrets.SERVER_PORT }}" \
-          && echo "SSH OK" \
-          || echo "SSH FAIL"
+      - name: Deploy targets to primary server
+        if: env.HAS_SSH_KEY == 'true' && !contains(env.BUILD_OPTIONS, 'noser')
+        continue-on-error: true
+        uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: >-
+            -avzr
+            --exclude='*erofs*'
+            --exclude='*squashfs*'
+            --exclude='*targz*'
+            --exclude='*imagebuilder*'
+          SOURCE: openwrt/bin/targets
+          REMOTE_HOST: ${{ secrets.HOST }}
+          REMOTE_PORT: ${{ secrets.PORT }}
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+          TARGET: /www/wwwroot/op.miaogongzi.cc/25.12
 
-        echo "=== CN SSH ==="
-        timeout 5 bash -c "</dev/tcp/${{ secrets.HOST }}/${{ secrets.PORT }}" \
-          && echo "SSH OK" \
-          || echo "SSH FAIL"
+      - name: Upload firmware artifact
+        if: env.UPLOAD_FIRMWARE_FOR_ARTIFACT == 'true'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ${{ env.VERSION }}_${{ env.TARGET }}
+          path: openwrt/bin/targets/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
 
-    - name: Deploy imagebuilder to Ubuntuserver
-      uses: easingthemes/ssh-deploy@main
-      continue-on-error: true
-      if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: >-
-          -avzr
-          --exclude='*erofs*'
-          --exclude='*squashfs*'
-          --exclude='*targz*'
-          --exclude='*imagebuilder*'
-        SOURCE: openwrt/bin/targets
-        REMOTE_HOST: ${{ secrets.HOST }}
-        REMOTE_PORT: ${{ secrets.PORT }}
-        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+      - name: Create release notes
+        if: env.HAS_RELEASE_TOKEN == 'true' && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        run: |
+          {
+            printf 'Target: %s\n' "$TARGET"
+            printf 'Kernel: %s\n' "$KERNEL_VER"
+            printf 'Base source: %s@%s\n' "$REPO_URL" "$SOURCE_COMMIT"
+            printf 'Kernel source commit: %s\n\n' "$KERNEL_SOURCE_COMMIT"
+            printf 'Kernel package source commit: %s\n\n' "$KERNEL_PACKAGES_SOURCE_COMMIT"
+            printf 'CDN: https://op.miaogongzi.cc/25.12/targets/x86/64/\n'
+          } > release.txt
 
-    - name: Upload firmware for artifact
-      uses: actions/upload-artifact@main
-      if: env.UPLOAD_FIRMWARE_FOR_ARTIFACT == 'true'
-      with:
-        name: ${{ env.VERSION }}_${{matrix.target}}
-        path: |
-          openwrt/bin/targets/
-
-    - name: Create release
-      id: create_release
-      if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
-      continue-on-error: true
-      run: |
-        echo -e "墙内加速下载 🚀:\n" >> release.txt
-        echo -e "[CDN] (https://op.miaogongzi.cc/25.12/targets/x86/64/ ☁)\n" >> release.txt
-        [ ${{ env.WETRANS }} ] && echo -e "[WeTransfer] (${{ env.WETRANS }} 🗽)\n" >> release.txt
-        [ ${{ env.COWURL }} ] && echo -e "[奶牛上传] (${{ env.COWURL }} 🐮)\n" >> release.txt
-        [ ${{ env.NOTICE }} ] && echo -e "${{ env.NOTICE }}" >> release.txt || true
-
-    - name: Upload firmware for release
-      uses: softprops/action-gh-release@master
-      continue-on-error: true
-      if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
-      with:
-        files: |
-            firmware/${{matrix.target}}/*
+      - name: Publish GitHub release
+        if: env.HAS_RELEASE_TOKEN == 'true' && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        continue-on-error: true
+        uses: softprops/action-gh-release@2bb465e97f322d3cb2a965294d483e0d26a67aa9 # v3.0.1
+        with:
+          token: ${{ secrets.TOKEN_MGZ0227 }}
+          files: |
+            firmware/${{ env.TARGET }}/*
             openwrt/error*.log
-        name: ${{ env.date2 }} ${{matrix.target}} KERNEL:${{ env.KERNEL_VER }} ${{ env.EMOJI }}
-        tag_name: ${{ env.date }}_${{matrix.target}}
-        body_path: release.txt
-    
-    - name: Deploy imagebuilder to server
-      uses: easingthemes/ssh-deploy@main
-      continue-on-error: true
-      if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
-      with:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        ARGS: "-avr --timeout=600 "
-        SSH_CMD_ARGS: "-o ServerAliveInterval=30 -o ServerAliveCountMax=10 -o StrictHostKeyChecking=no"
-        SOURCE: openwrt/bin/targets
-        REMOTE_HOST: ${{ secrets.SERVER_HOST }}
-        REMOTE_PORT: ${{ secrets.SERVER_PORT }}
-        REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
-        TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
+          name: ${{ env.BUILD_DATE_DISPLAY }} ${{ env.TARGET }} kernel ${{ env.KERNEL_VER }}
+          tag_name: ${{ env.BUILD_DATE }}_${{ env.TARGET }}
+          body_path: release.txt
 
+      - name: Deploy targets to secondary server
+        if: env.HAS_SSH_KEY == 'true' && !contains(env.BUILD_OPTIONS, 'noser')
+        continue-on-error: true
+        uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: -avr --timeout=600
+          SSH_CMD_ARGS: -o ServerAliveInterval=30 -o ServerAliveCountMax=10
+          SOURCE: openwrt/bin/targets
+          REMOTE_HOST: ${{ secrets.SERVER_HOST }}
+          REMOTE_PORT: ${{ secrets.SERVER_PORT }}
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }}
+          TARGET: /www/wwwroot/op.miaogongzi.cc/25.12
 
-    - name: WeChat notification
-      continue-on-error: true
-      if: env.SCKEY
-      run: |
-        # [ steps.compile.outputs.status == 'success' ] && curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=🎉OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译完成😋|| curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=❌OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译失败😂
+      - name: Send Telegram result
+        if: always() && env.HAS_TELEGRAM == 'true' && !contains(env.BUILD_OPTIONS, 'notg')
+        continue-on-error: true
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+        run: |
+          if [[ "$COMPILE_OUTCOME" == "success" ]]; then
+            message="OpenWrt $VERSION $TARGET build succeeded"
+          else
+            message="OpenWrt $VERSION $TARGET build failed"
+          fi
+          curl --fail-with-body --silent --show-error --retry 3 --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" --data-urlencode "text=$message" "https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage"
 
-    - name: Telegram notification
-      if: env.TELEGRAM_TOKEN && ! contains(github.event.action, 'notg')
-      continue-on-error: true
-      run: |
-        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
+      - name: Delete old workflow runs
+        if: always() && env.HAS_RELEASE_TOKEN == 'true'
+        continue-on-error: true
+        uses: mgz0227/delete-workflow-runs@09cf4452c0d19a5190fc977d9bacae384e0de9a8 # v1.0
+        with:
+          token: ${{ secrets.TOKEN_MGZ0227 }}
+          retain_days: 100
+          keep_minimum_runs: 1
 
-    - name: Delete workflow runs
-      uses: mgz0227/delete-workflow-runs@main
-      continue-on-error: true
-      with:
-        token: ${{ secrets.TOKEN_MGZ0227 }}
-        retain_days: 100
-        keep_minimum_runs: 0
-
-    - name: Remove old Releases
-      uses: mgz0227/delete-older-releases@master
-      continue-on-error: true
-      if: env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 15
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}
+      - name: Remove old releases
+        if: always() && env.HAS_RELEASE_TOKEN == 'true' && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
+        continue-on-error: true
+        uses: mgz0227/delete-older-releases@dfbe6be2a006e9475dfcbe5b8d201f1824c2a9fe # v0.3.4
+        with:
+          keep_latest: 15
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN_MGZ0227 }}

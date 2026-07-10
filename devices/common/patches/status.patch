@@ -6,7 +6,7 @@
  		var fields = [
 -			_('Total Available'), (mem.available) ? mem.available : (mem.total && mem.free && mem.buffered) ? mem.free + mem.buffered : null, mem.total,
 -			_('Used'),            (mem.total && mem.free) ? (mem.total - mem.free) : null, mem.total,
-+			_('Used'),            (mem.total && mem.available) ? (mem.total - mem.free - mem.buffered - mem.cached) : null, mem.total,
++			_('Used'),            (mem.total != null && mem.available != null) ? (mem.total - mem.available) : null, mem.total,
  		];
  
  		if (mem.buffered)

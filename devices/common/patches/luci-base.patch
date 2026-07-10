@@ -2,7 +2,7 @@
 +++ b/package/feeds/luci/luci-base/root/usr/share/rpcd/ucode/luci
 @@ -222,6 +222,7 @@ const methods = {
  
- 	getFeatures: {
+	getFeatures: {
  		call: function() {
 +			let kernel_version = popen('echo -n `uname -r`').read('all');
  			let result = {
@@ -45,7 +45,7 @@
 +
 +	getCPUUsage: {
 +		call: function() {
-+			const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%", 100 - $8)}\'');
++			const fd = popen('top -n1 | awk \'/^CPU/ {printf("%d%%", 100 - $8)}\'');
 +			if (fd) {
 +				let cpuusage = fd.read('all');
 +				fd.close();
@@ -286,31 +286,3 @@
  		/**
  		 * Assert a valid UCI identifier, hostname or IP address range.
  		 * @function LuCI.validation.ValidatorFactory.types#network
-
---- a/package/feeds/luci/luci-base/root/usr/share/luci/menu.d/luci-base.json
-+++ b/package/feeds/luci/luci-base/root/usr/share/luci/menu.d/luci-base.json
-@@ -50,6 +50,24 @@
- 		}
- 	},
- 
-+	"admin/nas": {
-+		"title": "NAS",
-+		"order": 60,
-+		"action": {
-+			"type": "firstchild",
-+			"recurse": true
-+		}
-+	},
-+
-+	"admin/control": {
-+		"title": "Control",
-+		"order": 61,
-+		"action": {
-+			"type": "firstchild",
-+			"recurse": true
-+		}
-+	},
-+
- 	"admin/vpn": {
- 		"title": "VPN",
- 		"order": 70,

@@ -1,0 +1,6 @@
+.learnings/
+openwrt/
+*.log
+*.orig
+*.rej
+

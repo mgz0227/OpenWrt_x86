@@ -1,0 +1,18 @@
+{
+	"admin/nas": {
+		"title": "NAS",
+		"order": 60,
+		"action": {
+			"type": "firstchild",
+			"recurse": true
+		}
+	},
+	"admin/control": {
+		"title": "Control",
+		"order": 61,
+		"action": {
+			"type": "firstchild",
+			"recurse": true
+		}
+	}
+}
