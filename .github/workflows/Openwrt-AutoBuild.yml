@@ -21,6 +21,9 @@ env:
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   DOCKER_ID: ${{ secrets.DOCKER_ID }}
   DOCKER_PASSWD: ${{ secrets.DOCKER_PASSWD }}
+  GIT_TERMINAL_PROMPT: "0"
+  GIT_HTTP_LOW_SPEED_LIMIT: "1024"
+  GIT_HTTP_LOW_SPEED_TIME: "60"
   TZ: Asia/Shanghai
 
 jobs:
@@ -32,11 +35,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: ["${{ github.event.client_payload.target }}"]
+        target: [x86_64]
         
     steps:
     - name: Checkout
-      uses: actions/checkout@main
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
           fetch-depth: 0
 
@@ -62,8 +65,6 @@ jobs:
         echo "UPLOAD_FIRMWARE_FOR_RELEASE=${UPLOAD_FIRMWARE_FOR_RELEASE}" >> $GITHUB_ENV
         echo "UPLOAD_FIRMWARE_TO_COWTRANSFER=${UPLOAD_FIRMWARE_TO_COWTRANSFER}" >> $GITHUB_ENV
         echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER}" >> $GITHUB_ENV
-        sed -i "1a REPO_TOKEN=${{ secrets.TOKEN_MGZ0227 }}" ${{ github.workspace }}/devices/common/diy.sh
-        sed -i "1a TARGET=${{matrix.target}}" ${{ github.workspace }}/devices/common/diy.sh
         if [ ${{matrix.target}} == "x86_64" ]; then
             echo "ARCH=linux/amd64" >> $GITHUB_ENV
             echo "MTARGET=x86_64" >> $GITHUB_ENV
@@ -82,7 +83,7 @@ jobs:
         fi
 
     - name: Free disk space
-      uses: coder-xiaomo/free-disk-space@main
+      uses: coder-xiaomo/free-disk-space@14d098403ea40da32e17b647317b09061853e911 # v1.4.0
       with:
         tool-cache: false
         android: true
@@ -98,12 +99,11 @@ jobs:
       run: |
         sudo -E apt-get -qq update
         sudo -E apt-get -qq install build-essential clang flex bison g++ gawk \
-        gcc-multilib gcc g++-multilib gettext git libncurses5-dev libssl-dev \
+        gcc-multilib gcc g++-multilib gettext git libncurses-dev libssl-dev \
         python3-setuptools rsync swig unzip zlib1g-dev file wget \
         libboost-system-dev libboost-filesystem-dev libpcre3-dev libv4l-dev \
         llvm python3-pyelftools libpython3-dev aria2 jq qemu-utils ccache rename \
         libelf-dev device-tree-compiler libgmp3-dev libmpc-dev libfuse-dev dwarves
-        sudo -E apt-get -qq autoremove --purge
         sudo -E apt-get -qq clean
 
         sudo timedatectl set-timezone "Asia/Shanghai"
@@ -120,32 +120,8 @@ jobs:
 
     - name: Clone source code
       run: |
-        set -x
-        TAG_INFO="$(curl -gs -H 'Content-Type: application/json' \
-           -H "Authorization: Bearer ${{ secrets.TOKEN_MGZ0227 }}" \
-           -X POST -d '{ "query": "query {repository(owner: \"openwrt\", name: \"openwrt\") {refs(refPrefix: \"refs/tags/\", first: 4, orderBy: {field: TAG_COMMIT_DATE, direction: DESC}) {nodes {name target { ... on Tag {tagger {date}}}}}}}"}' https://api.github.com/graphql)"
-        TAG_DATE="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[] | select(.name | startswith("v25")) | .target.tagger.date' | head -n 1)"
-        if [[ $(( ($(date +%s) - $(date -d "$TAG_DATE" +%s)) / 86400 )) -lt 20 ]]; then
-        REPO_BRANCH="$( echo ${TAG_INFO} | jq -r '.data.repository.refs.nodes[].name' | grep v25 | head -n 1)"
-        else
-        REPO_BRANCH="openwrt-25.12"
-        fi
-        #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/`echo $REPO_BRANCH  | cut -d . -f 1,2 | sed -e 's/^v//'`\"">>devices/common/.config
-        #echo "CONFIG_VERSION_REPO=\"https://op.miaogongzi.cc/25.12\"">>devices/common/.config
-        if [[ ! "${{ env.REPO_BRANCH }}" && "$REPO_URL" == "https://github.com/openwrt/openwrt" ]]; then
-            git clone $REPO_URL -b $REPO_BRANCH openwrt
-        elif [[ ! "${{ env.REPO_BRANCH }}" ]]; then
-            git clone $REPO_URL openwrt
-        else
-            REPO_BRANCH="${{env.REPO_BRANCH}}"
-            if [[ ${#REPO_BRANCH} -lt 10 ]]; then
-                git clone $REPO_URL -b ${REPO_BRANCH} openwrt
-            else
-                git clone $REPO_URL openwrt
-                cd openwrt
-                git checkout ${REPO_BRANCH}
-            fi
-        fi
+        set -euo pipefail
+        git clone --branch "$REPO_BRANCH" "$REPO_URL" openwrt
     
     - name: Free up disk space
       env:
@@ -202,23 +178,35 @@ jobs:
 
     - name: Apply patches
       run: |
+        set -euo pipefail
         cd openwrt
-        cp -rn devices/common/patches devices/${{matrix.target}}/
-          if [ -n "$(ls -A devices/${{matrix.target}}/*.bin.patch 2>/dev/null)" ]; then
-            git apply devices/${{matrix.target}}/patches/*.bin.patch
-          fi
-          find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.revert.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -R -B --merge -p1 --forward"
-          find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.patch' ! -name '*.revert.patch' ! -name '*.bin.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -B --merge -p1 --forward"
-          find feeds -path '*/adguardhome/files/adguardhome.init' -delete
-        sed -i '$a  \
-        CONFIG_CPU_FREQ_GOV_POWERSAVE=y \
-        CONFIG_CPU_FREQ_GOV_USERSPACE=y \
-        CONFIG_CPU_FREQ_GOV_ONDEMAND=y \
-        CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y \
-        CONFIG_CRYPTO_CHACHA20_NEON=y \
-        CONFIG_CRYPTO_CHACHA20POLY1305=y \
-        CONFIG_FAT_DEFAULT_IOCHARSET="utf8" \
-        ' `find target/linux -path "target/linux/*/config-*"`
+        patch_dir="devices/${{matrix.target}}/patches"
+        cp -r --update=none devices/common/patches/. "$patch_dir/"
+
+        while IFS= read -r -d '' file; do
+          git apply "$file"
+        done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.bin.patch' -print0 | sort -z)
+
+        while IFS= read -r -d '' file; do
+          patch -d './' -R --no-backup-if-mismatch --merge -p1 --forward < "$file"
+        done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.revert.patch' -print0 | sort -z)
+
+        while IFS= read -r -d '' file; do
+          patch -d './' --no-backup-if-mismatch --merge -p1 --forward < "$file"
+        done < <(find "$patch_dir" -maxdepth 1 -type f -name '*.patch' ! -name '*.revert.patch' ! -name '*.bin.patch' -print0 | sort -z)
+
+        find feeds -path '*/adguardhome/files/adguardhome.init' -delete
+        for config in target/linux/x86/config-* target/linux/generic/config-*; do
+          [[ -f "$config" ]] || continue
+          cat >> "$config" <<'EOF'
+        CONFIG_CPU_FREQ_GOV_POWERSAVE=y
+        CONFIG_CPU_FREQ_GOV_USERSPACE=y
+        CONFIG_CPU_FREQ_GOV_ONDEMAND=y
+        CONFIG_CPU_FREQ_GOV_CONSERVATIVE=y
+        CONFIG_CRYPTO_CHACHA20POLY1305=y
+        CONFIG_FAT_DEFAULT_IOCHARSET="utf8"
+        EOF
+        done
 
     - name: Write custom APK keys
       run: |
@@ -262,16 +250,14 @@ jobs:
     - name: Get kernel version
       id: kernel
       run: |
+        set -euo pipefail
         cd openwrt
-        #KERNEL_VER=$(make -s kernelversion 2>/dev/null | head -n1 | tr -d '[:space:]' || true)
-        # 找到 include/kernel-* 下的版本文件
-        KERNEL_FILE=$(ls target/linux/generic/kernel-6.18 | head -n1)
-        # 提取主版本号
-        BASE_VER=$(basename $KERNEL_FILE | cut -d'-' -f2)
-        # 提取补丁号
-        PATCH_VER=$(grep "^LINUX_VERSION-$BASE_VER" "$KERNEL_FILE" | cut -d= -f2 | tr -d ' .')
-        # 拼接完整版本号
-        KERNEL_FULL="$BASE_VER.$PATCH_VER"
+        KERNEL_PATCHVER="$(sed -n 's/^KERNEL_PATCHVER:=//p' target/linux/x86/Makefile | head -n 1)"
+        KERNEL_FILE="target/linux/generic/kernel-$KERNEL_PATCHVER"
+        [[ -n "$KERNEL_PATCHVER" && -f "$KERNEL_FILE" ]]
+        PATCH_VER="$(grep -m1 "^LINUX_VERSION-$KERNEL_PATCHVER" "$KERNEL_FILE" | cut -d= -f2 | tr -d ' .')"
+        [[ -n "$PATCH_VER" ]]
+        KERNEL_FULL="$KERNEL_PATCHVER.$PATCH_VER"
         echo "KERNEL_VER=$KERNEL_FULL" >> $GITHUB_ENV
         echo "Kernel full version detected: $KERNEL_FULL"
 
@@ -283,7 +269,7 @@ jobs:
   #      sleep 5
 
     - name: Cache
-      uses: stupidloud/cachewrtbuild@main
+      uses: stupidloud/cachewrtbuild@b729f807837dbc3455d02fd35192660d9b662121
       with:
         ccache: 'true'
         mixkey: ${{ matrix.target }}
@@ -294,7 +280,7 @@ jobs:
       run: |
         shopt -s extglob
         cd openwrt
-        if [[ -f staging_dir/*${{ env.MTARGET }}*/bin ]]; then
+        if find staging_dir -maxdepth 2 -type d -path "*${{ env.MTARGET }}*/bin" -print -quit | grep -q .; then
             rm -rvf staging_dir/!(*${{ env.MTARGET }}*|host|hostpkg) build_dir/!(*${{ env.MTARGET }}*|host|hostpkg)
         fi
         df -hT
@@ -373,7 +359,7 @@ jobs:
           || echo "SSH FAIL"
 
     - name: Deploy imagebuilder to Ubuntuserver
-      uses: easingthemes/ssh-deploy@main
+      uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3
       continue-on-error: true
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
       with:
@@ -391,7 +377,7 @@ jobs:
         TARGET: "/www/wwwroot/op.miaogongzi.cc/25.12"
 
     - name: Upload firmware for artifact
-      uses: actions/upload-artifact@main
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: env.UPLOAD_FIRMWARE_FOR_ARTIFACT == 'true'
       with:
         name: ${{ env.VERSION }}_${{matrix.target}}
@@ -402,15 +388,19 @@ jobs:
       id: create_release
       if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
       continue-on-error: true
+      env:
+        WETRANS: ${{ env.WETRANS }}
+        COWURL: ${{ env.COWURL }}
+        NOTICE: ${{ env.NOTICE }}
       run: |
-        echo -e "墙内加速下载 🚀:\n" >> release.txt
-        echo -e "[CDN] (https://op.miaogongzi.cc/25.12/targets/x86/64/ ☁)\n" >> release.txt
-        [ ${{ env.WETRANS }} ] && echo -e "[WeTransfer] (${{ env.WETRANS }} 🗽)\n" >> release.txt
-        [ ${{ env.COWURL }} ] && echo -e "[奶牛上传] (${{ env.COWURL }} 🐮)\n" >> release.txt
-        [ ${{ env.NOTICE }} ] && echo -e "${{ env.NOTICE }}" >> release.txt || true
+        printf '墙内加速下载:\n\n' >> release.txt
+        printf '[CDN](https://op.miaogongzi.cc/25.12/targets/x86/64/)\n\n' >> release.txt
+        [[ -z "$WETRANS" ]] || printf '[WeTransfer](%s)\n\n' "$WETRANS" >> release.txt
+        [[ -z "$COWURL" ]] || printf '[奶牛快传](%s)\n\n' "$COWURL" >> release.txt
+        [[ -z "$NOTICE" ]] || printf '%s\n' "$NOTICE" >> release.txt
 
     - name: Upload firmware for release
-      uses: softprops/action-gh-release@master
+      uses: softprops/action-gh-release@2bb465e97f322d3cb2a965294d483e0d26a67aa9 # v3.0.1
       continue-on-error: true
       if: env.REPO_TOKEN && env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true'
       env:
@@ -424,7 +414,7 @@ jobs:
         body_path: release.txt
     
     - name: Deploy imagebuilder to server
-      uses: easingthemes/ssh-deploy@main
+      uses: easingthemes/ssh-deploy@2cc5b27bf3029d0455dd5e09fe02633904031447 # v6.0.3
       continue-on-error: true
       if: env.SSH_PRIVATE_KEY && ! contains(github.event.action, 'noser')
       with:
@@ -451,7 +441,7 @@ jobs:
         curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
 
     - name: Delete workflow runs
-      uses: mgz0227/delete-workflow-runs@main
+      uses: mgz0227/delete-workflow-runs@09cf4452c0d19a5190fc977d9bacae384e0de9a8 # v1.0
       continue-on-error: true
       with:
         token: ${{ secrets.TOKEN_MGZ0227 }}
@@ -459,7 +449,7 @@ jobs:
         keep_minimum_runs: 0
 
     - name: Remove old Releases
-      uses: mgz0227/delete-older-releases@master
+      uses: mgz0227/delete-older-releases@dfbe6be2a006e9475dfcbe5b8d201f1824c2a9fe # v0.3.4
       continue-on-error: true
       if: env.UPLOAD_FIRMWARE_FOR_RELEASE == 'true' && !cancelled()
       with:
