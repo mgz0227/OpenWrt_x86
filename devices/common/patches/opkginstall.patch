@@ -9,10 +9,10 @@
  const currentDisplayRows = [];
  
  function parseList(s, dest)
-@@ -187,6 +187,9 @@ function parseList(s, dest)
+@@ -187,6 +187,10 @@ function parseList(s, dest)
  		}
  		else if (pkg) {
--			dest.pkgs[pkg.name] = pkg;
+ 			dest.pkgs[pkg.name] = pkg;
 +			const cur = dest.pkgs[pkg.name];
 +
 +			if (!cur || compareVersion(pkg.version || '0', cur.version || '0') >= 0)

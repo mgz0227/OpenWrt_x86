@@ -1,15 +1,12 @@
 --- a/target/linux/x86/base-files/etc/board.d/02_network
 +++ b/target/linux/x86/base-files/etc/board.d/02_network
-@@ -177,4 +177,12 @@ silicom-80500-0214-*)
-         ucidef_set_interfaces_lan_wan "eth0 eth1 eth2 eth3" "wan0"
-         ;;
+@@ -39,6 +39,9 @@ traverse-technologies-geos)
+ xiaoma-m12)
+ 	ucidef_set_interfaces_lan_wan "eth1 eth2 eth3 eth4 eth5 eth6" "eth0"
+ 	;;
 +*)
-+	ethernet_interfaces="$(ip -o link show | awk -F': ' '$2 ~ /^e/ && $2 !~ /[@.]/ { print $2 }')"
-+	interface_count="$(printf '%s\n' "$ethernet_interfaces" | sed '/^$/d' | wc -l)"
-+	if [ "$interface_count" -gt 2 ]; then
-+		lan_interfaces="$(printf '%s\n' "$ethernet_interfaces" | grep -v '^eth1$' | tr '\n' ' ' | sed 's/ $//')"
-+		[ -z "$lan_interfaces" ] || ucidef_set_interfaces_lan_wan "$lan_interfaces" "eth1"
-+	fi
++	[ "$(ip address | grep ^[0-9] | awk -F: '{print $2}' | sed "s/ //g" | grep '^[e]' | grep -cvE "(@|\.)")" -gt 2 ] && ucidef_set_interfaces_lan_wan "$(ip address | grep ^[0-9] | awk -F: '{print $2}' | sed "s/ //g" | grep '^[e]' | grep -vE "(@|\.|eth1)" | tr "\n" " " | sed "s/ $//")" "eth1"
 +	;;
  esac
  board_config_flush
+

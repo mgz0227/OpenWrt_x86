@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #=================================================
-set -Eeuo pipefail
+shopt -s extglob
 
 #临时切换mirror
 sed -i 's#https://git.openwrt.org/feed/packages.git#https://github.com/openwrt/packages.git#g' feeds.conf.default
@@ -14,6 +14,8 @@ sed -i "/telephony/d" feeds.conf.default
 sed -i "/video/d" feeds.conf.default
 
 sed -i "s?targets/%S/packages?targets/%S/\$(LINUX_VERSION)?" include/feeds.mk
+
+sed -i '/	refresh_config();/d' scripts/feeds
 
 ./scripts/feeds update -a
 ./scripts/feeds install -a -p miaogongzi -f
@@ -37,12 +39,27 @@ sed -i "s/192.168.1/192.168.3/" package/base-files/files/bin/config_generate
 #wget -N  https://github.com/coolsnowwolf/lede/raw/refs/heads/master/package/system/fstools/patches/0200-ntfs3-with-utf8.patch -P package/system/fstools/patches/
 #wget -N https://github.com/immortalwrt/immortalwrt/raw/refs/heads/openwrt-25.12/config/Config-kernel.in -P config/
 
+rm -rf package/libs/openssl package/network/services/ppp
+git_clone_path openwrt-25.12 https://github.com/immortalwrt/immortalwrt package/libs/openssl package/network/services/ppp 
+
+
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile
 sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-advancedplus luci-app-firewall luci-app-package-manager \
 luci-app-wizard luci-base luci-compat luci-lib-ipkg luci-lib-fs luci-app-log-viewer \
 luci-app-argon-config luci-app-ddns-go luci-app-openclash luci-app-adguardhome tcpdump-mini open-vm-tools \
 wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-filemanager luci-app-ipsec /" include/target.mk
+
+sed -i "s/^.*vermagic$/\techo '1' > \$(LINUX_DIR)\/.vermagic/" include/kernel-defaults.mk
+
+status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
+echo "$status"
+while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
+	echo "wait 5s"
+	sleep 5
+	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/mgz0227/OP-Packages/actions/runs" | jq -r '.workflow_runs[0].status')
+done
+
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
@@ -59,9 +76,9 @@ sed -i 's/max_requests 3/max_requests 20/g' package/network/services/uhttpd/file
 #rm -rf ./feeds/packages/lang/{golang,node}
 sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/inittab
 
-build_date="$(date +%Y%m%d)"
+date=`date +%Y%m%d`
 sed -i \
-	-e "/\(# \)\?REVISION:=/c\REVISION:=$build_date" \
+  -e "/\(# \)\?REVISION:=/c\REVISION:=$date" \
   -e '/VERSION_CODE:=/c\VERSION_CODE:=$(REVISION)' \
   include/version.mk
 
