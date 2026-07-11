@@ -6,7 +6,7 @@ bash $SHELL_FOLDER/../common/kernel_6.18.sh
 
 #git_clone_path master https://github.com/coolsnowwolf/lede target/linux/x86/files target/linux/x86/patches-6.6
 
-wget --timeout=30 --tries=3 -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/x86/base-files/etc/board.d/02_network -P target/linux/x86/base-files/etc/board.d/
+wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/x86/base-files/etc/board.d/02_network -P target/linux/x86/base-files/etc/board.d/
 
 #apk提示模块输出
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
@@ -25,7 +25,7 @@ rm -rf target/linux/generic/backport-6.18/627-v7.1-net-pse-pd-fix-sign-on-ENOENT
 #wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/pending-6.18/360-Revert-MIPS-mm-kmalloc-tlb_vpn-array-to-avoid-stack-.patch -P target/linux/generic/pending-6.18/
 #以下不能动
 
-wget --timeout=30 --tries=3 -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
+wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
 
 #结束
 
@@ -34,5 +34,4 @@ wget --timeout=30 --tries=3 -N https://raw.githubusercontent.com/mgz0227/openwrt
 sed -i 's/DEFAULT_PACKAGES +=/DEFAULT_PACKAGES += kmod-fs-f2fs kmod-mmc kmod-sdhci kmod-usb-hid usbutils pciutils lm-sensors-detect kmod-atlantic kmod-vmxnet3 kmod-igbvf kmod-iavf kmod-bnx2x kmod-pcnet32 kmod-tulip kmod-8139cp kmod-8139too kmod-i40e kmod-drm-amdgpu kmod-mlx4-core kmod-mlx5-core fdisk lsblk kmod-phy-broadcom kmod-ixgbevf/' target/linux/x86/Makefile
 
 
-grep -qE '^[[:space:]]*256[[:space:]]*$' target/linux/x86/image/Makefile
-sed -i '/^[[:space:]]*256[[:space:]]*$/s/256/1024/' target/linux/x86/image/Makefile
+sed -i 's/256/1024/g' target/linux/x86/image/Makefile
