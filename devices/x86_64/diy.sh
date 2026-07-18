@@ -17,7 +17,7 @@ rm -rf target/linux/generic/backport-6.18/300-v7.2-MIPS-smp-report-dying-CPU-to-
 
 
 
-
+rm -rf target/linux/generic/backport-6.18/704-v7.2-netfilter-flowtable-fix-offloaded-ct-timeout-never-b.patch
 #rm -rf target/linux/generic/backport-6.18/742-v7.1-r8152-fix-incorrect-register-write-to-USB_UPHY_XTAL.patch
 #rm -rf target/linux/generic/backport-6.18/827-v7.0-crypto-inside-secure-eip93-fix-register-definition.patch
 #rm -rf target/linux/generic/backport-6.18/828-v7.0-crypto-inside-secure-eip93-register-hash-before-auth.patch
