@@ -13,13 +13,10 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
 #rm -rf target/linux/generic/pending-6.18/151-net-bridge-do-not-send-arp-replies-if-src-and-target.patch
-rm -rf target/linux/generic/backport-6.18/300-v7.2-MIPS-smp-report-dying-CPU-to-RCU-in-stop_this_cpu.patch
 
+rm -rf target/linux/generic/backport-6.18/625-v7.0-ppp-enable-TX-scatter-gather.patch
+rm -rf target/linux/generic/pending-6.18/303-powerpc-85xx-Add-fsl-ifc-to-common-device-ids.patch
 
-rm -rf target/linux/generic/backport-6.18/752-v7.2-net-dsa-qca8k-fix-led-devicename-when-using-external.patch
-rm -rf target/linux/generic/backport-6.18/627-v7.2-net-pse-pd-scope-pse_control-regulator-handle-to-kre.patch
-rm -rf target/linux/generic/backport-6.18/300-v7.1-MIPS-mm-fix-highmem-init.patch
-rm -rf target/linux/generic/backport-6.18/704-v7.2-netfilter-flowtable-fix-offloaded-ct-timeout-never-b.patch
 #rm -rf target/linux/generic/backport-6.18/742-v7.1-r8152-fix-incorrect-register-write-to-USB_UPHY_XTAL.patch
 #rm -rf target/linux/generic/backport-6.18/827-v7.0-crypto-inside-secure-eip93-fix-register-definition.patch
 #rm -rf target/linux/generic/backport-6.18/828-v7.0-crypto-inside-secure-eip93-register-hash-before-auth.patch
