@@ -33,7 +33,7 @@
 
 + Actions页面选择 Repo Dispatcher 点击 Run workflow
 ### 2.2 **GitHub结合浏览器插件编译**
-请在支持油猴的浏览器中安装 [脚本](https://greasyfork.org/scripts/407616-github-actions-trigger/code/Github%20Actions%20Trigger.user.js) ,仓库右上角会出现 x86_64 Actions,K2P Actions等按钮,点击对应按钮即可.更多玩法 [repo-dispatcher](https://github.com/tete1030/github-repo-dispatcher)
+请在支持油猴的浏览器中安装 [脚本]([https://update.greasyfork.org/scripts/590289/GitHub%20Actions%20Trigger.user.js](https://greasyfork.org/zh-CN/scripts/590289-github-actions-trigger)) ,仓库右上角会出现 x86_64 Actions,K2P Actions等按钮,点击对应按钮即可.更多玩法 [repo-dispatcher](https://github.com/tete1030/github-repo-dispatcher)
 
 ## 3. **使用**
 
