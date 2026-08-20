@@ -12,19 +12,12 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
-#rm -rf target/linux/generic/pending-6.18/151-net-bridge-do-not-send-arp-replies-if-src-and-target.patch
-rm -rf target/linux/generic/backport-6.12/620-v6.15-ppp-use-IFF_NO_QUEUE-in-virtual-interfaces.patch
-rm -rf target/linux/generic/backport-6.12/621-v6.17-ppp-convert-to-percpu-netstats.patch
-rm -rf target/linux/generic/backport-6.12/625-v7.0-ppp-enable-TX-scatter-gather.patch
-rm -rf target/linux/generic/backport-6.18/625-v7.0-ppp-enable-TX-scatter-gather.patch
-rm -rf target/linux/generic/pending-6.12/303-powerpc-85xx-Add-fsl-ifc-to-common-device-ids.patch
-rm -rf target/linux/generic/pending-6.18/303-powerpc-85xx-Add-fsl-ifc-to-common-device-ids.patch
+#6.18.45
+rm -rf target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch
+rm -rf target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch
+wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch target/linux/generic/pending-6.18/
+wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch target/linux/generic/pending-6.18/
 
-#rm -rf target/linux/generic/backport-6.18/742-v7.1-r8152-fix-incorrect-register-write-to-USB_UPHY_XTAL.patch
-#rm -rf target/linux/generic/backport-6.18/827-v7.0-crypto-inside-secure-eip93-fix-register-definition.patch
-#rm -rf target/linux/generic/backport-6.18/828-v7.0-crypto-inside-secure-eip93-register-hash-before-auth.patch
-rm -rf target/linux/generic/backport-6.18/627-v7.1-net-pse-pd-fix-sign-on-ENOENT-check-in-of_load_pse_p.patch
-#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/pending-6.18/360-Revert-MIPS-mm-kmalloc-tlb_vpn-array-to-avoid-stack-.patch -P target/linux/generic/pending-6.18/
 #以下不能动
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
