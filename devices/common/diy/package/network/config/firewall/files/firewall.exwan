@@ -55,7 +55,7 @@ update_firewall_rule() {
     config_set "$rule.dest_port" "$port"
     config_set "$rule.target" "ACCEPT"
 
-    [ "$family" = "ipv4" ] && config_set "$rule.family" "ipv4" || config_set "$rule.family" "ipv6"
+    case "$family" in ipv4|ipv6) config_set "$rule.family" "$family" ;; *) config_delete "$rule.family" ;; esac
 
     if [ "$is_backend_port" = "1" ]; then
         config_add_list "$rule.proto" "tcp"
