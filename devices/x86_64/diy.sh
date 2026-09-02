@@ -18,6 +18,10 @@ rm -rf target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-c
 wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch target/linux/generic/pending-6.18/
 wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch target/linux/generic/pending-6.18/
 
+#6.18.19
+rm -rf target/linux/generic/backport-6.18/501-v7.1-ksmbd-harden-file-lifetime-during-session-teardown.patch
+rm -rf target/linux/generic/backport-6.18/894-v7.3-usb-xhci-handle-port-events-when-there-is-one-roothub.patch
+
 #以下不能动
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
