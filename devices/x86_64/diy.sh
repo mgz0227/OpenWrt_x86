@@ -12,6 +12,10 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
+#6.48.50
+rm -rf target/linux/generic/pending-6.18/737-02-net-phylink-introduce-internal-phylink-PCS-handling.patch
+rm -rf target/linux/generic/pending-6.18/737-05-net-phylink-support-late-PCS-provider-attach.patch
+
 #6.18.45
 rm -rf target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch
 rm -rf target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch
