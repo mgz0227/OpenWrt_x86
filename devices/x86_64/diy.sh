@@ -15,6 +15,7 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #6.48.50
 rm -rf target/linux/generic/pending-6.18/737-02-net-phylink-introduce-internal-phylink-PCS-handling.patch
 rm -rf target/linux/generic/pending-6.18/737-05-net-phylink-support-late-PCS-provider-attach.patch
+rm -rf target/linux/generic/pending-6.18/737-10-net-phylink-link-the-PCS-list-before-the-initial-con.patch
 wget -N https://raw.githubusercontent.com/graysky2/openwrt/cb2c5b10529a028a649539e6b33b63c8da66af89/target/linux/generic/pending-6.18/737-02-net-phylink-introduce-internal-phylink-PCS-handling.patch -P -P target/linux/generic/pending-6.18/
 
 #6.18.45
