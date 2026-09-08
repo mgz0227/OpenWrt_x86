@@ -13,20 +13,8 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
 #6.48.50
-rm -rf target/linux/generic/pending-6.18/737-02-net-phylink-introduce-internal-phylink-PCS-handling.patch
-rm -rf target/linux/generic/pending-6.18/737-05-net-phylink-support-late-PCS-provider-attach.patch
-rm -rf target/linux/generic/pending-6.18/737-10-net-phylink-link-the-PCS-list-before-the-initial-con.patch
-wget -N https://raw.githubusercontent.com/graysky2/openwrt/cb2c5b10529a028a649539e6b33b63c8da66af89/target/linux/generic/pending-6.18/737-02-net-phylink-introduce-internal-phylink-PCS-handling.patch -P -P target/linux/generic/pending-6.18/
-
-#6.18.45
-rm -rf target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch
-rm -rf target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch
-wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/804-nvmem-core-support-mac-base-fixed-layout-cells.patch -P target/linux/generic/pending-6.18/
-wget -N https://github.com/graysky2/openwrt/raw/refs/heads/18/target/linux/generic/pending-6.18/809-01-nvmem-core-generalize-mac-base-cells-handling.patch -P target/linux/generic/pending-6.18/
-
-#6.18.49
-rm -rf target/linux/generic/backport-6.18/501-v7.1-ksmbd-harden-file-lifetime-during-session-teardown.patch
-rm -rf target/linux/generic/backport-6.18/894-v7.3-usb-xhci-handle-port-events-when-there-is-one-roothub.patch
+rm -rf target/linux/generic
+git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
 #以下不能动
 
