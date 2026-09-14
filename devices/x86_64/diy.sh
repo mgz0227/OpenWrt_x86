@@ -16,6 +16,8 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 rm -rf target/linux/generic
 git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
+rm -rf target/linux/generic/hack-6.18/200-tools_portability.patch
+
 #以下不能动
 
 wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
