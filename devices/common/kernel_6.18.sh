@@ -22,7 +22,7 @@ git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2lo
 cd ../../
 
 cd package
-rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct
+rm -rf devel/kselftests-bpf  kernel/mt76 kernel/ath10k-ct devel/perf
 
 cd ../
 
