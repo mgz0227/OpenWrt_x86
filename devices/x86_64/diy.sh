@@ -13,8 +13,8 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
 #6.48.50
-rm -rf target/linux/generic
-git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
+#rm -rf target/linux/generic
+#git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
 
 #以下不能动
