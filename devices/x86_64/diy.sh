@@ -12,8 +12,27 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
-#6.48.50
-#rm -rf target/linux/generic
+#6.48.53
+rm -rf target/linux/generic/backport-6.18/706-v7.2-bus-mhi-host-pci_generic-round-up-nr_irqs-to-a-power-of-two.patch
+rm -rf target/linux/generic/backport-6.18/751-v7.2-net-dsa-qca8k-add-support-for-force-mode-for-fixed-l.patch
+rm -rf target/linux/generic/backport-6.18/852-v7.1-rtc-cmos-use-platform_get_irq_optional.patch
+rm -rf target/linux/generic/backport-6.18/942-04-v7.2-net-dsa-realtek-rtl8365mb-prepare-for-multiple-sourc.patch
+rm -rf target/linux/generic/backport-6.18/942-05-v7.2-net-dsa-realtek-rtl8365mb-add-table-lookup-interface.patch
+rm -rf target/linux/generic/backport-6.18/942-06-v7.2-net-dsa-realtek-rtl8365mb-add-VLAN-support.patch
+rm -rf target/linux/generic/backport-6.18/942-07-v7.2-net-dsa-realtek-rtl8365mb-add-FDB-support.patch
+rm -rf target/linux/generic/backport-6.18/942-08-v7.2-net-dsa-realtek-rtl8365mb-add-port_bridge_-join-leav.patch
+rm -rf target/linux/generic/backport-6.18/942-09-v7.2-net-dsa-realtek-rtl8365mb-add-bridge-port-flags.patch
+rm -rf target/linux/generic/backport-6.18/943-01-v7.3-net-dsa-realtek-rtl8365mb-add-SGMII-support.patch
+rm -rf target/linux/generic/backport-6.18/943-02-v7.3-net-dsa-realtek-rtl8365mb-add-HSGMII-support.patch
+rm -rf target/linux/generic/backport-6.18/944-01-v7.2-net-dsa-realtek-rtl8365mb-use-devm_mutex_init-for-mib_lock.patch
+rm -rf target/linux/generic/backport-6.18/944-02-v7.2-net-dsa-realtek-use-devm_mutex_init-for-regmap-lock.patch
+rm -rf target/linux/generic/backport-6.18/944-03-v7.2-net-dsa-realtek-use-devm_mutex_init-for-vlan_lock.patch
+rm -rf target/linux/generic/backport-6.18/944-04-v7.2-net-dsa-realtek-use-devm_mutex_init-for-l2_lock.patch
+rm -rf target/linux/generic/backport-6.18/946-v7.3-net-dsa-mt7530-populate-lpi_interfaces-to-fix-EEE-support.patch
+rm -rf target/linux/generic/backport-6.18/947-v7.3-net-ethernet-mtk_eth_soc-populate-lpi_interfaces-to-fix-EEE-support.patch
+rm -rf target/linux/generic/pending-6.18/737-10-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch
+rm -rf target/linux/generic/pending-6.18/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch
+#target/linux/generic
 #git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
 
