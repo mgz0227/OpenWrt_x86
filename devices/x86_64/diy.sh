@@ -30,6 +30,7 @@ rm -rf target/linux/generic/backport-6.18/944-03-v7.2-net-dsa-realtek-use-devm_m
 rm -rf target/linux/generic/backport-6.18/944-04-v7.2-net-dsa-realtek-use-devm_mutex_init-for-l2_lock.patch
 rm -rf target/linux/generic/backport-6.18/946-v7.3-net-dsa-mt7530-populate-lpi_interfaces-to-fix-EEE-support.patch
 rm -rf target/linux/generic/backport-6.18/947-v7.3-net-ethernet-mtk_eth_soc-populate-lpi_interfaces-to-fix-EEE-support.patch
+rm -rf target/linux/generic/hack-6.18/890-serial-8250-add-UPIO_AU-case-to-set_io_from_upio.patch
 rm -rf target/linux/generic/pending-6.18/737-10-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch
 rm -rf target/linux/generic/pending-6.18/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch
 #target/linux/generic
