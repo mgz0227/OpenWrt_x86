@@ -33,6 +33,11 @@ rm -rf target/linux/generic/backport-6.18/947-v7.3-net-ethernet-mtk_eth_soc-popu
 rm -rf target/linux/generic/hack-6.18/890-serial-8250-add-UPIO_AU-case-to-set_io_from_upio.patch
 rm -rf target/linux/generic/pending-6.18/737-10-net-ethernet-mtk_eth_soc-add-paths-and-SerDes-modes-.patch
 rm -rf target/linux/generic/pending-6.18/738-01-net-ethernet-mtk_eth_soc-reduce-rx-ring-size-for-older.patch
+
+#6.18.54
+rm -rf target/linux/generic/pending-6.18/505-ksmbd-revert-fix-to-handle-removal-of-rfc1002-header.patch
+rm -rf target/linux/generic/pending-6.18/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
+
 #target/linux/generic
 #git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
