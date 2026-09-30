@@ -37,6 +37,7 @@ rm -rf target/linux/generic/pending-6.18/738-01-net-ethernet-mtk_eth_soc-reduce-
 #6.18.54
 rm -rf target/linux/generic/pending-6.18/505-ksmbd-revert-fix-to-handle-removal-of-rfc1002-header.patch
 rm -rf target/linux/generic/pending-6.18/700-netfilter-nft_flow_offload-handle-netdevice-events-f.patch
+rm -rf target/linux/generic/backport-6.18/895-v7.2-Bluetooth-btusb-Add-Mercusys-MA530-for-Realtek-RTL87.patch
 
 #target/linux/generic
 #git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
