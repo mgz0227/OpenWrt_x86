@@ -12,8 +12,10 @@ wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/
 rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 #内核升级模块
 #开始
-#6.48.55
-rm -rf target/linux/generic/backport-6.18/707-v7.3-net-phylink-record-the-PHY-only-once-bringup-cannot-.patch
+#6.48.56
+rm -rf target/linux/generic/backport-6.18/438-v7.3-mtd-spinand-Do-not-update-the-QE-bit-on-devices-without-one.patch
+rm -rf target/linux/generic/backport-6.18/782-v7.3-USB-serial-option-add-Quectel-EG060W.patch
+rm -rf target/linux/generic/backport-6.18/787-v7.3-net-usb-qmi_wwan-add-Quectel-EG120K-EA.patch
 
 
 #target/linux/generic
