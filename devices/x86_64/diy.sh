@@ -16,7 +16,7 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 rm -rf target/linux/generic/backport-6.18/438-v7.3-mtd-spinand-Do-not-update-the-QE-bit-on-devices-without-one.patch
 rm -rf target/linux/generic/backport-6.18/782-v7.3-USB-serial-option-add-Quectel-EG060W.patch
 rm -rf target/linux/generic/backport-6.18/787-v7.3-net-usb-qmi_wwan-add-Quectel-EG120K-EA.patch
-
+rm -rf target/linux/generic/pending-6.18/304-LoongArch-vdso-keep-the-prefix-map-flags.patch
 
 #target/linux/generic
 #git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
