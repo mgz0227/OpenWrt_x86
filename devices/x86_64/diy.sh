@@ -19,6 +19,12 @@ rm -rf target/linux/generic/backport-6.18/787-v7.3-net-usb-qmi_wwan-add-Quectel-
 rm -rf target/linux/generic/pending-6.18/304-LoongArch-vdso-keep-the-prefix-map-flags.patch
 wget -N https://github.com/graysky2/openwrt/raw/d9a495694435c22ed78602bea7a31ae9a94a590f/target/linux/generic/pending-6.18/304-LoongArch-vdso-keep-the-prefix-map-flags.patch -P target/linux/generic/pending-6.18/
 
+#6.18.57
+rm -rf target/linux/generic/backport-6.18/438-v7.3-mtd-spinand-Do-not-update-the-QE-bit-on-devices-without-one.patch
+rm -rf target/linux/generic/backport-6.18/782-v7.3-USB-serial-option-add-Quectel-EG060W.patch
+rm -rf target/linux/generic/backport-6.18/787-v7.3-net-usb-qmi_wwan-add-Quectel-EG120K-EA.patch
+
+
 #target/linux/generic
 #git_clone_path 18 https://github.com/graysky2/openwrt target/linux/generic target/linux/generic
 
