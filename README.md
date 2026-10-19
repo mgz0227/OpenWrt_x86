@@ -1,12 +1,9 @@
 [![Build OpenWrt](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml/badge.svg)](https://github.com/mgz0227/OpenWrt_x86/actions/workflows/Openwrt-AutoBuild.yml)
 
-# Linux Kernel Release Timeline (v7.3-v7.6)
+# Linux Kernel Release Timeline (v7.4-v7.7)
 
 | Version | Stage | Start Date | End Date |
 |---------|---------------|------------|------------|
-| v7.3 | Merge Window | 2026-08-17 | 2026-08-30 |
-| v7.3 | -rc1 | 2026-08-30 | |
-| v7.3 | Final Release | 2026-10-18 | |
 | v7.4 | Merge Window | 2026-10-19 | 2026-11-01 |
 | v7.4 | -rc1 | 2026-11-01 | |
 | v7.4 | Final Release | 2026-12-20 | |
@@ -16,6 +13,10 @@
 | v7.6 | Merge Window | 2027-02-22 | 2027-03-07 |
 | v7.6 | -rc1 | 2027-03-07 | |
 | v7.6 | Final Release | 2027-04-25 | |
+| v7.7 | Merge Window | 2027-04-26 | 2027-05-09 |
+| v7.7 | -rc1 | 2027-05-09 | |
+| v7.7 | Final Release | 2027-06-27 | |
+
 
 ## 1. **固件**
 
