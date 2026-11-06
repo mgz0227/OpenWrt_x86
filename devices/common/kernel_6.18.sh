@@ -7,7 +7,7 @@ mkdir new; cp -rf .git new/.git
 cd new
 git reset --hard origin/main
 
-cp -rf --parents target/linux target/Config.in scripts/target-metadata.pl package/boot package/devel package/firmware package/kernel package/libs package/network tools toolchain config ../
+cp -rf --parents include/meson.mk target/linux target/Config.in scripts/target-metadata.pl package/boot package/devel package/firmware package/kernel package/libs package/network tools toolchain config ../
 
 cd -
 
