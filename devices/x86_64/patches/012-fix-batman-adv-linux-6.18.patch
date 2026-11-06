@@ -1,0 +1,23 @@
+Backport Linux 6.18 build compatibility without changing the package version.
+Upstream: https://github.com/openwrt/routing/commit/61466d6639b9a1afe727d16461edacfa53e3f77e
+Upstream: https://github.com/openwrt/routing/commit/52ba65e168c0fe01445328128c9ba1fa129bea0c
+
+--- a/feeds/routing/batman-adv/Makefile
++++ b/feeds/routing/batman-adv/Makefile
+@@ -34,7 +34,7 @@ define KernelPackage/batman-adv
+   SUBMENU:=Network Support
+   TITLE:=B.A.T.M.A.N. Adv
+   URL:=https://www.open-mesh.org/
+-  DEPENDS:=+BATMAN_ADV_BLA:kmod-lib-crc16 +kmod-lib-crc32c +kmod-cfg80211 +batctl
++  DEPENDS:=+BATMAN_ADV_BLA:kmod-lib-crc16 +LINUX_6_12:kmod-lib-crc32c +kmod-cfg80211 +batctl
+   FILES:=$(PKG_BUILD_DIR)/net/batman-adv/batman-adv.$(LINUX_KMOD_SUFFIX)
+   AUTOLOAD:=$(call AutoProbe,batman-adv)
+ endef
+@@ -84,6 +84,5 @@ define Build/Compile
+ 		M="$(PKG_BUILD_DIR)/net/batman-adv" \
+ 		$(PKG_EXTRA_KCONFIG) \
+-		EXTRA_CFLAGS="$(PKG_EXTRA_CFLAGS)" \
+-		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS)" \
++		NOSTDINC_FLAGS="$(NOSTDINC_FLAGS) $(PKG_EXTRA_CFLAGS)" \
+ 		modules
+ endef
