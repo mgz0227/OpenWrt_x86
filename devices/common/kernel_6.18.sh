@@ -13,10 +13,10 @@ cd -
 
 
 cd feeds/packages
-rm -rf net/xtables-addons net/jool kernel/v4l2loopback kernel/ovpn-dco libs/libpfring libs/libmariadb 
+rm -rf net/xtables-addons net/jool kernel/v4l2loopback kernel/ovpn-dco libs/libpfring libs/libmariadb lang/golang
 #lang/python
 
-git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2loopback net/xtables-addons libs/libmariadb  kernel/ovpn-dco 
+git_clone_path master https://github.com/openwrt/packages net/jool kernel/v4l2loopback net/xtables-addons libs/libmariadb  kernel/ovpn-dco lang/golang
 #lang/python libs/libpfring
 
 cd ../../
