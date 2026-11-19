@@ -22,7 +22,7 @@ rm -rf package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 
 #以下不能动
 
-wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
+#wget -N https://raw.githubusercontent.com/mgz0227/openwrt/refs/heads/6.18.y/target/linux/generic/kernel-6.18 -P target/linux/generic/
 
 #结束
 
